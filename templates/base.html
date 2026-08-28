@@ -1,0 +1,107 @@
+{% load static products_extras %}
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}CZ Glowisd Science And Technology — professional manufacturer of paving machine sensors, cables, control handles, displays and accessories.{% else %}CZ Glowisd Science And Technology — 专业摊铺机传感器、线缆、控制手柄、显示控制器与配件制造商。{% endif %}{% endblock %}">
+  <title>{% block title %}{% if lang == 'en' %}Glowisd — Paving Machine Sensors &amp; Accessories{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "CZ Glowisd Science And Technology co., ltd",
+    "url": "https://glowisd.com",
+    "description": "Professional manufacturer of paving machine sensors, cables and accessories"
+  }
+  </script>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{% url 'home' %}">Glowisd<span class="brand-dot">.</span></a>
+
+      <nav class="nav-main" aria-label="{% if lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
+        <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+        <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
+        <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
+        <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'en' %}Custom{% else %}定制{% endif %}</a>
+        <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'en' %}Contact{% else %}联系{% endif %}</a>
+      </nav>
+
+      <div style="display:flex; align-items:center; gap:16px;">
+        <div class="header-lang" data-lang-switcher></div>
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="{% if lang == 'en' %}Menu{% else %}菜单{% endif %}">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav" aria-label="{% if lang == 'en' %}Mobile navigation{% else %}移动导航{% endif %}">
+      <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
+      <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
+      <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'en' %}Custom{% else %}定制{% endif %}</a>
+      <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'en' %}Contact{% else %}联系{% endif %}</a>
+      <div class="mobile-lang" data-lang-switcher></div>
+    </nav>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="brand">Glowisd<span class="brand-dot">.</span></span>
+          <p>{% if lang == 'en' %}CZ Glowisd Science And Technology co., ltd — a professional manufacturer of paving machine sensors, cables, control handles, displays and accessories.{% else %}CZ Glowisd Science And Technology co., ltd — 专业摊铺机传感器、线缆、控制手柄、显示控制器与配件制造商。{% endif %}</p>
+        </div>
+        <div class="footer-col">
+          <h4>{% if lang == 'en' %}Company{% else %}公司{% endif %}</h4>
+          <ul>
+            <li><a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a></li>
+            <li><a href="{% url 'factory' %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a></li>
+            <li><a href="{% url 'custom' %}">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</a></li>
+            <li><a href="{% url 'contact' %}">{% if lang == 'en' %}Contact{% else %}联系我们{% endif %}</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>{% if lang == 'en' %}Products{% else %}产品{% endif %}</h4>
+          <ul>
+            {% footer_categories as fcats %}
+            {% for c in fcats %}
+            <li><a href="{% url 'product_list' %}?category={{ c.slug }}">{{ c|cname:lang }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>{% if lang == 'en' %}Contact{% else %}联系方式{% endif %}</h4>
+          <div class="f-addr">
+            {% if lang == 'en' %}
+            CZ Glowisd Science And Technology co., ltd<br>
+            Changzhou, Jiangsu, China<br>
+            <a href="mailto:sales@glowisd.com">sales@glowisd.com</a> <small style="color:#6F6A63">(placeholder)</small><br>
+            +86-XXX-XXXX-XXXX <small style="color:#6F6A63">(placeholder)</small>
+            {% else %}
+            常州 Glowisd 科技有限公司<br>
+            中国·江苏·常州<br>
+            <a href="mailto:sales@glowisd.com">sales@glowisd.com</a> <small style="color:#6F6A63">（占位）</small><br>
+            +86-XXX-XXXX-XXXX <small style="color:#6F6A63">（占位）</small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 CZ Glowisd Science And Technology co., ltd. {% if lang == 'en' %}All rights reserved.{% else %}保留所有权利。{% endif %}</span>
+        <span class="ver">V0.1.1 · GLOWISD</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'vendor/vue.global.prod.js' %}"></script>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

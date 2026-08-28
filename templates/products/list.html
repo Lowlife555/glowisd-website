@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}{% if lang == 'en' %}Products — Glowisd{% else %}产品中心 — Glowisd{% endif %}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">{% if lang == 'en' %}Product Catalog{% else %}产品目录{% endif %}</span>
+    <h1>{% if lang == 'en' %}Products{% else %}产品中心{% endif %}</h1>
+    <p class="lead">
+      {% if lang == 'en' %}
+      Sensors, cables, control handles, displays and more — filter by category
+      or search by SKU / P/N / name.
+      {% else %}
+      传感器、线缆、控制手柄、显示控制器等配件；可按分类筛选，或按 SKU / P/N / 名称搜索。
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <span class="sep">/</span>
+      <span>{% if lang == 'en' %}Products{% else %}产品{% endif %}</span>
+    </nav>
+
+    <div class="filter-bar">
+      <div class="filter-groups">
+        <span class="filter-label">{% if lang == 'en' %}Category{% else %}分类{% endif %}</span>
+        <div class="chip-row">
+          <a class="chip {% if not active_category %}is-active{% endif %}" href="{% url 'product_list' %}">
+            {% if lang == 'en' %}All{% else %}全部{% endif %}
+          </a>
+          {% for c in categories %}
+          <a class="chip {% if active_category == c.slug %}is-active{% endif %}"
+             href="{% url 'product_list' %}?category={{ c.slug }}">{{ c|cname:lang }}</a>
+          {% endfor %}
+        </div>
+      </div>
+      <form class="search-form" action="{% url 'product_list' %}" method="get" role="search">
+        {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
+        <input type="search" name="search" value="{{ search }}" placeholder="{% if lang == 'en' %}Search SKU / P/N / name…{% else %}搜索 SKU / P/N / 名称…{% endif %}" aria-label="{% if lang == 'en' %}Search products{% else %}搜索产品{% endif %}">
+        <button type="submit">{% if lang == 'en' %}Search{% else %}搜索{% endif %}</button>
+      </form>
+    </div>
+
+    <div class="result-meta">
+      <span class="count">
+        {% if lang == 'en' %}<b>{{ products|length }}</b> products found{% else %}共 <b>{{ products|length }}</b> 款产品{% endif %}
+        {% if active_category %} · {{ active_category }}{% endif %}
+        {% if search %} · "{{ search }}"{% endif %}
+      </span>
+      {% if products %}
+      <a class="link-arrow" href="{% url 'contact' %}">
+        {% if lang == 'en' %}Can't find it? Ask us{% else %}找不到？向我们询价{% endif %}
+        <span class="arrow">→</span>
+      </a>
+      {% endif %}
+    </div>
+
+    {% if products %}
+    <div class="grid-products">
+      {% for p in products %}
+      <a class="p-card" href="{% url 'product_detail' p.pk %}">
+        <div class="p-card__media">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
+          {% else %}
+          <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+          {% endif %}
+          <span class="p-card__sku">{{ p.sku }}</span>
+        </div>
+        <div class="p-card__body">
+          {% if p.part_name or p.part_name_en %}
+          <span class="p-card__name">{{ p|pname:lang }}</span>
+          {% else %}
+          <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
+          {% endif %}
+          <div class="p-card__ids">
+            <div><b>SKU</b> {{ p.sku }}</div>
+            {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
+          </div>
+          <div class="p-card__foot">
+            <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="big">{% if lang == 'en' %}No products found{% else %}没有找到匹配的产品{% endif %}</div>
+      <p>{% if lang == 'en' %}Try another keyword, or contact us for the exact part you need.{% else %}换个关键词试试，或直接联系我们查询所需配件。{% endif %}</p>
+      <div style="margin-top:26px;">
+        <a class="btn btn--primary" href="{% url 'contact' %}">{% if lang == 'en' %}Send an Inquiry{% else %}发送询价{% endif %}</a>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

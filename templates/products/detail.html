@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}{{ product|pname:lang }} — Glowisd{% endblock %}
+
+{% block content %}
+
+<section class="section">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <span class="sep">/</span>
+      <a href="{% url 'product_list' %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
+      <span class="sep">/</span>
+      <span>{{ product.sku }}</span>
+    </nav>
+
+    <div class="p-detail">
+      <div class="p-media">
+        {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.sku }} — {{ product|pname:lang }}">
+        {% else %}
+        <img src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+        {% endif %}
+      </div>
+
+      <div class="p-info">
+        {% if product.part_name or product.part_name_en %}
+        <h1>{{ product|pname:lang }}</h1>
+        {% else %}
+        <h1 class="is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</h1>
+        {% endif %}
+        <p class="p-tagline">{{ product.sku }} · {{ product.category|cname:lang }}</p>
+
+        <dl class="meta-table">
+          <div class="meta-row">
+            <dt>SKU</dt>
+            <dd>{{ product.sku }}</dd>
+          </div>
+          <div class="meta-row">
+            <dt>P/N</dt>
+            <dd>{{ product.pn|default:"—" }}</dd>
+          </div>
+          <div class="meta-row">
+            <dt>{% if lang == 'en' %}Brand{% else %}兼容品牌{% endif %}</dt>
+            <dd>{{ product.brand|default:"—" }}</dd>
+          </div>
+          <div class="meta-row">
+            <dt>{% if lang == 'en' %}Weight{% else %}重量{% endif %}</dt>
+            <dd>{{ product.weight|default:"—" }}</dd>
+          </div>
+          <div class="meta-row">
+            <dt>{% if lang == 'en' %}Warranty{% else %}质保{% endif %}</dt>
+            <dd>{{ product.warranty|default:"—" }}</dd>
+          </div>
+          <div class="meta-row">
+            <dt>{% if lang == 'en' %}Category{% else %}分类{% endif %}</dt>
+            <dd>
+              <a href="{% url 'product_list' %}?category={{ product.category.slug }}" style="border-bottom:1px solid var(--line-strong);">
+                {{ product.category|cname:lang }}
+              </a>
+            </dd>
+          </div>
+        </dl>
+
+        {% if product.description or product.description_en %}
+        <div class="p-desc">
+          <h2>{% if lang == 'en' %}Description{% else %}产品描述{% endif %}</h2>
+          <p>
+            {% if lang == 'en' %}
+            {{ product.description_en|default:product.description }}
+            {% else %}
+            {{ product.description|default:product.description_en }}
+            {% endif %}
+          </p>
+        </div>
+        {% endif %}
+
+        <div class="p-actions">
+          <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
+            {% if lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
+          </a>
+          <a class="btn btn--outline" href="{% url 'product_list' %}">
+            {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    {% if related %}
+    <div class="related">
+      <div class="related-head">
+        <h2 class="h-section">{% if lang == 'en' %}Related Products{% else %}相关产品{% endif %}</h2>
+        <a class="link-arrow" href="{% url 'product_list' %}?category={{ product.category.slug }}">
+          {% if lang == 'en' %}More in this category{% else %}该分类更多产品{% endif %}
+          <span class="arrow">→</span>
+        </a>
+      </div>
+      <div class="grid-products">
+        {% for p in related %}
+        <a class="p-card" href="{% url 'product_detail' p.pk %}">
+          <div class="p-card__media">
+            {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.sku }}">
+            {% else %}
+            <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+            {% endif %}
+            <span class="p-card__sku">{{ p.sku }}</span>
+          </div>
+          <div class="p-card__body">
+            {% if p.part_name or p.part_name_en %}
+            <span class="p-card__name">{{ p|pname:lang }}</span>
+            {% else %}
+            <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
+            {% endif %}
+            <div class="p-card__ids">
+              <div><b>SKU</b> {{ p.sku }}</div>
+              {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

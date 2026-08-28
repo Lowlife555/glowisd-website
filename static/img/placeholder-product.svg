@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Glowisd product placeholder">
+  <rect width="400" height="300" fill="#EFEAE1"/>
+  <g stroke="#E1D9C9" stroke-width="1">
+    <path d="M300 0v300M320 0v300M340 0v300M360 0v300M380 0v300"/>
+    <path d="M0 240h400M0 260h400M0 280h400"/>
+  </g>
+  <g fill="none" stroke="#B9B0A1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="108" y="74" width="184" height="124" rx="4"/>
+    <rect x="140" y="100" width="120" height="36" rx="2" stroke="#C6BDAC"/>
+    <path d="M150 118h100"/>
+    <circle cx="258" cy="170" r="7"/>
+    <circle cx="258" cy="170" r="2.4" fill="#B9B0A1" stroke="none"/>
+    <circle cx="122" cy="88" r="3"/>
+    <circle cx="278" cy="88" r="3"/>
+    <circle cx="122" cy="184" r="3"/>
+    <circle cx="278" cy="184" r="3"/>
+    <path d="M292 138c36 0 44 10 46 36v4"/>
+    <rect x="332" y="176" width="26" height="15" rx="2"/>
+    <path d="M345 191v8"/>
+  </g>
+  <text x="200" y="248" text-anchor="middle" font-family="Georgia, serif" font-size="13" letter-spacing="5" fill="#A89E8C">GLOWISD</text>
+  <line x1="158" y1="264" x2="242" y2="264" stroke="#C9C0B0" stroke-width="1"/>
+</svg>

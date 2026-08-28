@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}{% if lang == 'en' %}Contact &amp; Inquiry — Glowisd{% else %}联系我们 — Glowisd{% endif %}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">{% if lang == 'en' %}Contact{% else %}联系{% endif %}</span>
+    <h1>{% if lang == 'en' %}Contact &amp; Inquiry{% else %}联系我们 / 询价{% endif %}</h1>
+    <p class="lead">
+      {% if lang == 'en' %}
+      Tell us the SKU or P/N you need — we reply within 24 hours.
+      {% else %}
+      告诉我们您需要的 SKU 或 P/N，我们将在 24 小时内回复。
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- 服务端提示（JS 不可用时的回退） -->
+    {% if ok %}
+    <div class="notice notice--ok" role="status">
+      {% if lang == 'en' %}Submitted! We will contact you soon.{% else %}提交成功，我们会尽快与您联系！{% endif %}
+    </div>
+    {% endif %}
+    {% if error_key == 'rate_limited' %}
+    <div class="notice notice--err" role="alert">
+      {% if lang == 'en' %}Too many submissions. Please try again in 5 minutes.{% else %}提交过于频繁，请 5 分钟后再试。{% endif %}
+    </div>
+    {% endif %}
+    {% if error_key == 'invalid' %}
+    <div class="notice notice--err" role="alert">
+      {% if lang == 'en' %}Submission invalid. Please check required fields and email format.{% else %}提交内容有误，请检查必填项与邮箱格式。{% endif %}
+    </div>
+    {% endif %}
+
+    <div class="contact-grid">
+
+      <!-- 询价表单（Vue 3） -->
+      <div id="contact-app" data-lang="{{ lang }}">
+        <div class="form-card">
+          <h2>{% if lang == 'en' %}Inquiry Form{% else %}询价表单{% endif %}</h2>
+          <p class="form-sub">
+            {% if lang == 'en' %}
+            Fields marked * are required. Your inquiry goes straight to our sales team.
+            {% else %}
+            带 * 为必填项，您的询价将直接发送至销售团队。
+            {% endif %}
+          </p>
+          {% verbatim %}
+          <div v-if="ok" class="notice notice--ok" role="status">{{ okText }}</div>
+          <div v-if="error" class="notice notice--err" role="alert">{{ error }}</div>
+          {% endverbatim %}
+          <form method="post" action="{% url 'contact' %}" @submit.prevent="submit" novalidate>
+            {% csrf_token %}
+            <div class="form-grid">
+              <div class="field">
+                <label for="cf-name">{% if lang == 'en' %}Name{% else %}姓名{% endif %} <span class="req">*</span></label>
+                <input id="cf-name" v-model.trim="form.name" type="text" autocomplete="name" placeholder="{% if lang == 'en' %}Your name{% else %}您的姓名{% endif %}">
+              </div>
+              <div class="field">
+                <label for="cf-company">{% if lang == 'en' %}Company{% else %}公司{% endif %}</label>
+                <input id="cf-company" v-model.trim="form.company" type="text" autocomplete="organization" placeholder="{% if lang == 'en' %}Company name (optional){% else %}公司名称（选填）{% endif %}">
+              </div>
+              <div class="field">
+                <label for="cf-email">{% if lang == 'en' %}Email{% else %}邮箱{% endif %} <span class="req">*</span></label>
+                <input id="cf-email" v-model.trim="form.email" type="email" autocomplete="email" placeholder="name@company.com">
+              </div>
+              <div class="field">
+                <label for="cf-phone">{% if lang == 'en' %}Phone{% else %}电话{% endif %}</label>
+                <input id="cf-phone" v-model.trim="form.phone" type="tel" autocomplete="tel" placeholder="+86 …">
+              </div>
+              <div class="field">
+                <label for="cf-country">{% if lang == 'en' %}Country / Region{% else %}国家 / 地区{% endif %}</label>
+                <input id="cf-country" v-model.trim="form.country" type="text" autocomplete="country-name" placeholder="{% if lang == 'en' %}e.g. Germany{% else %}如：德国{% endif %}">
+              </div>
+              <div class="field">
+                <label for="cf-category">{% if lang == 'en' %}Interested Category{% else %}感兴趣分类{% endif %}</label>
+                <select id="cf-category" v-model="form.category">
+                  <option value="">{% if lang == 'en' %}Not sure / All{% else %}不确定 / 全部{% endif %}</option>
+                  {% for c in categories %}
+                  <option value="{{ c.slug }}">{{ c|cname:lang }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="field field--full">
+                <label for="cf-message">{% if lang == 'en' %}Message{% else %}留言{% endif %} <span class="req">*</span></label>
+                <textarea id="cf-message" v-model="form.message" placeholder="{% if lang == 'en' %}SKU / P/N, quantity, target market…{% else %}SKU / P/N、数量、目标市场…{% endif %}"></textarea>
+              </div>
+            </div>
+
+            <!-- 蜜罐字段（对用户不可见） -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="cf-website">Website</label>
+              <input id="cf-website" v-model="form.website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+
+            {% verbatim %}
+            <div class="form-actions">
+              <button class="btn btn--primary" type="submit" :disabled="submitting">{{ submitting ? sendingText : submitText }}</button>
+              <span v-if="submitting" class="form-loading"><span class="spin"></span>{{ sendingText }}</span>
+            </div>
+            {% endverbatim %}
+          </form>
+        </div>
+      </div>
+
+      <!-- 联系方式 -->
+      <aside>
+        <div class="info-list">
+          <div class="info-item">
+            <div class="ic">址</div>
+            <div>
+              <div class="lab">{% if lang == 'en' %}Address{% else %}公司地址{% endif %}</div>
+              <div class="val">
+                {% if lang == 'en' %}Changzhou, Jiangsu, China{% else %}中国 · 江苏 · 常州{% endif %}
+                <small>{% if lang == 'en' %}placeholder — to be confirmed{% else %}占位——待确认{% endif %}</small>
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic">电</div>
+            <div>
+              <div class="lab">{% if lang == 'en' %}Phone / WeChat{% else %}电话 / 微信{% endif %}</div>
+              <div class="val">
+                +86-XXX-XXXX-XXXX
+                <small>{% if lang == 'en' %}placeholder{% else %}占位{% endif %}</small>
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic">邮</div>
+            <div>
+              <div class="lab">{% if lang == 'en' %}Email{% else %}邮箱{% endif %}</div>
+              <div class="val">
+                <a href="mailto:sales@glowisd.com">sales@glowisd.com</a>
+                <small>{% if lang == 'en' %}placeholder{% else %}占位{% endif %}</small>
+              </div>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="ic">时</div>
+            <div>
+              <div class="lab">{% if lang == 'en' %}Working Hours{% else %}工作时间{% endif %}</div>
+              <div class="val">
+                {% if lang == 'en' %}Mon – Fri · 9:00 – 18:00 (GMT+8){% else %}周一至周五 · 9:00 – 18:00（GMT+8）{% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="info-note">
+          {% if lang == 'en' %}
+          <b>Note:</b> contact details above are placeholders — replace them with
+          real company information before launch.
+          {% else %}
+          <b>提示：</b>以上联系方式为占位信息，正式上线前请替换为真实公司信息。
+          {% endif %}
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

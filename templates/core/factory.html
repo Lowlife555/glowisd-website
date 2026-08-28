@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}{% if lang == 'en' %}Our Factory — Glowisd{% else %}工厂介绍 — Glowisd{% endif %}{% endblock %}
+
+{% block content %}
+
+<section class="page-hero">
+  <div class="container">
+    <span class="eyebrow">{% if lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
+    <h1>{% if lang == 'en' %}Our Factory{% else %}工厂介绍{% endif %}</h1>
+    <p class="lead">
+      {% if lang == 'en' %}
+      Full-process manufacturing under one roof — machining, assembly, calibration
+      and testing — to keep every Glowisd part consistent and reliable.
+      {% else %}
+      加工、组装、标定、检测全流程自主掌控，确保每一件 Glowisd 配件的一致与可靠。
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+<!-- intro -->
+<section class="section">
+  <div class="container">
+    <div class="split">
+      <div>
+        <span class="eyebrow">{% if lang == 'en' %}About the Factory{% else %}工厂概况{% endif %}</span>
+        <h2 class="h-section">
+          {% if lang == 'en' %}Built on precision, run on process{% else %}以精密为基础，以流程为保障{% endif %}
+        </h2>
+        <p class="lead">
+          {% if lang == 'en' %}
+          Our Changzhou facility combines CNC machining, SMT assembly, cable
+          harness production and sensor calibration lines. Each production batch
+          is inspected, documented and traceable — from incoming material to the
+          finished part on your paver.
+          {% else %}
+          常州工厂集 CNC 加工、SMT 贴片、线缆组装与传感器标定产线于一体。
+          每一生产批次均经过检验、记录与追溯——从来料直到装到您的摊铺机上。
+          {% endif %}
+        </p>
+        <ul class="body-list">
+          <li>{% if lang == 'en' %}Dedicated production lines for sensors, cables and control handles{% else %}传感器、线缆、控制手柄专用产线{% endif %}</li>
+          <li>{% if lang == 'en' %}Batch-level traceability and documented inspection records{% else %}批次级追溯，检验记录完整可查{% endif %}</li>
+          <li>{% if lang == 'en' %}Continuous improvement driven by field feedback{% else %}以现场反馈驱动持续改进{% endif %}</li>
+        </ul>
+      </div>
+      <div class="photo-frame">
+        <div class="ph">
+          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Factory building — placeholder photo{% else %}工厂厂房（占位图）{% endif %}">
+        </div>
+        <div class="caption">
+          <span>{% if lang == 'en' %}Factory{% else %}工厂外景{% endif %}</span>
+          <span>GLOWISD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- capability numbers -->
+<section class="section section--white">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Capability{% else %}生产能力{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'en' %}At a Glance{% else %}产能一览{% endif %}</h2>
+      <p class="lead">
+        {% if lang == 'en' %}Figures below are placeholders — update them with real data before launch.{% else %}以下数据为占位值，正式上线前请替换为真实数据。{% endif %}
+      </p>
+    </div>
+    <div class="num-grid">
+      <div class="num-cell">
+        <div class="num">5,000<span class="plus">㎡</span></div>
+        <div class="lab">{% if lang == 'en' %}Plant Area{% else %}生产面积{% endif %}</div>
+        <div class="note">{% if lang == 'en' %}placeholder{% else %}占位{% endif %}</div>
+      </div>
+      <div class="num-cell">
+        <div class="num">30<span class="plus">+</span></div>
+        <div class="lab">{% if lang == 'en' %}Machines &amp; Lines{% else %}设备与产线{% endif %}</div>
+        <div class="note">{% if lang == 'en' %}placeholder{% else %}占位{% endif %}</div>
+      </div>
+      <div class="num-cell">
+        <div class="num">10<span class="plus">K+</span></div>
+        <div class="lab">{% if lang == 'en' %}Units / Month{% else %}月产能（件）{% endif %}</div>
+        <div class="note">{% if lang == 'en' %}placeholder{% else %}占位{% endif %}</div>
+      </div>
+      <div class="num-cell">
+        <div class="num">100<span class="plus">%</span></div>
+        <div class="lab">{% if lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
+        <div class="note">{% if lang == 'en' %}per batch{% else %}每批次{% endif %}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- equipment -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Equipment{% else %}主要设备{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'en' %}Production Equipment{% else %}生产与检测设备{% endif %}</h2>
+    </div>
+    <div class="grid grid--3">
+      <div class="card equip-card">
+        <span class="no">01</span>
+        <div>
+          <h3>{% if lang == 'en' %}SMT Assembly{% else %}SMT 贴片产线{% endif %}</h3>
+          <span class="en">SMT / PCB</span>
+          <p>{% if lang == 'en' %}High-precision placement and reflow for display controllers and PCBs.{% else %}高精度贴片与回流焊，满足显示控制器与电路板生产。{% endif %}</p>
+        </div>
+      </div>
+      <div class="card equip-card">
+        <span class="no">02</span>
+        <div>
+          <h3>{% if lang == 'en' %}CNC Machining{% else %}CNC 精密加工{% endif %}</h3>
+          <span class="en">CNC</span>
+          <p>{% if lang == 'en' %}Machining of housings, brackets and leveling components.{% else %}加工壳体、支架与找平机构等精密零件。{% endif %}</p>
+        </div>
+      </div>
+      <div class="card equip-card">
+        <span class="no">03</span>
+        <div>
+          <h3>{% if lang == 'en' %}Cable Harness{% else %}线缆组装与测试{% endif %}</h3>
+          <span class="en">Cables</span>
+          <p>{% if lang == 'en' %}Crimping, potting and continuity testing for rugged paver cables.{% else %}压接、灌封与导通测试，打造耐候摊铺机线缆。{% endif %}</p>
+        </div>
+      </div>
+      <div class="card equip-card">
+        <span class="no">04</span>
+        <div>
+          <h3>{% if lang == 'en' %}Calibration{% else %}传感器标定台{% endif %}</h3>
+          <span class="en">Calibration</span>
+          <p>{% if lang == 'en' %}Sensor calibration and linearity verification against reference masters.{% else %}依据基准件完成传感器标定与线性度验证。{% endif %}</p>
+        </div>
+      </div>
+      <div class="card equip-card">
+        <span class="no">05</span>
+        <div>
+          <h3>{% if lang == 'en' %}Aging &amp; Burn-in{% else %}老化与高低温测试{% endif %}</h3>
+          <span class="en">Testing</span>
+          <p>{% if lang == 'en' %}Temperature cycling and aging tests simulate real job-site conditions.{% else %}高低温循环与老化测试，模拟真实工地工况。{% endif %}</p>
+        </div>
+      </div>
+      <div class="card equip-card">
+        <span class="no">06</span>
+        <div>
+          <h3>{% if lang == 'en' %}Packing &amp; Storage{% else %}包装与仓储{% endif %}</h3>
+          <span class="en">Logistics</span>
+          <p>{% if lang == 'en' %}Protective packing and organized storage for fast, safe dispatch.{% else %}防护包装与规范仓储，保障快速安全发运。{% endif %}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- quality control -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Quality Control{% else %}质量控制{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'en' %}Three-Stage Quality Control{% else %}三段式质量控制{% endif %}</h2>
+    </div>
+    <div class="qc-row">
+      <div class="card qc-card">
+        <h3>{% if lang == 'en' %}Incoming Inspection{% else %}来料检验{% endif %}</h3>
+        <div class="code">IQC</div>
+        <p>{% if lang == 'en' %}Every material lot is verified against specifications before entering production.{% else %}所有来料批次按规格书验收合格后方可投产。{% endif %}</p>
+      </div>
+      <div class="card qc-card">
+        <h3>{% if lang == 'en' %}In-Process Control{% else %}过程检验{% endif %}</h3>
+        <div class="code">IPQC</div>
+        <p>{% if lang == 'en' %}Key stations are checked during assembly; deviations stop the line immediately.{% else %}关键工位实时抽检，异常即停线处理。{% endif %}</p>
+      </div>
+      <div class="card qc-card">
+        <h3>{% if lang == 'en' %}Final Inspection{% else %}出厂检验{% endif %}</h3>
+        <div class="code">OQC</div>
+        <p>{% if lang == 'en' %}Finished goods pass functional testing and visual inspection before packing.{% else %}成品包装前完成功能测试与外观全检。{% endif %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- workshop photos -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Workshop{% else %}车间实景{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'en' %}Inside the Workshop{% else %}车间一瞥{% endif %}</h2>
+      <p class="lead">
+        {% if lang == 'en' %}Photo placeholders — replace with real workshop photos before launch.{% else %}照片为占位图，正式上线前请替换为真实车间照片。{% endif %}
+      </p>
+    </div>
+    <div class="photo-grid">
+      <div class="photo-frame">
+        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 1{% else %}车间照片占位 1{% endif %}"></div>
+        <div class="caption"><span>{% if lang == 'en' %}Assembly Line{% else %}组装产线{% endif %}</span><span>01</span></div>
+      </div>
+      <div class="photo-frame">
+        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 2{% else %}车间照片占位 2{% endif %}"></div>
+        <div class="caption"><span>{% if lang == 'en' %}CNC Area{% else %}CNC 加工区{% endif %}</span><span>02</span></div>
+      </div>
+      <div class="photo-frame">
+        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 3{% else %}车间照片占位 3{% endif %}"></div>
+        <div class="caption"><span>{% if lang == 'en' %}Testing Bench{% else %}检测台{% endif %}</span><span>03</span></div>
+      </div>
+      <div class="photo-frame">
+        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 4{% else %}车间照片占位 4{% endif %}"></div>
+        <div class="caption"><span>{% if lang == 'en' %}Warehouse{% else %}成品仓储{% endif %}</span><span>04</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section section--white">
+  <div class="container">
+    <div class="cta-band">
+      <div class="cta-panel">
+        <span class="eyebrow">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
+        <h3>{% if lang == 'en' %}Need OEM / ODM?{% else %}需要 OEM / ODM 定制？{% endif %}</h3>
+        <p>{% if lang == 'en' %}From private label to custom development — our factory can build it.{% else %}从贴牌到联合开发，我们的工厂都能承接。{% endif %}</p>
+        <a class="btn btn--outline" href="{% url 'custom' %}">{% if lang == 'en' %}Custom Services{% else %}定制服务{% endif %}</a>
+      </div>
+      <div class="cta-panel">
+        <span class="eyebrow--dark eyebrow">{% if lang == 'en' %}Inquiry{% else %}询价{% endif %}</span>
+        <h3>{% if lang == 'en' %}Request a Quotation{% else %}获取产品报价{% endif %}</h3>
+        <p>{% if lang == 'en' %}Send us the SKU or P/N — we reply within 24 hours.{% else %}提供 SKU 或 P/N，我们 24 小时内回复。{% endif %}</p>
+        <a class="btn btn--outline-light" href="{% url 'contact' %}">{% if lang == 'en' %}Contact Us{% else %}联系我们{% endif %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

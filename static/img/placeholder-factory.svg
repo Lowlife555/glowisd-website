@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" role="img" aria-label="Glowisd factory placeholder">
+  <rect width="800" height="480" fill="#EDE8DF"/>
+  <g stroke="#E1D9C9" stroke-width="1">
+    <path d="M0 420h800M0 440h800M0 460h800"/>
+    <path d="M760 0v480M780 0v480"/>
+  </g>
+  <g fill="none" stroke="#AFA695" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="120" y="170" width="360" height="230"/>
+    <path d="M120 170l40-54 40 54 40-54 40 54 40-54 40 54 40-54 40 54 40-54 40 54"/>
+    <g stroke-width="1.5">
+      <rect x="150" y="206" width="44" height="34"/>
+      <rect x="212" y="206" width="44" height="34"/>
+      <rect x="274" y="206" width="44" height="34"/>
+      <rect x="336" y="206" width="44" height="34"/>
+      <rect x="398" y="206" width="44" height="34"/>
+      <rect x="150" y="266" width="44" height="34"/>
+      <rect x="212" y="266" width="44" height="34"/>
+      <rect x="274" y="266" width="44" height="34"/>
+      <rect x="336" y="266" width="44" height="34"/>
+      <rect x="398" y="266" width="44" height="34"/>
+    </g>
+    <rect x="214" y="336" width="84" height="64"/>
+    <path d="M600 400v-166"/>
+    <path d="M586 234h28"/>
+    <path d="M96 400h608"/>
+  </g>
+  <text x="400" y="452" text-anchor="middle" font-family="Georgia, serif" font-size="14" letter-spacing="6" fill="#A89E8C">GLOWISD FACTORY</text>
+</svg>

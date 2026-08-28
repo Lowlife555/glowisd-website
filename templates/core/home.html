@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}{% if lang == 'en' %}Glowisd — Paving Machine Sensors &amp; Accessories{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endblock %}
+
+{% block content %}
+
+<!-- ================= Hero ================= -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">CZ Glowisd Science And Technology · Changzhou, China</span>
+    <h1>
+      {% if lang == 'en' %}
+      Paving Machine Sensors<br>&amp; Accessories
+      {% else %}
+      专业摊铺机传感器<br>与配件制造
+      {% endif %}
+    </h1>
+    <p class="lead">
+      {% if lang == 'en' %}
+      High-quality replacement parts for Vogele, Bomag, Wirtgen, ABG and other
+      leading paver brands — trusted by road construction and maintenance
+      professionals worldwide.
+      {% else %}
+      为 Vogele、Bomag、Wirtgen、ABG 等国际主流品牌提供高品质替代配件，
+      服务全球道路施工与养护设备用户。
+      {% endif %}
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn--primary" href="{% url 'product_list' %}">
+        {% if lang == 'en' %}View Products{% else %}查看产品{% endif %}
+      </a>
+      <a class="btn btn--outline-light" href="{% url 'contact' %}">
+        {% if lang == 'en' %}Contact Us{% else %}联系我们{% endif %}
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">180<span class="plus">+</span></div>
+        <div class="lab">{% if lang == 'en' %}Catalog Models{% else %}全系列型号{% endif %}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">{{ category_count }}</div>
+        <div class="lab">{% if lang == 'en' %}Product Lines{% else %}产品线{% endif %}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">3</div>
+        <div class="lab">{% if lang == 'en' %}Markets Served{% else %}服务市场{% endif %}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">100<span class="plus">%</span></div>
+        <div class="lab">{% if lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Categories ================= -->
+<section class="section section--white">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品分类{% endif %}</span>
+      <h2 class="h-section">
+        {% if lang == 'en' %}Browse by Category{% else %}按产品线浏览{% endif %}
+      </h2>
+      <p class="lead">
+        {% if lang == 'en' %}
+        From sensors to complete kits — every component engineered for the paver.
+        {% else %}
+        从传感器到完整套件，每一件配件都为摊铺机工况而设计。
+        {% endif %}
+      </p>
+    </div>
+    <div class="grid grid--3">
+      {% for c in cats %}
+      <a class="card cat-card" href="{% url 'product_list' %}?category={{ c.slug }}">
+        <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
+        <h3>{{ c.name }}</h3>
+        <span class="en">{{ c.name_en }}</span>
+        <div class="meta">
+          <span class="count">
+            {% if lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
+          </span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ================= Why Glowisd ================= -->
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Why Glowisd{% else %}为什么选择我们{% endif %}</span>
+      <h2 class="h-section">
+        {% if lang == 'en' %}Engineered precision, delivered reliably{% else %}以工程精度，服务每一次摊铺{% endif %}
+      </h2>
+    </div>
+    <div class="grid grid--4">
+      <div class="card adv-card">
+        <div class="glyph">质</div>
+        <h3>{% if lang == 'en' %}Quality Assured{% else %}品质管控{% endif %}</h3>
+        <span class="en">{% if lang == 'en' %}Quality{% else %}Quality Assured{% endif %}</span>
+        <p>{% if lang == 'en' %}Every unit passes strict inspection and burn-in testing before shipping.{% else %}每件产品出厂前经过严格检验与老化测试，确保一致性与可靠性。{% endif %}</p>
+      </div>
+      <div class="card adv-card">
+        <div class="glyph">容</div>
+        <h3>{% if lang == 'en' %}Wide Compatibility{% else %}兼容广泛{% endif %}</h3>
+        <span class="en">{% if lang == 'en' %}Compatibility{% else %}Wide Compatibility{% endif %}</span>
+        <p>{% if lang == 'en' %}Compatible with Vogele, Bomag, Wirtgen, ABG and other leading paver brands.{% else %}覆盖 Vogele、Bomag、Wirtgen、ABG 等主流摊铺机品牌机型。{% endif %}</p>
+      </div>
+      <div class="card adv-card">
+        <div class="glyph">速</div>
+        <h3>{% if lang == 'en' %}Fast Response{% else %}快速响应{% endif %}</h3>
+        <span class="en">{% if lang == 'en' %}Response{% else %}Fast Response{% endif %}</span>
+        <p>{% if lang == 'en' %}Quotes and technical support within 24 hours for customers worldwide.{% else %}报价与技术支持 24 小时内响应全球客户。{% endif %}</p>
+      </div>
+      <div class="card adv-card">
+        <div class="glyph">专</div>
+        <h3>{% if lang == 'en' %}Expert Support{% else %}专业支持{% endif %}</h3>
+        <span class="en">{% if lang == 'en' %}Expertise{% else %}Expert Support{% endif %}</span>
+        <p>{% if lang == 'en' %}Experienced engineers guide selection, installation and after-sales service.{% else %}资深工程团队提供选型、安装与售后指导。{% endif %}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Factory / Custom CTA ================= -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="cta-band">
+      <div class="cta-panel">
+        <span class="eyebrow">{% if lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
+        <h3>{% if lang == 'en' %}Own factory, full-process manufacturing{% else %}自有工厂 · 全流程制造{% endif %}</h3>
+        <p>{% if lang == 'en' %}CNC machining, SMT assembly, cable harness and calibration testing under one roof.{% else %}CNC 加工、SMT 贴片、线缆组装与标定检测，全流程自主掌控。{% endif %}</p>
+        <a class="btn btn--outline" href="{% url 'factory' %}">
+          {% if lang == 'en' %}Visit Our Factory{% else %}走进工厂{% endif %}
+        </a>
+      </div>
+      <div class="cta-panel">
+        <span class="eyebrow--dark eyebrow">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
+        <h3>{% if lang == 'en' %}OEM / ODM development{% else %}OEM / ODM 定制开发{% endif %}</h3>
+        <p>{% if lang == 'en' %}Private label, custom development and made-to-print manufacturing for your brand.{% else %}支持贴牌、联合开发与来图/来样制造，让您的品牌拥有专属配件。{% endif %}</p>
+        <a class="btn btn--outline-light" href="{% url 'custom' %}">
+          {% if lang == 'en' %}Learn More{% else %}了解定制{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= About ================= -->
+<section class="section">
+  <div class="container">
+    <div class="split">
+      <div>
+        <span class="eyebrow">{% if lang == 'en' %}About{% else %}公司简介{% endif %}</span>
+        <h2 class="h-section">
+          {% if lang == 'en' %}Focused on paver parts, serving the world{% else %}专注摊铺机配件，服务全球客户{% endif %}
+        </h2>
+        <p class="lead">
+          {% if lang == 'en' %}
+          CZ Glowisd Science And Technology co., ltd is a professional manufacturer
+          of paving machine sensors, cables and accessories, based in Changzhou,
+          Jiangsu — at the heart of China's equipment manufacturing belt. Our
+          products serve customers across the Middle East, Europe and China.
+          {% else %}
+          CZ Glowisd Science And Technology co., ltd 是一家专业生产摊铺机传感器、
+          线缆及配件的制造商，地处江苏常州——中国装备制造产业带核心区域。
+          产品远销中东、欧洲与中国大陆。
+          {% endif %}
+        </p>
+        <ul class="body-list">
+          <li>{% if lang == 'en' %}Own factory with full-process production capability{% else %}自有工厂，全流程生产能力{% endif %}</li>
+          <li>{% if lang == 'en' %}Multi-brand compatible replacement parts{% else %}多品牌兼容替代配件{% endif %}</li>
+          <li>{% if lang == 'en' %}Strict quality control system, traceable batches{% else %}严格质量控制体系，批次可追溯{% endif %}</li>
+        </ul>
+        <div style="margin-top:36px;">
+          <a class="link-arrow" href="{% url 'factory' %}">
+            {% if lang == 'en' %}Learn more about Glowisd{% else %}了解更多{% endif %}
+            <span class="arrow">→</span>
+          </a>
+        </div>
+      </div>
+      <div class="photo-frame">
+        <div class="ph">
+          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Glowisd factory — placeholder photo{% else %}Glowisd 工厂（占位图）{% endif %}">
+        </div>
+        <div class="caption">
+          <span>{% if lang == 'en' %}Factory{% else %}工厂车间{% endif %}</span>
+          <span>GLOWISD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
