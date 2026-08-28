@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "home": "首页",
+    "products": "产品中心",
+    "about": "关于我们",
+    "contact": "联系我们"
+  },
+  "footer": {
+    "tagline": "专业摊铺机传感器与配件制造商",
+    "quickLinks": "快速链接",
+    "contactUs": "联系我们",
+    "rights": "© 2026 Glowisd. All rights reserved."
+  },
+  "common": {
+    "loading": "加载中...",
+    "noResult": "暂无结果",
+    "backToList": "返回列表",
+    "viewDetails": "查看详情",
+    "searchPlaceholder": "搜索产品编号 SKU / P/N..."
+  }
+}

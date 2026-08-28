@@ -1,0 +1,21 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "about": "About Us",
+    "contact": "Contact"
+  },
+  "footer": {
+    "tagline": "Professional paving machine sensors & accessories manufacturer",
+    "quickLinks": "Quick Links",
+    "contactUs": "Contact Us",
+    "rights": "© 2026 Glowisd. All rights reserved."
+  },
+  "common": {
+    "loading": "Loading...",
+    "noResult": "No results",
+    "backToList": "Back to list",
+    "viewDetails": "View Details",
+    "searchPlaceholder": "Search SKU / P/N..."
+  }
+}
