@@ -49,3 +49,6 @@ db.sqlite3
 __pycache__/
 *.pyc
 
+# 产品图本地备份（不进版本库，仅本地回滚用）
+/media/products_backup/
+

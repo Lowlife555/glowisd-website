@@ -17,6 +17,7 @@
   --line-strong: #C9D1E8;
   --gold: #D2AE00;
   --dark-text: #A6B0CC;
+  --footer-bg: #333333;
   --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", "Noto Serif SC", serif;
   --sans: "Helvetica Neue", "Segoe UI", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --mono: "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
@@ -715,7 +716,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 }
 
 /* ---------- footer ---------- */
-.site-footer { background: var(--ink); color: var(--dark-text); }
+.site-footer { background: var(--footer-bg); color: var(--dark-text); }
 .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.4fr; gap: 48px; padding: 72px 0 56px; }
 .footer-brand .brand { color: #fff; }
 .footer-brand p { margin-top: 18px; font-size: 13px; line-height: 1.9; max-width: 300px; }
@@ -742,7 +743,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   font-size: 12px;
   letter-spacing: .04em;
 }
-.footer-bottom .ver { font-family: var(--mono); color: #5A6B9E; letter-spacing: .1em; }
+.footer-bottom .ver { font-family: var(--mono); color: #9AA0AE; letter-spacing: .1em; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
