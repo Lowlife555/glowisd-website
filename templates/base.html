@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}CZ Glowisd Science And Technology — professional manufacturer of paving machine sensors, cables, control handles, displays and accessories.{% else %}CZ Glowisd Science And Technology — 专业摊铺机传感器、线缆、控制手柄、显示控制器与配件制造商。{% endif %}{% endblock %}">
-  <title>{% block title %}{% if lang == 'en' %}Glowisd — Paving Machine Sensors &amp; Accessories{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endblock %}</title>
-  <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
+  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endblock %}">
+  <title>{% block title %}{% if lang == 'en' %}Glowisd — Construction Machinery Control Systems &amp; Components{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{% static 'img/favicon-logo.png' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <script type="application/ld+json">
   {
@@ -14,7 +14,7 @@
     "@type": "Organization",
     "name": "CZ Glowisd Science And Technology co., ltd",
     "url": "https://glowisd.com",
-    "description": "Professional manufacturer of paving machine sensors, cables and accessories"
+    "description": "Technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components"
   }
   </script>
   {% block head_extra %}{% endblock %}
@@ -22,7 +22,7 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="{% url 'home' %}">Glowisd<span class="brand-dot">.</span></a>
+      <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:40px;width:auto;"></a>
 
       <nav class="nav-main" aria-label="{% if lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
         <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
@@ -56,8 +56,8 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <span class="brand">Glowisd<span class="brand-dot">.</span></span>
-          <p>{% if lang == 'en' %}CZ Glowisd Science And Technology co., ltd — a professional manufacturer of paving machine sensors, cables, control handles, displays and accessories.{% else %}CZ Glowisd Science And Technology co., ltd — 专业摊铺机传感器、线缆、控制手柄、显示控制器与配件制造商。{% endif %}</p>
+          <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:32px;width:auto;">
+          <p>{% if lang == 'en' %}CZ Glowisd Science And Technology co., ltd — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology co., ltd — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
         </div>
         <div class="footer-col">
           <h4>{% if lang == 'en' %}Company{% else %}公司{% endif %}</h4>
@@ -83,13 +83,13 @@
             {% if lang == 'en' %}
             CZ Glowisd Science And Technology co., ltd<br>
             Changzhou, Jiangsu, China<br>
-            <a href="mailto:sales@glowisd.com">sales@glowisd.com</a> <small style="color:#6F6A63">(placeholder)</small><br>
-            +86-XXX-XXXX-XXXX <small style="color:#6F6A63">(placeholder)</small>
+            <a href="mailto:424760214@qq.com">424760214@qq.com</a><br>
+            +86-139-6147-3930
             {% else %}
             常州 Glowisd 科技有限公司<br>
             中国·江苏·常州<br>
-            <a href="mailto:sales@glowisd.com">sales@glowisd.com</a> <small style="color:#6F6A63">（占位）</small><br>
-            +86-XXX-XXXX-XXXX <small style="color:#6F6A63">（占位）</small>
+            <a href="mailto:424760214@qq.com">424760214@qq.com</a><br>
+            +86-139-6147-3930
             {% endif %}
           </div>
         </div>
