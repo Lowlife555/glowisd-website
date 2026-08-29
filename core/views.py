@@ -41,10 +41,26 @@ def home(request):
             'tl_en': tl[1],
         })
     hero_slides = HeroSlide.objects.filter(is_active=True).order_by('sort_order')
+
+    # 首页推荐产品：featured=True，按最近更新排序，取前 8 个
+    featured_products = Product.objects.filter(featured=True).order_by('-updated_at')[:8]
+
+    # 产品线分区陈列：有产品的分类（排除"未分类"），每线取前 4 个产品
+    lineups = []
+    for c in categories.exclude(slug='uncategorized'):
+        if c.product_count > 0:
+            prods = list(Product.objects.filter(category=c).order_by('-created_at')[:4])
+            lineups.append({
+                'category': c,
+                'products': prods,
+            })
+
     return render(request, 'core/home.html', {
         'active': 'home',
         'cats': cats,
         'hero_slides': hero_slides,
+        'featured_products': featured_products,
+        'lineups': lineups,
         'category_count': len(cats),
         'product_count': Product.objects.count(),
     })

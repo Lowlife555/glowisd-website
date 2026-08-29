@@ -22,7 +22,7 @@
 <section class="section">
   <div class="container">
 
-    <!-- 服务端提示（JS 不可用时的回退） -->
+    <!-- Server-side notices (fallback when JS is disabled) -->
     {% if ok %}
     <div class="notice notice--ok" role="status">
       {% if lang == 'en' %}Submitted! We will contact you soon.{% else %}提交成功，我们会尽快与您联系！{% endif %}
@@ -41,7 +41,7 @@
 
     <div class="contact-grid">
 
-      <!-- 询价表单（Vue 3） -->
+      <!-- Inquiry form (Vue 3) -->
       <div id="contact-app" data-lang="{{ lang }}">
         <div class="form-card">
           <h2>{% if lang == 'en' %}Inquiry Form{% else %}询价表单{% endif %}</h2>
@@ -94,7 +94,7 @@
               </div>
             </div>
 
-            <!-- 蜜罐字段（对用户不可见） -->
+            <!-- Honeypot field (hidden from users) -->
             <div class="hp-field" aria-hidden="true">
               <label for="cf-website">Website</label>
               <input id="cf-website" v-model="form.website" type="text" tabindex="-1" autocomplete="off">
@@ -110,7 +110,7 @@
         </div>
       </div>
 
-      <!-- 联系方式 -->
+      <!-- Contact info -->
       <aside>
         <div class="info-list">
           <div class="info-item">

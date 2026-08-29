@@ -787,3 +787,35 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   .p-actions { flex-direction: column; }
   .p-actions .btn { width: 100%; }
 }
+
+/* ---------- home: product line showcase ---------- */
+.lineup { padding: 40px 0; }
+.lineup + .lineup { border-top: 1px solid var(--line); }
+.lineup-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+}
+.lineup-name {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: .02em;
+  color: var(--ink);
+}
+.lineup-name .en {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-left: 14px;
+}
+@media (max-width: 720px) {
+  .lineup-name { font-size: 20px; }
+  .lineup-name .en { display: block; margin-left: 0; margin-top: 4px; }
+}

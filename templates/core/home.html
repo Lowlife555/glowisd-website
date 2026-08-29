@@ -69,7 +69,7 @@
     <div class="sec-head">
       <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品分类{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}<span class="h-main">Browse by Category</span><span class="h-sub">按产品线浏览</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Browse by Category</span>{% endif %}
+        {% if lang == 'en' %}<span class="h-main">Browse by Category</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Browse by Category</span>{% endif %}
       </h2>
       <p class="lead">
         {% if lang == 'en' %}
@@ -83,8 +83,8 @@
       {% for c in cats %}
       <a class="card cat-card" href="{% url 'product_list' %}?category={{ c.slug }}">
         <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-        <h3>{{ c.name }}</h3>
-        <span class="en">{{ c.name_en }}</span>
+        <h3>{% if lang == 'en' %}{{ c.name_en }}{% else %}{{ c.name }}{% endif %}</h3>
+        {% if lang == 'zh' %}<span class="en">{{ c.name_en }}</span>{% endif %}
         <div class="meta">
           <span class="count">
             {% if lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
@@ -96,6 +96,118 @@
     </div>
   </div>
 </section>
+
+{% if featured_products %}
+<!-- ================= Featured Products ================= -->
+<section class="section section--alt">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Featured{% else %}推荐产品{% endif %}</span>
+      <h2 class="h-section">
+        {% if lang == 'en' %}<span class="h-main">Featured Products</span>{% else %}<span class="h-main">推荐产品</span><span class="h-sub">Featured Products</span>{% endif %}
+      </h2>
+      <p class="lead">
+        {% if lang == 'en' %}
+        Hand-picked bestsellers — proven paver parts our customers order again and again.
+        {% else %}
+        精选热销配件——客户反复订购、久经验证的摊铺机配件。
+        {% endif %}
+      </p>
+    </div>
+    <div class="grid-products">
+      {% for p in featured_products %}
+      <a class="p-card" href="{% url 'product_detail' p.pk %}">
+        <div class="p-card__media">
+          {% if p.image %}
+          <img src="{{ p.image.url }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
+          {% else %}
+          <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+          {% endif %}
+          <span class="p-card__sku">{{ p.sku }}</span>
+        </div>
+        <div class="p-card__body">
+          {% if p.part_name or p.part_name_en %}
+          <span class="p-card__name">{{ p|pname:lang }}</span>
+          {% else %}
+          <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
+          {% endif %}
+          <div class="p-card__ids">
+            <div><b>SKU</b> {{ p.sku }}</div>
+            {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
+          </div>
+          <div class="p-card__foot">
+            <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ================= Shop by Product Line ================= -->
+{% if lineups %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品线{% endif %}</span>
+      <h2 class="h-section">
+        {% if lang == 'en' %}<span class="h-main">Shop by Product Line</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Shop by Product Line</span>{% endif %}
+      </h2>
+      <p class="lead">
+        {% if lang == 'en' %}
+        Browse the full range by product line — sensors, cables, handles, displays and more.
+        {% else %}
+        按产品线浏览全系列——传感器、线缆、手柄、显示器等配件。
+        {% endif %}
+      </p>
+    </div>
+    {% for lineup in lineups %}
+    <div class="lineup">
+      <div class="lineup-head">
+        <h3 class="lineup-name">
+          {{ lineup.category|cname:lang }}
+          {% if lang == 'zh' %}<span class="en">{{ lineup.category.name_en }}</span>{% endif %}
+        </h3>
+        <a class="link-arrow" href="{% url 'product_list' %}?category={{ lineup.category.slug }}">
+          {% if lang == 'en' %}View all{% else %}查看全部{% endif %}
+          <span class="arrow">→</span>
+        </a>
+      </div>
+      <div class="grid-products">
+        {% for p in lineup.products %}
+        <a class="p-card" href="{% url 'product_detail' p.pk %}">
+          <div class="p-card__media">
+            {% if p.image %}
+            <img src="{{ p.image.url }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
+            {% else %}
+            <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+            {% endif %}
+            <span class="p-card__sku">{{ p.sku }}</span>
+          </div>
+          <div class="p-card__body">
+            {% if p.part_name or p.part_name_en %}
+            <span class="p-card__name">{{ p|pname:lang }}</span>
+            {% else %}
+            <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
+            {% endif %}
+            <div class="p-card__ids">
+              <div><b>SKU</b> {{ p.sku }}</div>
+              {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
+            </div>
+            <div class="p-card__foot">
+              <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
 <!-- ================= Why Glowisd ================= -->
 <section class="section">

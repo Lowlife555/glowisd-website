@@ -1,0 +1,802 @@
+[
+  {
+    "image": "products/p001_1.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p005_1.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p005_2.jpg",
+    "part_name": "球头拉马",
+    "part_name_en": "Ball Joint Separator"
+  },
+  {
+    "image": "products/p005_3.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p006_1.jpg",
+    "part_name": "手持测试仪",
+    "part_name_en": "Handheld Tester"
+  },
+  {
+    "image": "products/p006_2.jpg",
+    "part_name": "控制盒",
+    "part_name_en": "Control Box"
+  },
+  {
+    "image": "products/p006_3.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p007_1.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p007_2.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p007_3.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p008_1.jpg",
+    "part_name": "控制盒",
+    "part_name_en": "Control Box"
+  },
+  {
+    "image": "products/p008_2.jpg",
+    "part_name": "拉线传感器",
+    "part_name_en": "Draw-wire Sensor"
+  },
+  {
+    "image": "products/p008_3.jpg",
+    "part_name": "旋转传感器",
+    "part_name_en": "Rotary Sensor"
+  },
+  {
+    "image": "products/p009_1.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p009_2.jpg",
+    "part_name": "支架",
+    "part_name_en": "Bracket"
+  },
+  {
+    "image": "products/p009_3.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p010_2.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p010_3.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p011_1.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p011_2.jpg",
+    "part_name": "遥控器",
+    "part_name_en": "Remote Control"
+  },
+  {
+    "image": "products/p011_3.jpg",
+    "part_name": "遥控器",
+    "part_name_en": "Remote Control"
+  },
+  {
+    "image": "products/p012_1.jpg",
+    "part_name": "遥控器",
+    "part_name_en": "Remote Control"
+  },
+  {
+    "image": "products/p012_2.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p013_1.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p013_2.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p013_3.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p014_1.jpg",
+    "part_name": "显示器",
+    "part_name_en": "Display"
+  },
+  {
+    "image": "products/p014_2.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p014_3.jpg",
+    "part_name": "键盘",
+    "part_name_en": "Keyboard"
+  },
+  {
+    "image": "products/p015_1.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p015_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p015_3.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p016_1.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p016_2.jpg",
+    "part_name": "线束",
+    "part_name_en": "Wiring Harness"
+  },
+  {
+    "image": "products/p017_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p017_3.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p018_1.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p018_2.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p018_3.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p019_1.jpg",
+    "part_name": "线束",
+    "part_name_en": "Wiring Harness"
+  },
+  {
+    "image": "products/p019_2.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p019_3.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p020_1.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p020_2.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p020_3.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p021_1.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p021_2.jpg",
+    "part_name": "接线盒",
+    "part_name_en": "Junction Box"
+  },
+  {
+    "image": "products/p021_3.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p022_1.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p022_2.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p022_3.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p023_1.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p023_2.jpg",
+    "part_name": "显示器",
+    "part_name_en": "Display"
+  },
+  {
+    "image": "products/p023_3.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p024_1.jpg",
+    "part_name": "电位器",
+    "part_name_en": "Potentiometer"
+  },
+  {
+    "image": "products/p024_2.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p024_3.jpg",
+    "part_name": "霍尔电流传感器",
+    "part_name_en": "Hall Current Sensor"
+  },
+  {
+    "image": "products/p025_1.jpg",
+    "part_name": "限位开关",
+    "part_name_en": "Limit Switch"
+  },
+  {
+    "image": "products/p025_2.jpg",
+    "part_name": "行程开关",
+    "part_name_en": "Limit Switch"
+  },
+  {
+    "image": "products/p025_3.jpg",
+    "part_name": "位移传感器",
+    "part_name_en": "Displacement Sensor"
+  },
+  {
+    "image": "products/p026_1.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p026_2.jpg",
+    "part_name": "电子控制单元",
+    "part_name_en": "ECU"
+  },
+  {
+    "image": "products/p026_3.jpg",
+    "part_name": "电源控制器",
+    "part_name_en": "Power Controller"
+  },
+  {
+    "image": "products/p027_1.jpg",
+    "part_name": "操纵杆",
+    "part_name_en": "Joystick"
+  },
+  {
+    "image": "products/p027_2.jpg",
+    "part_name": "电路板",
+    "part_name_en": "Circuit Board"
+  },
+  {
+    "image": "products/p027_3.jpg",
+    "part_name": "电路板",
+    "part_name_en": "Circuit Board"
+  },
+  {
+    "image": "products/p028_1.jpg",
+    "part_name": "电路板",
+    "part_name_en": "Circuit Board"
+  },
+  {
+    "image": "products/p028_2.jpg",
+    "part_name": "控制电路板",
+    "part_name_en": "Control Board"
+  },
+  {
+    "image": "products/p028_3.jpg",
+    "part_name": "电路板",
+    "part_name_en": "Circuit Board"
+  },
+  {
+    "image": "products/p029_1.jpg",
+    "part_name": "电路板",
+    "part_name_en": "Circuit Board"
+  },
+  {
+    "image": "products/p029_2.jpg",
+    "part_name": "显示器",
+    "part_name_en": "Display"
+  },
+  {
+    "image": "products/p029_3.jpg",
+    "part_name": "警示灯",
+    "part_name_en": "Warning Light"
+  },
+  {
+    "image": "products/p030_1.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p030_2.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p030_3.jpg",
+    "part_name": "键盘",
+    "part_name_en": "Keypad"
+  },
+  {
+    "image": "products/p031_1.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p031_2.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p031_3.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p032_2.jpg",
+    "part_name": "键盘",
+    "part_name_en": "Keyboard"
+  },
+  {
+    "image": "products/p032_3.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p033_1.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p033_2.jpg",
+    "part_name": "控制面板",
+    "part_name_en": "Control Panel"
+  },
+  {
+    "image": "products/p033_3.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p034_1.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p034_2.jpg",
+    "part_name": "膜开关",
+    "part_name_en": "Membrane Switch"
+  },
+  {
+    "image": "products/p034_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p035_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p035_2.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p035_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p036_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p036_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p037_1.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p037_2.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p037_3.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p038_1.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p038_2.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p038_3.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p039_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p039_2.jpg",
+    "part_name": "连接线缆",
+    "part_name_en": "Connecting Cable"
+  },
+  {
+    "image": "products/p039_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p040_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p040_2.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p040_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p041_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p041_2.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p041_3.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p042_1.jpg",
+    "part_name": "螺旋线缆",
+    "part_name_en": "Coiled Cable"
+  },
+  {
+    "image": "products/p042_2.jpg",
+    "part_name": "温度传感器",
+    "part_name_en": "Temperature Sensor"
+  },
+  {
+    "image": "products/p043_2.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p043_3.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p044_1.jpg",
+    "part_name": "温度传感器",
+    "part_name_en": "Temperature Sensor"
+  },
+  {
+    "image": "products/p044_3.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p045_1.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p045_2.jpg",
+    "part_name": "温度传感器",
+    "part_name_en": "Temperature Sensor"
+  },
+  {
+    "image": "products/p045_3.jpg",
+    "part_name": "航空插头",
+    "part_name_en": "Aviation Plug"
+  },
+  {
+    "image": "products/p046_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p046_2.jpg",
+    "part_name": "航空插头",
+    "part_name_en": "Aviation Plug"
+  },
+  {
+    "image": "products/p047_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p047_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p047_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p048_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p048_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p048_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p049_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p049_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p049_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p050_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p050_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p050_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p051_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p051_2.jpg",
+    "part_name": "航空插头",
+    "part_name_en": "Aviation Plug"
+  },
+  {
+    "image": "products/p051_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p052_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p052_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p052_3.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p053_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p053_2.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p053_3.jpg",
+    "part_name": "找平传感器",
+    "part_name_en": "Slope Sensor"
+  },
+  {
+    "image": "products/p054_1.jpg",
+    "part_name": "减震器",
+    "part_name_en": "Damper"
+  },
+  {
+    "image": "products/p054_2.jpg",
+    "part_name": "急停开关",
+    "part_name_en": "Emergency Stop Switch"
+  },
+  {
+    "image": "products/p054_3.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p055_1.jpg",
+    "part_name": "喷嘴",
+    "part_name_en": "Nozzle"
+  },
+  {
+    "image": "products/p055_2.jpg",
+    "part_name": "喷嘴",
+    "part_name_en": "Nozzle"
+  },
+  {
+    "image": "products/p055_3.jpg",
+    "part_name": "控制手柄",
+    "part_name_en": "Control Handle"
+  },
+  {
+    "image": "products/p056_1.jpg",
+    "part_name": "支架",
+    "part_name_en": "Bracket"
+  },
+  {
+    "image": "products/p056_2.jpg",
+    "part_name": "工具箱",
+    "part_name_en": "Toolbox"
+  },
+  {
+    "image": "products/p056_3.jpg",
+    "part_name": "工业插座",
+    "part_name_en": "Industrial Plug"
+  },
+  {
+    "image": "products/p057_1.jpg",
+    "part_name": "连接器",
+    "part_name_en": "Connector"
+  },
+  {
+    "image": "products/p057_2.jpg",
+    "part_name": "显示器",
+    "part_name_en": "Display"
+  },
+  {
+    "image": "products/p057_3.jpg",
+    "part_name": "工作灯",
+    "part_name_en": "LED Work Light"
+  },
+  {
+    "image": "products/p058_1.jpg",
+    "part_name": "传感器",
+    "part_name_en": "Sensor"
+  },
+  {
+    "image": "products/p058_2.jpg",
+    "part_name": "点火电极",
+    "part_name_en": "Ignition Electrode"
+  },
+  {
+    "image": "products/p058_3.jpg",
+    "part_name": "液压泵",
+    "part_name_en": "Hydraulic Pump"
+  },
+  {
+    "image": "products/p059_1.jpg",
+    "part_name": "液压泵",
+    "part_name_en": "Hydraulic Pump"
+  },
+  {
+    "image": "products/p059_2.jpg",
+    "part_name": "橡胶防尘套",
+    "part_name_en": "Rubber Boot"
+  },
+  {
+    "image": "products/p059_3.jpg",
+    "part_name": "电磁阀",
+    "part_name_en": "Solenoid Valve"
+  },
+  {
+    "image": "products/p060_1.jpg",
+    "part_name": "显示屏",
+    "part_name_en": "Display Screen"
+  },
+  {
+    "image": "products/p060_2.jpg",
+    "part_name": "显示器",
+    "part_name_en": "Display"
+  },
+  {
+    "image": "products/p060_3.jpg",
+    "part_name": "线缆",
+    "part_name_en": "Cable"
+  },
+  {
+    "image": "products/p061_1.jpg",
+    "part_name": "传感器支架",
+    "part_name_en": "Sensor Bracket"
+  }
+]
