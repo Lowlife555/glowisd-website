@@ -6,7 +6,15 @@
 {% block content %}
 
 <!-- ================= Hero ================= -->
-<section class="hero">
+<section class="hero{% if hero_slides %} hero--slideshow{% endif %}">
+  {% if hero_slides %}
+  <div class="hero-slides" aria-hidden="true">
+    {% for slide in hero_slides %}
+    <img class="hero-slide{% if forloop.first %} is-active{% endif %}" src="{{ slide.image.url }}" alt="" loading="eager">
+    {% endfor %}
+  </div>
+  {% endif %}
+  <div class="hero-veil" aria-hidden="true"></div>
   <div class="container">
     <span class="eyebrow">CZ Glowisd Science And Technology · Changzhou, China</span>
     <h1>
@@ -199,5 +207,20 @@
     </div>
   </div>
 </section>
+
+{% if hero_slides %}
+<script>
+(function () {
+  var slides = document.querySelectorAll('.hero-slide');
+  if (slides.length < 2) return;
+  var idx = 0;
+  setInterval(function () {
+    slides[idx].classList.remove('is-active');
+    idx = (idx + 1) % slides.length;
+    slides[idx].classList.add('is-active');
+  }, 5000);
+})();
+</script>
+{% endif %}
 
 {% endblock %}

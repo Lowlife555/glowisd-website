@@ -239,13 +239,51 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 .mobile-nav .mobile-lang { display: flex; padding: 14px 28px 20px; gap: 12px; }
 
 /* ---------- hero ---------- */
-.hero { background: var(--ink); color: #fff; padding: 128px 0 96px; position: relative; }
+.hero { background: var(--ink); color: #fff; padding: 128px 0 96px; position: relative; overflow: hidden; }
 .hero::before {
   content: "";
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 1px;
   background: linear-gradient(90deg, var(--primary), transparent 70%);
+  z-index: 3;
+}
+.hero .container { position: relative; z-index: 3; }
+
+/* --- hero slideshow --- */
+.hero--slideshow { background: var(--ink); }
+.hero-slides { position: absolute; inset: 0; z-index: 0; }
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 1.6s ease-in-out;
+}
+.hero-slide.is-active { opacity: 1; }
+/* 图片整体变暗，保证白字可读 */
+.hero-slides::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 14, 28, .55); /* 亮度约 0.45 */
+  z-index: 1;
+}
+/* 底部渐变高斯模糊遮罩：从上到下渐隐，模糊约 10%，让文字压图更清晰 */
+.hero-veil {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 64%;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(12, 16, 32, 0) 0%, rgba(12, 16, 32, .6) 55%, rgba(12, 16, 32, .92) 100%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
 }
 .hero .eyebrow { color: #D2AE00; }
 .hero h1 {
@@ -257,7 +295,13 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   color: #fff;
   max-width: 15em;
 }
-.hero .lead { margin-top: 26px; max-width: 620px; }
+.hero .lead {
+  margin-top: 26px;
+  max-width: 620px;
+  font-size: 18px;
+  color: #F5F7FF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+}
 .hero-actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 44px; }
 .hero-stats {
   display: grid;
@@ -275,7 +319,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   color: #fff;
   line-height: 1.1;
 }
-.hero-stat .num .plus { color: var(--primary); }
+.hero-stat .num .plus { color: var(--gold); }
 .hero-stat .lab {
   margin-top: 8px;
   font-size: 11px;

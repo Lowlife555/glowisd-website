@@ -8,6 +8,7 @@ from products.models import Category, Product
 
 from .context_processors import get_lang
 from .forms import ContactForm
+from .models import HeroSlide
 
 RATE_LIMIT_WINDOW = 300  # 5 分钟
 RATE_LIMIT_MAX = 3       # 同一会话最多 3 次
@@ -39,9 +40,11 @@ def home(request):
             'tl_zh': tl[0],
             'tl_en': tl[1],
         })
+    hero_slides = HeroSlide.objects.filter(is_active=True).order_by('sort_order')
     return render(request, 'core/home.html', {
         'active': 'home',
         'cats': cats,
+        'hero_slides': hero_slides,
         'category_count': len(cats),
         'product_count': Product.objects.count(),
     })
