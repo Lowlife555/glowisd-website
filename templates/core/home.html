@@ -116,30 +116,7 @@
     </div>
     <div class="grid-products">
       {% for p in featured_products %}
-      <a class="p-card" href="{% url 'product_detail' p.pk %}">
-        <div class="p-card__media">
-          {% if p.image %}
-          <img src="{{ p.image.url }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
-          {% else %}
-          <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
-          {% endif %}
-          <span class="p-card__sku">{{ p.sku }}</span>
-        </div>
-        <div class="p-card__body">
-          {% if p.part_name or p.part_name_en %}
-          <span class="p-card__name">{{ p|pname:lang }}</span>
-          {% else %}
-          <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
-          {% endif %}
-          <div class="p-card__ids">
-            <div><b>SKU</b> {{ p.sku }}</div>
-            {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
-          </div>
-          <div class="p-card__foot">
-            <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
-          </div>
-        </div>
-      </a>
+      {% include "products/_product_card.html" with p=p %}
       {% endfor %}
     </div>
   </div>
@@ -177,30 +154,7 @@
       </div>
       <div class="grid-products">
         {% for p in lineup.products %}
-        <a class="p-card" href="{% url 'product_detail' p.pk %}">
-          <div class="p-card__media">
-            {% if p.image %}
-            <img src="{{ p.image.url }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
-            {% else %}
-            <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
-            {% endif %}
-            <span class="p-card__sku">{{ p.sku }}</span>
-          </div>
-          <div class="p-card__body">
-            {% if p.part_name or p.part_name_en %}
-            <span class="p-card__name">{{ p|pname:lang }}</span>
-            {% else %}
-            <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
-            {% endif %}
-            <div class="p-card__ids">
-              <div><b>SKU</b> {{ p.sku }}</div>
-              {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
-            </div>
-            <div class="p-card__foot">
-              <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
-            </div>
-          </div>
-        </a>
+        {% include "products/_product_card.html" with p=p %}
         {% endfor %}
       </div>
     </div>
