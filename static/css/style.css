@@ -4,9 +4,9 @@
    ============================================================ */
 
 :root {
-  --primary: #E87A00;
-  --primary-deep: #C76200;
-  --primary-soft: #F6E9DA;
+  --primary: #162A87;
+  --primary-deep: #101F66;
+  --primary-soft: #E8ECF7;
   --ink: #1A1A1A;
   --ink-2: #333333;
   --ink-3: #6F6A63;
@@ -15,7 +15,7 @@
   --surface: #FFFFFF;
   --line: #E3DCCF;
   --line-strong: #CFC6B6;
-  --gold: #B08D57;
+  --gold: #D2AE00;
   --dark-text: #A8A29A;
   --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", "Noto Serif SC", serif;
   --sans: "Helvetica Neue", "Segoe UI", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;

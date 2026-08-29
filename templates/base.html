@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endblock %}">
   <title>{% block title %}{% if lang == 'en' %}Glowisd — Construction Machinery Control Systems &amp; Components{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endblock %}</title>
-  <link rel="icon" type="image/png" href="{% static 'img/favicon-logo.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon-192.png' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <script type="application/ld+json">
   {
@@ -22,7 +22,7 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:40px;width:auto;"></a>
+      <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:60px;width:auto;"></a>
 
       <nav class="nav-main" aria-label="{% if lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
         <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
@@ -56,7 +56,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:32px;width:auto;">
+          <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:48px;width:auto;">
           <p>{% if lang == 'en' %}CZ Glowisd Science And Technology co., ltd — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology co., ltd — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
         </div>
         <div class="footer-col">
