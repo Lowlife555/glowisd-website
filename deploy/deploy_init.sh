@@ -27,8 +27,13 @@ echo "=== [5/8] 初始化产品数据（9分类+10示例+183 PDF产品）==="
 venv/bin/python manage.py seed_data
 venv/bin/python manage.py import_pdf
 
-echo "=== [6/8] 超级管理员 ==="
-DJANGO_SUPERUSER_PASSWORD=nyj060927 venv/bin/python manage.py createsuperuser --username lowlife --email 1578242212@qq.com --noinput 2>/dev/null || echo "lowlife 已存在，跳过"
+echo "=== [6/8] 超级管理员（密码从环境变量读取，不入库）==="
+if [ -z "$DJANGO_SUPERUSER_PASSWORD" ]; then
+  echo "错误：请先设置环境变量 DJANGO_SUPERUSER_PASSWORD 再运行本脚本"
+  echo "  示例：export DJANGO_SUPERUSER_PASSWORD='你的密码'"
+  exit 1
+fi
+DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD venv/bin/python manage.py createsuperuser --username lowlife --email "${DJANGO_SUPERUSER_EMAIL:-admin@example.com}" --noinput 2>/dev/null || echo "lowlife 已存在，跳过"
 
 echo "=== [7/8] 收集静态 + 启动 pm2 + nginx ==="
 venv/bin/python manage.py collectstatic --noinput
