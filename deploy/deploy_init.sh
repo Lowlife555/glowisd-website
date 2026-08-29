@@ -4,7 +4,13 @@
 set -e
 echo "=== [1/8] clone 代码 ==="
 cd /var/www
-[ -d glowisd ] || git clone https://github.com/Lowlife555/glowisd-website.git glowisd
+if [ -d glowisd/.git ]; then
+  echo "glowisd 已 clone，跳过"
+else
+  rm -rf glowisd
+  ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null || true
+  git clone git@github.com:Lowlife555/glowisd-website.git glowisd
+fi
 cd glowisd
 
 echo "=== [2/8] Python venv ==="
