@@ -61,7 +61,7 @@
     <div class="sec-head">
       <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品分类{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}Browse by Category{% else %}按产品线浏览{% endif %}
+        {% if lang == 'en' %}<span class="h-main">Browse by Category</span><span class="h-sub">按产品线浏览</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Browse by Category</span>{% endif %}
       </h2>
       <p class="lead">
         {% if lang == 'en' %}
@@ -100,25 +100,25 @@
     </div>
     <div class="grid grid--4">
       <div class="card adv-card">
-        <div class="glyph">质</div>
+        <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/><path d="m8.5 12 2.5 2.5 5-5"/></svg></div>
         <h3>{% if lang == 'en' %}Quality Assured{% else %}品质管控{% endif %}</h3>
         <span class="en">{% if lang == 'en' %}Quality{% else %}Quality Assured{% endif %}</span>
         <p>{% if lang == 'en' %}Every unit passes strict inspection and burn-in testing before shipping.{% else %}每件产品出厂前经过严格检验与老化测试，确保一致性与可靠性。{% endif %}</p>
       </div>
       <div class="card adv-card">
-        <div class="glyph">容</div>
+        <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></div>
         <h3>{% if lang == 'en' %}Wide Compatibility{% else %}兼容广泛{% endif %}</h3>
         <span class="en">{% if lang == 'en' %}Compatibility{% else %}Wide Compatibility{% endif %}</span>
         <p>{% if lang == 'en' %}Compatible with Vogele, Bomag, Wirtgen, ABG and other leading paver brands.{% else %}覆盖 Vogele、Bomag、Wirtgen、ABG 等主流摊铺机品牌机型。{% endif %}</p>
       </div>
       <div class="card adv-card">
-        <div class="glyph">速</div>
+        <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
         <h3>{% if lang == 'en' %}Fast Response{% else %}快速响应{% endif %}</h3>
         <span class="en">{% if lang == 'en' %}Response{% else %}Fast Response{% endif %}</span>
         <p>{% if lang == 'en' %}Quotes and technical support within 24 hours for customers worldwide.{% else %}报价与技术支持 24 小时内响应全球客户。{% endif %}</p>
       </div>
       <div class="card adv-card">
-        <div class="glyph">专</div>
+        <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg></div>
         <h3>{% if lang == 'en' %}Expert Support{% else %}专业支持{% endif %}</h3>
         <span class="en">{% if lang == 'en' %}Expertise{% else %}Expert Support{% endif %}</span>
         <p>{% if lang == 'en' %}Experienced engineers guide selection, installation and after-sales service.{% else %}资深工程团队提供选型、安装与售后指导。{% endif %}</p>

@@ -22,7 +22,7 @@
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:60px;width:auto;"></a>
+      <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:64px;width:auto;"></a>
 
       <nav class="nav-main" aria-label="{% if lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
         <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
@@ -56,7 +56,7 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:48px;width:auto;">
+          <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:56px;width:auto;">
           <p>{% if lang == 'en' %}CZ Glowisd Science And Technology co., ltd — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology co., ltd — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
         </div>
         <div class="footer-col">

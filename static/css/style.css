@@ -5,18 +5,18 @@
 
 :root {
   --primary: #162A87;
-  --primary-deep: #101F66;
-  --primary-soft: #E8ECF7;
-  --ink: #1A1A1A;
-  --ink-2: #333333;
-  --ink-3: #6F6A63;
-  --bg: #F6F3EE;
-  --bg-deep: #EDE8DF;
+  --primary-deep: #0F1D5C;
+  --primary-soft: #E9EDF7;
+  --ink: #162A87;
+  --ink-2: #1A2452;
+  --ink-3: #5A6B9E;
+  --bg: #FFFFFF;
+  --bg-deep: #F4F6FB;
   --surface: #FFFFFF;
-  --line: #E3DCCF;
-  --line-strong: #CFC6B6;
+  --line: #E4E9F5;
+  --line-strong: #C9D1E8;
   --gold: #D2AE00;
-  --dark-text: #A8A29A;
+  --dark-text: #A6B0CC;
   --serif: Georgia, "Times New Roman", "Songti SC", "SimSun", "Noto Serif SC", serif;
   --sans: "Helvetica Neue", "Segoe UI", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --mono: "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
@@ -64,7 +64,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   display: block;
   margin-bottom: 18px;
 }
-.eyebrow--dark { color: #E8953C; }
+.eyebrow--dark { color: #D2AE00; }
 .h-display {
   font-family: var(--serif);
   font-weight: 500;
@@ -81,6 +81,8 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   letter-spacing: .01em;
   color: var(--ink);
 }
+.h-section .h-main { display: block; }
+.h-section .h-sub { display: block; font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin-top: 8px; }
 .lead { font-size: 17px; line-height: 1.9; color: var(--ink-3); max-width: 640px; }
 .lead--dark { color: var(--dark-text); }
 .sec-head { margin-bottom: 52px; }
@@ -134,7 +136,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 .link-arrow:hover { color: var(--primary); border-color: var(--primary); }
 .link-arrow .arrow { font-family: var(--serif); font-size: 15px; line-height: 1; }
 .link-arrow--light { color: #fff; border-bottom-color: rgba(255,255,255,.3); }
-.link-arrow--light:hover { color: #E8953C; border-color: #E8953C; }
+.link-arrow--light:hover { color: #D2AE00; border-color: #D2AE00; }
 
 /* ---------- header ---------- */
 .site-header {
@@ -245,7 +247,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   height: 1px;
   background: linear-gradient(90deg, var(--primary), transparent 70%);
 }
-.hero .eyebrow { color: #E8953C; }
+.hero .eyebrow { color: #D2AE00; }
 .hero h1 {
   font-family: var(--serif);
   font-weight: 500;
@@ -346,7 +348,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 .p-card__media {
   position: relative;
   aspect-ratio: 4 / 3;
-  background: #EFEAE1;
+  background: #F4F6FB;
   display: flex; align-items: center; justify-content: center;
   overflow: hidden;
 }
@@ -547,7 +549,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 .cta-band { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .cta-panel { padding: 48px 44px; background: var(--surface); }
 .cta-panel + .cta-panel { border-left: 1px solid var(--line); background: var(--ink); color: #fff; }
-.cta-panel .eyebrow--dark { color: #E8953C; }
+.cta-panel .eyebrow--dark { color: #D2AE00; }
 .cta-panel h3 { font-family: var(--serif); font-weight: 500; font-size: 24px; color: var(--ink); line-height: 1.3; }
 .cta-panel + .cta-panel h3 { color: #fff; }
 .cta-panel p { margin-top: 12px; font-size: 14px; color: var(--ink-3); line-height: 1.8; }
@@ -561,7 +563,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   position: absolute; top: 0; left: 0; right: 0; height: 1px;
   background: linear-gradient(90deg, var(--primary), transparent 70%);
 }
-.page-hero .eyebrow { color: #E8953C; }
+.page-hero .eyebrow { color: #D2AE00; }
 .page-hero h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4vw, 46px); color: #fff; line-height: 1.18; }
 .page-hero .lead { margin-top: 20px; max-width: 640px; }
 
@@ -696,7 +698,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   font-size: 12px;
   letter-spacing: .04em;
 }
-.footer-bottom .ver { font-family: var(--mono); color: #6F6A63; letter-spacing: .1em; }
+.footer-bottom .ver { font-family: var(--mono); color: #5A6B9E; letter-spacing: .1em; }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
