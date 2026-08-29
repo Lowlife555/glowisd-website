@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         from django.conf import settings
 
-        json_path = settings.BASE_DIR.parent.parent / '素材' / 'extracted_products.json'
+        json_path = settings.BASE_DIR / 'products' / 'fixtures' / 'extracted_products.json'
         if not json_path.exists():
             self.stderr.write(f'找不到 {json_path}')
             return

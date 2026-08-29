@@ -1,0 +1,3670 @@
+{
+ "source_pdf": "素材/产品目录.pdf",
+ "pdf_type": "scanned-image (no text layer; P/N requires OCR or manual entry)",
+ "total_pages": 61,
+ "total_products": 183,
+ "layout_model": "每页固定3行网格，橙色分隔条位于约[0.147,0.421,0.696]页高处定义3个产品格",
+ "part_number_status": "未提取（扫描件无文字层），需人工/OCR补充",
+ "products": [
+  {
+   "page": 1,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p001_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 1,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p001_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 1,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p001_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 2,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p002_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 2,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p002_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 2,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p002_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 3,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p003_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 3,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p003_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 3,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p003_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 4,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p004_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 4,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p004_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 4,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p004_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 5,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p005_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 5,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p005_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 5,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p005_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 6,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p006_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 6,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p006_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 6,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p006_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 7,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p007_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 7,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p007_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 7,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p007_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 8,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p008_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 8,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p008_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 8,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p008_3.png",
+   "band_frac": [
+    0.6959,
+    1.0
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7308
+   ],
+   "size_px": [
+    5167,
+    2223
+   ]
+  },
+  {
+   "page": 9,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p009_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 9,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p009_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 9,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p009_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 10,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p010_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 10,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p010_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 10,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p010_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 11,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p011_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 11,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p011_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 11,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p011_3.png",
+   "band_frac": [
+    0.6959,
+    1.0
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7308
+   ],
+   "size_px": [
+    5167,
+    2223
+   ]
+  },
+  {
+   "page": 12,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p012_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 12,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p012_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 12,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p012_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 13,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p013_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 13,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p013_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 13,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p013_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 14,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p014_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 14,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p014_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 14,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p014_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 15,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p015_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 15,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p015_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 15,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p015_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 16,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p016_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 16,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p016_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 16,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p016_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 17,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p017_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 17,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p017_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 17,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p017_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 18,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p018_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 18,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p018_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 18,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p018_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 19,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p019_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 19,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p019_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 19,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p019_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 20,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p020_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 20,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p020_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 20,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p020_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 21,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p021_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 21,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p021_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 21,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p021_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 22,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p022_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 22,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p022_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 22,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p022_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 23,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p023_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 23,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p023_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 23,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p023_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 24,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p024_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 24,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p024_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 24,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p024_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 25,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p025_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 25,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p025_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 25,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p025_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 26,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p026_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 26,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p026_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 26,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p026_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 27,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p027_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 27,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p027_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 27,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p027_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 28,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p028_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 28,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p028_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 28,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p028_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 29,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p029_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 29,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p029_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 29,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p029_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 30,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p030_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 30,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p030_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 30,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p030_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 31,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p031_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 31,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p031_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 31,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p031_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 32,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p032_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 32,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p032_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 32,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p032_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 33,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p033_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 33,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p033_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 33,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p033_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 34,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p034_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 34,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p034_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 34,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p034_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 35,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p035_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 35,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p035_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 35,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p035_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 36,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p036_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 36,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p036_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 36,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p036_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 37,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p037_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 37,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p037_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 37,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p037_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 38,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p038_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 38,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p038_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 38,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p038_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 39,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p039_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 39,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p039_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 39,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p039_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 40,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p040_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 40,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p040_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 40,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p040_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 41,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p041_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 41,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p041_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 41,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p041_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 42,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p042_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 42,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p042_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 42,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p042_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 43,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p043_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 43,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p043_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 43,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p043_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 44,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p044_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 44,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p044_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 44,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p044_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 45,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p045_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 45,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p045_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 45,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p045_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 46,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p046_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 46,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p046_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 46,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p046_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 47,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p047_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 47,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p047_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 47,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p047_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 48,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p048_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 48,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p048_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 48,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p048_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 49,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p049_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 49,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p049_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 49,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p049_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 50,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p050_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 50,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p050_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 50,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p050_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 51,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p051_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 51,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p051_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 51,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p051_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 52,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p052_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 52,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p052_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 52,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p052_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 53,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p053_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 53,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p053_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 53,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p053_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 54,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p054_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 54,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p054_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 54,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p054_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 55,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p055_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 55,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p055_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 55,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p055_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 56,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p056_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 56,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p056_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 56,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p056_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 57,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p057_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 57,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p057_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 57,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p057_3.png",
+   "band_frac": [
+    0.6959,
+    1.0
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7308
+   ],
+   "size_px": [
+    5167,
+    2223
+   ]
+  },
+  {
+   "page": 58,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p058_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 58,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p058_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 58,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p058_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 59,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p059_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 59,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p059_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 59,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p059_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 60,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p060_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 60,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p060_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 60,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p060_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  },
+  {
+   "page": 61,
+   "index": 1,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p061_1.png",
+   "band_frac": [
+    0.1471,
+    0.4215
+   ],
+   "pixel_region": [
+    0,
+    1075,
+    5167,
+    3080
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 61,
+   "index": 2,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p061_2.png",
+   "band_frac": [
+    0.4215,
+    0.6959
+   ],
+   "pixel_region": [
+    0,
+    3080,
+    5167,
+    5085
+   ],
+   "size_px": [
+    5167,
+    2005
+   ]
+  },
+  {
+   "page": 61,
+   "index": 3,
+   "part_number": null,
+   "image": "site/glowisd-website/media/products/p061_3.png",
+   "band_frac": [
+    0.6959,
+    0.97
+   ],
+   "pixel_region": [
+    0,
+    5085,
+    5167,
+    7088
+   ],
+   "size_px": [
+    5167,
+    2003
+   ]
+  }
+ ]
+}
