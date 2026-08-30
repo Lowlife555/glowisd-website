@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -16,3 +17,21 @@ class HeroSlide(models.Model):
 
     def __str__(self):
         return f'Slide {self.sort_order} - {self.title_zh or self.title_en or "未命名"}'
+
+
+class LoginRecord(models.Model):
+    """管理员后台登录记录（登录时间 / IP / 设备）"""
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name='管理员', related_name='login_records'
+    )
+    login_time = models.DateTimeField('登录时间', auto_now_add=True)
+    ip_address = models.GenericIPAddressField('IP 地址', blank=True, null=True)
+    user_agent = models.CharField('设备/浏览器', max_length=500, blank=True)
+
+    class Meta:
+        verbose_name = '登录记录'
+        verbose_name_plural = '登录记录'
+        ordering = ['-login_time']
+
+    def __str__(self):
+        return f'{self.user.username} @ {self.login_time.strftime("%Y-%m-%d %H:%M:%S")}'
