@@ -1,5 +1,5 @@
 /* =========================================================
-   GLOWISD — front-end scripts (Vue 3 global build)   V0.2.0
+   GLOWISD — front-end scripts (Vue 3 global build)   V0.2.1
    组件：语言切换 · 移动导航 · 询价表单（fetch POST）
    ========================================================= */
 (function () {
