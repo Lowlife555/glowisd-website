@@ -27,6 +27,11 @@ class LoginRecord(models.Model):
     login_time = models.DateTimeField('登录时间', auto_now_add=True)
     ip_address = models.GenericIPAddressField('IP 地址', blank=True, null=True)
     user_agent = models.CharField('设备/浏览器', max_length=500, blank=True)
+    # 以下 4 字段为登录审计增强，历史记录不回填，保持空字符串
+    device_type = models.CharField('设备类型', max_length=20, blank=True, default='')
+    os_name = models.CharField('操作系统', max_length=50, blank=True, default='')
+    browser = models.CharField('浏览器', max_length=50, blank=True, default='')
+    region = models.CharField('登录地区', max_length=100, blank=True, default='')
 
     class Meta:
         verbose_name = '登录记录'

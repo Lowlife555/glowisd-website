@@ -13,6 +13,9 @@ db.sqlite3
 /staticfiles/
 /media/products_backup/
 
+# ip2region 离线 IP 库（约 11MB，不入库，获取方式见 core/signals.py 注释）
+/core/data/ip2region_v4.xdb
+
 # 环境变量（含密钥，不进版本库）
 .env
 .env.*
