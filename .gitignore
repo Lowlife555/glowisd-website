@@ -27,3 +27,4 @@ Thumbs.db
 # 遗留待清理（Next.js 残留，物理文件被进程锁定时先忽略，勿提交进库）
 /node_modules/
 /prisma/
+/static/img/favicon_backup/
