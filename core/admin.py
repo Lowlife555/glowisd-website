@@ -19,12 +19,21 @@ class HeroSlideAdmin(admin.ModelAdmin):
 @admin.register(LoginRecord)
 class LoginRecordAdmin(admin.ModelAdmin):
     """管理员登录历史：谁、何时、用什么设备、什么 IP 登录过后台。"""
-    list_display = ['user', 'login_time', 'ip_address', 'user_agent']
-    list_filter = ['user', 'login_time']
+    list_display = ['user', 'formatted_time', 'ip_address', 'short_ua']
+    list_filter = ['user']
     search_fields = ['user__username', 'ip_address', 'user_agent']
     list_per_page = 30
-    readonly_fields = ['user', 'login_time', 'ip_address', 'user_agent']
+    readonly_fields = ['user', 'formatted_time', 'ip_address', 'user_agent']
     date_hierarchy = 'login_time'
+
+    @admin.display(description='登录时间', ordering='login_time')
+    def formatted_time(self, obj):
+        return obj.login_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    @admin.display(description='设备/浏览器')
+    def short_ua(self, obj):
+        ua = obj.user_agent or ''
+        return ua[:60] + ('…' if len(ua) > 60 else '')
 
     def has_add_permission(self, request):
         return False
