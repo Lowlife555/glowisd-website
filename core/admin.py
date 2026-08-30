@@ -1,12 +1,14 @@
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 
 from .models import HeroSlide, LoginRecord
 
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):
-    list_display = ['image', 'title_zh', 'title_en', 'sort_order', 'is_active', 'created_at']
+    list_display = ['image_preview', 'title_zh', 'title_en', 'sort_order', 'is_active', 'created_at']
     list_editable = ['sort_order', 'is_active']
     list_per_page = 20
     fieldsets = (
@@ -14,6 +16,22 @@ class HeroSlideAdmin(admin.ModelAdmin):
         ('标题', {'fields': ('title_zh', 'title_en')}),
         ('设置', {'fields': ('sort_order', 'is_active')}),
     )
+
+    @admin.display(description='轮播图片')
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" alt="{}" '
+                'style="height:56px;width:100px;object-fit:cover;'
+                'border:1px solid #E4E9F5;border-radius:2px;display:block;" />',
+                obj.image.url,
+                obj.title_zh or obj.title_en or '轮播图',
+            )
+        return mark_safe(
+            '<span style="display:block;height:56px;width:100px;line-height:56px;'
+            'text-align:center;color:#A6B0CC;border:1px dashed #C9D1E8;'
+            'border-radius:2px;font-size:12px;">—</span>'
+        )
 
 
 @admin.register(LoginRecord)
