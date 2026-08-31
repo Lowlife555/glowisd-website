@@ -5,11 +5,13 @@ from datetime import timedelta
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import HeroSlide, LoginRecord
+from .models import HeroSlide, LoginRecord, SiteSettings
 
 
 @admin.register(HeroSlide)
@@ -38,6 +40,32 @@ class HeroSlideAdmin(admin.ModelAdmin):
             'text-align:center;color:#A6B0CC;border:1px dashed #C9D1E8;'
             'border-radius:2px;font-size:12px;">—</span>'
         )
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    """站点设置单例：始终只有一条（pk=1），不可新增多条、不可删除。"""
+    fieldsets = (
+        ('公司信息', {'fields': ('company_name_zh', 'company_name_en', 'address_zh', 'address_en')}),
+        ('联系方式', {'fields': ('phone', 'email', 'whatsapp')}),
+        ('生产信息', {'fields': ('factory_area', 'moq')}),
+        ('公司简介', {'fields': ('about_zh', 'about_en')}),
+        ('SEO 设置', {'fields': ('seo_title_zh', 'seo_title_en', 'seo_desc_zh', 'seo_desc_en')}),
+    )
+
+    # 单例：已存在记录时禁止再新增；永不删除
+    def has_add_permission(self, request):
+        if SiteSettings.objects.exists():
+            return False
+        return super().has_add_permission(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    # 点击菜单直接进入唯一一条记录的编辑页（不存在则自动创建）
+    def changelist_view(self, request, extra_context=None):
+        obj = SiteSettings.load()
+        return redirect(reverse('admin:core_sitesettings_change', args=[obj.pk]))
 
 
 @admin.register(LoginRecord)

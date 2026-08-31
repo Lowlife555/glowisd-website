@@ -121,7 +121,7 @@
             <div>
               <div class="lab">{% if lang == 'en' %}Address{% else %}公司地址{% endif %}</div>
               <div class="val">
-                {% if lang == 'en' %}Changzhou, Jiangsu, China{% else %}中国 · 江苏 · 常州{% endif %}
+                {% if lang == 'en' %}{{ site_settings.address_en|default:"Changzhou, Jiangsu, China" }}{% else %}{{ site_settings.address_zh|default:"中国 · 江苏 · 常州" }}{% endif %}
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@
             <div>
               <div class="lab">{% if lang == 'en' %}Phone / WeChat{% else %}电话 / 微信{% endif %}</div>
               <div class="val">
-                +86-139-6147-3930
+                {{ site_settings.phone|default:"+86-139-6147-3930" }}
                 <small>{% if lang == 'en' %}WeChat: HappyfamilyZheng{% else %}微信: HappyfamilyZheng{% endif %}</small>
               </div>
             </div>
@@ -140,7 +140,7 @@
             <div>
               <div class="lab">{% if lang == 'en' %}Email{% else %}邮箱{% endif %}</div>
               <div class="val">
-                <a href="mailto:424760214@qq.com">424760214@qq.com</a>
+                <a href="mailto:{{ site_settings.email|default:"424760214@qq.com" }}">{{ site_settings.email|default:"424760214@qq.com" }}</a>
               </div>
             </div>
           </div>

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static products_extras %}
 
-{% block title %}{% if lang == 'en' %}Glowisd — Paving Machine Sensors &amp; Accessories{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endblock %}
+{% block title %}{% if lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Paving Machine Sensors &amp; Accessories{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -16,7 +16,7 @@
   {% endif %}
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="container">
-    <span class="eyebrow hero-brand">CZ Glowisd Science And Technology Co.,Ltd</span>
+    <span class="eyebrow hero-brand">{% if lang == 'en' %}{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}{% else %}{{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }}{% endif %}</span>
     <h1>
       {% if lang == 'en' %}
       Construction Machinery Control Systems<br>Manufacturing &amp; Parts Warehousing
@@ -236,17 +236,9 @@
         </h2>
         <p class="lead">
           {% if lang == 'en' %}
-          CZ Glowisd Science And Technology Co.,Ltd is a technology enterprise
-          specializing in the R&D and manufacturing of construction machinery
-          electronic control systems, cables and mechanical components, based in
-          Changzhou, Jiangsu — at the heart of China's equipment manufacturing belt.
-          Our products are sold worldwide, with long-term partners across the Middle
-          East, Central Asia, Europe and mainland China.
+          {% if site_settings.about_en %}{{ site_settings.about_en }}{% else %}CZ Glowisd Science And Technology Co.,Ltd is a technology enterprise specializing in the R&D and manufacturing of construction machinery electronic control systems, cables and mechanical components, based in Changzhou, Jiangsu — at the heart of China's equipment manufacturing belt. Our products are sold worldwide, with long-term partners across the Middle East, Central Asia, Europe and mainland China.{% endif %}
           {% else %}
-          CZ Glowisd Science And Technology Co.,Ltd 是一家专注于工程机械电控系统、
-          线缆及机械配件研发与制造的科技企业，坐落于江苏常州——中国装备制造产业带
-          核心区域。产品远销全球，在中东、中亚、欧洲及中国大陆拥有多家长期稳定的
-          合作伙伴。
+          {% if site_settings.about_zh %}{{ site_settings.about_zh }}{% else %}CZ Glowisd Science And Technology Co.,Ltd 是一家专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业，坐落于江苏常州——中国装备制造产业带核心区域。产品远销全球，在中东、中亚、欧洲及中国大陆拥有多家长期稳定的合作伙伴。{% endif %}
           {% endif %}
         </p>
         <ul class="body-list">

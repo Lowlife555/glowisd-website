@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endblock %}">
-  <title>{% block title %}{% if lang == 'en' %}Glowisd — Construction Machinery Control Systems &amp; Components{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}{% if site_settings.seo_desc_en %}{{ site_settings.seo_desc_en }}{% else %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% endif %}{% else %}{% if site_settings.seo_desc_zh %}{{ site_settings.seo_desc_zh }}{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endif %}{% endblock %}">
+  <title>{% block title %}{% if lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Construction Machinery Control Systems &amp; Components{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endif %}{% endblock %}</title>
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16.png' %}?v=0200">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}?v=0200">
   <link rel="icon" type="image/png" sizes="48x48" href="{% static 'img/favicon-48.png' %}?v=0200">
@@ -16,7 +16,7 @@
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "CZ Glowisd Science And Technology Co.,Ltd",
+    "name": "{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}",
     "url": "https://glowisd.com",
     "description": "Technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components"
   }
@@ -61,7 +61,7 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <img src="{% static 'img/logo.png' %}" alt="Glowisd" style="height:56px;width:auto;">
-          <p>{% if lang == 'en' %}CZ Glowisd Science And Technology Co.,Ltd — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}CZ Glowisd Science And Technology Co.,Ltd — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
+          <p>{% if lang == 'en' %}{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }} — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}{{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }} — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
         </div>
         <div class="footer-col">
           <h4>{% if lang == 'en' %}Company{% else %}公司{% endif %}</h4>
@@ -85,22 +85,22 @@
           <h4>{% if lang == 'en' %}Contact{% else %}联系方式{% endif %}</h4>
           <div class="f-addr">
             {% if lang == 'en' %}
-            CZ Glowisd Science And Technology Co.,Ltd<br>
-            Changzhou, Jiangsu, China<br>
-            <a href="mailto:424760214@qq.com">424760214@qq.com</a><br>
-            +86-139-6147-3930
+            {{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}<br>
+            {{ site_settings.address_en|default:"Changzhou, Jiangsu, China" }}<br>
+            <a href="mailto:{{ site_settings.email|default:"424760214@qq.com" }}">{{ site_settings.email|default:"424760214@qq.com" }}</a><br>
+            {{ site_settings.phone|default:"+86-139-6147-3930" }}
             {% else %}
-            常州 Glowisd 科技有限公司<br>
-            中国·江苏·常州<br>
-            <a href="mailto:424760214@qq.com">424760214@qq.com</a><br>
-            +86-139-6147-3930
+            {{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }}<br>
+            {{ site_settings.address_zh|default:"中国·江苏·常州" }}<br>
+            <a href="mailto:{{ site_settings.email|default:"424760214@qq.com" }}">{{ site_settings.email|default:"424760214@qq.com" }}</a><br>
+            {{ site_settings.phone|default:"+86-139-6147-3930" }}
             {% endif %}
           </div>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 CZ Glowisd Science And Technology Co.,Ltd. {% if lang == 'en' %}All rights reserved.{% else %}保留所有权利。{% endif %}</span>
-        <span class="ver">V0.3.6 · GLOWISD</span>
+        <span>© 2026 {{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}. {% if lang == 'en' %}All rights reserved.{% else %}保留所有权利。{% endif %}</span>
+        <span class="ver">V0.3.7 · GLOWISD</span>
       </div>
     </div>
   </footer>

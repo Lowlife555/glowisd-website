@@ -46,6 +46,24 @@ class Product(models.Model):
         name = self.part_name if lang == 'zh' else self.part_name_en
         return name or self.part_name or self.part_name_en or '产品名称待更新'
 
+    def completeness_percent(self):
+        """资料完整度：10 个字段各占 10%（品名中英/描述中英/重量/质保/品牌/PN/分类/图片）。"""
+        fields = [
+            bool(self.part_name),
+            bool(self.part_name_en),
+            bool(self.description),
+            bool(self.description_en),
+            bool(self.weight),
+            bool(self.warranty),
+            bool(self.brand),
+            bool(self.pn),
+            # 分类：已关联且非「未分类」才算完整
+            (self.category_id is not None and getattr(self.category, 'slug', '') != 'uncategorized'),
+            bool(self.image),
+        ]
+        filled = sum(1 for f in fields if f)
+        return int(round(filled / len(fields) * 100))
+
 
 class ContactMessage(models.Model):
     name = models.CharField('姓名', max_length=100)

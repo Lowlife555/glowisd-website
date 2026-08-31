@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.lang_context',
+                'core.context_processors.site_settings',
             ],
         },
     },
@@ -154,6 +155,7 @@ SIMPLEUI_CONFIG = {
                 {'name': '产品', 'icon': 'fas fa-box', 'url': '/admin/products/product/'},
                 {'name': '产品分类', 'icon': 'fas fa-tags', 'url': '/admin/products/category/'},
                 {'name': '首页轮播', 'icon': 'fas fa-images', 'url': '/admin/core/heroslide/'},
+                {'name': '数据质量检查', 'icon': 'fas fa-clipboard-check', 'url': '/admin/products/product/data-quality/'},
             ],
         },
         {
@@ -161,6 +163,13 @@ SIMPLEUI_CONFIG = {
             'icon': 'fas fa-comments',
             'models': [
                 {'name': '询价留言', 'icon': 'fas fa-envelope', 'url': '/admin/products/contactmessage/'},
+            ],
+        },
+        {
+            'name': '站点设置',
+            'icon': 'fas fa-cog',
+            'models': [
+                {'name': '站点设置', 'icon': 'fas fa-sliders-h', 'url': '/admin/core/sitesettings/'},
             ],
         },
         {

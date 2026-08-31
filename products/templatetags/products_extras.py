@@ -21,3 +21,11 @@ def cname(category, lang='zh'):
 def footer_categories(limit=6):
     """页脚产品分类快捷入口"""
     return Category.objects.all()[:limit]
+
+
+@register.simple_tag
+def product_completeness(obj):
+    """产品资料完整度百分比（0-100），用于后台编辑页顶部进度条。"""
+    if obj is None or obj.pk is None:
+        return 0
+    return obj.completeness_percent()

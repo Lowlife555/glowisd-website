@@ -1,5 +1,8 @@
 from django.contrib import admin
+from django.contrib.admin import EmptyFieldListFilter
 from django.db.models import Count
+from django.shortcuts import render
+from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -20,7 +23,14 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ['image_preview', 'sku', 'part_name', 'pn', 'brand', 'category', 'featured', 'updated_at']
-    list_filter = ['category', 'featured']
+    list_filter = [
+        'category', 'featured',
+        ('part_name_en', EmptyFieldListFilter),
+        ('description_en', EmptyFieldListFilter),
+        ('weight', EmptyFieldListFilter),
+        ('warranty', EmptyFieldListFilter),
+        ('brand', EmptyFieldListFilter),
+    ]
     search_fields = ['sku', 'part_name', 'part_name_en', 'pn', 'brand']
     list_editable = ['featured']
     list_per_page = 20
@@ -47,6 +57,83 @@ class ProductAdmin(admin.ModelAdmin):
         ('描述', {'fields': ('description', 'description_en')}),
         ('图片', {'fields': ('image',)}),
     )
+
+    # —— 数据质量检查自定义页面 ——
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom = [
+            path(
+                'data-quality/',
+                self.admin_site.admin_view(self.data_quality_view),
+                name='products_product_data_quality',
+            ),
+        ]
+        return custom + urls
+
+    def data_quality_view(self, request):
+        """7 项数据质量统计，每项可点击跳转到预筛选后的产品列表。"""
+        uncat = Category.objects.filter(slug='uncategorized').first()
+        uncat_count = Product.objects.filter(category=uncat).count() if uncat else 0
+
+        duplicate_skus = list(
+            Product.objects.values('sku')
+            .annotate(cnt=Count('id'))
+            .filter(cnt__gt=1)
+            .order_by('-cnt', 'sku')
+        )
+        first_dup_sku = duplicate_skus[0]['sku'] if duplicate_skus else None
+
+        stats = [
+            {
+                'label': '缺英文品名',
+                'count': Product.objects.filter(part_name_en='').count(),
+                'url': '/admin/products/product/?part_name_en__isempty=1',
+            },
+            {
+                'label': '缺英文描述',
+                'count': Product.objects.filter(description_en='').count(),
+                'url': '/admin/products/product/?description_en__isempty=1',
+            },
+            {
+                'label': '缺重量',
+                'count': Product.objects.filter(weight='').count(),
+                'url': '/admin/products/product/?weight__isempty=1',
+            },
+            {
+                'label': '缺质保',
+                'count': Product.objects.filter(warranty='').count(),
+                'url': '/admin/products/product/?warranty__isempty=1',
+            },
+            {
+                'label': '缺品牌',
+                'count': Product.objects.filter(brand='').count(),
+                'url': '/admin/products/product/?brand__isempty=1',
+            },
+            {
+                'label': '未分类',
+                'count': uncat_count,
+                'url': (
+                    f'/admin/products/product/?category__id__exact={uncat.id}'
+                    if uncat else '/admin/products/product/'
+                ),
+            },
+            {
+                'label': 'SKU 重复',
+                'count': len(duplicate_skus),
+                'url': (
+                    f'/admin/products/product/?q={first_dup_sku}'
+                    if first_dup_sku else '/admin/products/product/'
+                ),
+            },
+        ]
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': '数据质量检查',
+            'stats': stats,
+        }
+        return render(request, 'admin/products/product/data_quality.html', context)
 
 
 @admin.register(ContactMessage)

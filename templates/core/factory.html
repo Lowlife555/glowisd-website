@@ -68,7 +68,7 @@
     </div>
     <div class="num-grid">
       <div class="num-cell">
-        <div class="num">1,500<span class="plus">㎡</span></div>
+        <div class="num">{{ site_settings.factory_area|default:"1,500㎡" }}</div>
         <div class="lab">{% if lang == 'en' %}Plant Area{% else %}生产面积{% endif %}</div>
       </div>
       <div class="num-cell">

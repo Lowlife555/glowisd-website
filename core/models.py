@@ -50,3 +50,35 @@ class LoginRecord(models.Model):
         label = self.username_attempted or '未知用户'
         status = '成功' if self.success else '失败'
         return f'{label}({status}) @ {self.login_time.strftime("%Y-%m-%d %H:%M:%S")}'
+
+
+class SiteSettings(models.Model):
+    """站点设置单例：公司信息 / 联系方式 / SEO / 生产信息（始终只有 pk=1 一条）。"""
+    company_name_zh = models.CharField('公司名(中文)', max_length=200, blank=True, default='')
+    company_name_en = models.CharField('公司名(英文)', max_length=200, blank=True, default='')
+    address_zh = models.CharField('地址(中文)', max_length=200, blank=True, default='')
+    address_en = models.CharField('地址(英文)', max_length=200, blank=True, default='')
+    phone = models.CharField('电话', max_length=50, blank=True, default='')
+    email = models.CharField('邮箱', max_length=100, blank=True, default='')
+    whatsapp = models.CharField('WhatsApp', max_length=100, blank=True, default='')
+    factory_area = models.CharField('工厂面积', max_length=50, blank=True, default='')
+    moq = models.CharField('起订量', max_length=50, blank=True, default='')
+    about_zh = models.TextField('公司简介(中文)', blank=True, default='')
+    about_en = models.TextField('公司简介(英文)', blank=True, default='')
+    seo_title_zh = models.CharField('SEO标题(中文)', max_length=200, blank=True, default='')
+    seo_title_en = models.CharField('SEO标题(英文)', max_length=200, blank=True, default='')
+    seo_desc_zh = models.TextField('SEO描述(中文)', blank=True, default='')
+    seo_desc_en = models.TextField('SEO描述(英文)', blank=True, default='')
+
+    class Meta:
+        verbose_name = '站点设置'
+        verbose_name_plural = '站点设置'
+
+    def __str__(self):
+        return self.company_name_zh or self.company_name_en or '站点设置'
+
+    @classmethod
+    def load(cls):
+        """取（或首次创建）唯一的站点设置实例。"""
+        obj, _created = cls.objects.get_or_create(pk=1)
+        return obj
