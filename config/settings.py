@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'products',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,9 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# 受保护的超级管理员账号用户名（accounts app 角色体系使用）
+SUPER_ADMIN_USERNAME = 'glowisd'
+
 # simpleui 后台配置
 SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
 SIMPLEUI_HOME_TITLE = 'Glowisd 管理后台'
@@ -133,6 +137,43 @@ SIMPLEUI_HOME_INFO = False
 SIMPLEUI_ANALYSIS = False
 SIMPLEUI_LOGO = ''
 SIMPLEUI_HOME_QUICK = False
+
+# 侧边栏菜单重组：system_keep=False 时完全用下面三组自定义菜单（不再显示 Django 默认的
+# 「认证和授权 / core / products」等按 app 分组的原始菜单）。
+# 「管理员中心」加了 permission 字段：simpleui 会按 request.user.get_all_permissions()
+# 过滤——超级管理员拥有全部权限（含 auth.view_user），故能看到该组；普通管理员
+# （role=admin/viewer、is_superuser=False）没有 auth.view_user 权限，整组被隐藏，
+# 与阶段一 CustomUserAdmin.has_module_permission / LoginRecordAdmin.has_module_permission 的门槛保持一致。
+SIMPLEUI_CONFIG = {
+    'system_keep': False,
+    'menus': [
+        {
+            'name': '产品管理',
+            'icon': 'fas fa-box',
+            'models': [
+                {'name': '产品', 'icon': 'fas fa-box', 'url': '/admin/products/product/'},
+                {'name': '产品分类', 'icon': 'fas fa-tags', 'url': '/admin/products/category/'},
+                {'name': '首页轮播', 'icon': 'fas fa-images', 'url': '/admin/core/heroslide/'},
+            ],
+        },
+        {
+            'name': '客户消息',
+            'icon': 'fas fa-comments',
+            'models': [
+                {'name': '询价留言', 'icon': 'fas fa-envelope', 'url': '/admin/products/contactmessage/'},
+            ],
+        },
+        {
+            'name': '管理员中心',
+            'icon': 'fas fa-user-shield',
+            'permission': 'auth.view_user',
+            'models': [
+                {'name': '管理员列表', 'icon': 'far fa-user', 'url': '/admin/auth/user/'},
+                {'name': '登录记录', 'icon': 'fas fa-history', 'url': '/admin/core/loginrecord/'},
+            ],
+        },
+    ],
+}
 
 
 # Email

@@ -1,36 +1,15 @@
+import csv
+from collections import Counter
+from datetime import timedelta
+
 from django.contrib import admin
-from django.contrib import messages
 from django.contrib.admin.models import LogEntry
-from django.contrib.auth.admin import GroupAdmin, UserAdmin
-from django.contrib.auth.models import Group, User
+from django.http import HttpResponse
+from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 from .models import HeroSlide, LoginRecord
-
-
-class SuperuserOnlyAdminMixin:
-    """仅超级管理员可访问的模块：普通 staff 连模块入口都看不到。"""
-
-    def has_module_permission(self, request):
-        return bool(
-            request
-            and getattr(request, 'user', None)
-            and request.user.is_authenticated
-            and request.user.is_superuser
-        )
-
-    def has_view_permission(self, request, obj=None):
-        return self.has_module_permission(request)
-
-    def has_add_permission(self, request):
-        return self.has_module_permission(request)
-
-    def has_change_permission(self, request, obj=None):
-        return self.has_module_permission(request)
-
-    def has_delete_permission(self, request, obj=None):
-        return self.has_module_permission(request)
 
 
 @admin.register(HeroSlide)
@@ -68,18 +47,121 @@ class LoginRecordAdmin(admin.ModelAdmin):
     注意：ip_address / user_agent 原始字符串只在数据库保存，不在后台列表或详情页展示，
     超管如需自查请用 Django shell。
     """
-    list_display = ['user', 'formatted_time', 'device_type', 'os_name', 'browser', 'region']
-    list_filter = ['user', 'device_type', 'os_name', 'browser']
-    search_fields = ['user__username', 'os_name', 'browser', 'region']
+    list_display = [
+        'display_user', 'formatted_time', 'region', 'device_type', 'os_name',
+        'browser', 'success_display', 'fail_reason',
+    ]
+    list_filter = ['success', 'user', 'login_time']
+    search_fields = ['user__username', 'username_attempted', 'os_name', 'browser', 'region']
     list_per_page = 30
+    actions = ['export_login_csv']
     # 详情页只展示审计增强后的字段，隐藏 ip_address / user_agent
-    fields = ['user', 'device_type', 'os_name', 'browser', 'region']
-    readonly_fields = ['user', 'formatted_time', 'device_type', 'os_name', 'browser', 'region']
+    fields = [
+        'user', 'username_attempted', 'login_time', 'success', 'fail_reason',
+        'device_type', 'os_name', 'browser', 'region',
+    ]
+    readonly_fields = [
+        'user', 'username_attempted', 'login_time', 'success', 'fail_reason',
+        'device_type', 'os_name', 'browser', 'region',
+    ]
     date_hierarchy = 'login_time'
+
+    @admin.display(description='用户', ordering='user__username')
+    def display_user(self, obj):
+        """无关联用户（失败登录）时展示尝试用户名。"""
+        if obj.user_id:
+            return obj.user.username
+        return obj.username_attempted or '—'
 
     @admin.display(description='登录时间', ordering='login_time')
     def formatted_time(self, obj):
         return obj.login_time.strftime('%Y-%m-%d %H:%M:%S')
+
+    @admin.display(description='登录成功', ordering='success')
+    def success_display(self, obj):
+        return '✅ 成功' if obj.success else '❌ 失败'
+
+    # —— 统计卡片 + 异常登录判定 ——
+
+    def _anomalous_pk_set(self):
+        """返回「异常登录」记录的 pk 集合。
+
+        异常定义：该条记录的 region 与该用户「最近30天」最常见 region 不同。
+        无关联用户（失败登录）、region 为空、或该用户最近30天没有有效 region
+        基线时，不判定为异常（无法比较）。
+        """
+        now = timezone.now()
+        cutoff = now - timedelta(days=30)
+        by_user = {}
+        for r in LoginRecord.objects.all():
+            if r.user_id is None:
+                continue
+            by_user.setdefault(r.user_id, []).append(r)
+
+        anomalous = set()
+        for recs in by_user.values():
+            recent = [r.region for r in recs if r.region and r.login_time >= cutoff]
+            if not recent:
+                continue
+            mode = Counter(recent).most_common(1)[0][0]
+            for r in recs:
+                if r.region and r.region != mode:
+                    anomalous.add(r.pk)
+        return anomalous
+
+    def _build_login_stats(self, anomalous_ids):
+        now = timezone.now()
+        today_start = timezone.localtime(now).replace(hour=0, minute=0, second=0, microsecond=0)
+        seven_days_ago = now - timedelta(days=7)
+
+        today_count = LoginRecord.objects.filter(login_time__gte=today_start).count()
+        active_admin_count = (
+            LoginRecord.objects.filter(login_time__gte=seven_days_ago, user__isnull=False)
+            .values('user').distinct().count()
+        )
+        fail_count_7d = LoginRecord.objects.filter(
+            login_time__gte=seven_days_ago, success=False
+        ).count()
+
+        return {
+            'today_count': today_count,
+            'active_admin_count': active_admin_count,
+            'fail_count_7d': fail_count_7d,
+            'anomaly_count': len(anomalous_ids),
+        }
+
+    def get_changelist_instance(self, request):
+        """在 ChangeList 实例上挂载统计与异常集合，供自定义 changelist 模板使用。"""
+        cl = super().get_changelist_instance(request)
+        cl.anomalous_ids = self._anomalous_pk_set()
+        cl.login_stats = self._build_login_stats(cl.anomalous_ids)
+        return cl
+
+    # —— CSV 导出（不含 IP）——
+
+    def export_login_csv(self, request, queryset):
+        """导出选中记录为 CSV：管理员/时间/地区/设备/系统/浏览器/结果/失败原因（不含 IP）。"""
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="login_records.csv"'
+        # UTF-8 BOM，保证 Excel 直接打开中文不乱码
+        response.write('\ufeff')
+        writer = csv.writer(response)
+        writer.writerow(['管理员', '时间', '地区', '设备', '系统', '浏览器', '结果', '失败原因'])
+        for r in queryset:
+            user_label = r.user.username if r.user_id else (r.username_attempted or '—')
+            writer.writerow([
+                user_label,
+                timezone.localtime(r.login_time).strftime('%Y-%m-%d %H:%M:%S'),
+                r.region or '',
+                r.device_type or '',
+                r.os_name or '',
+                r.browser or '',
+                '成功' if r.success else '失败',
+                r.fail_reason or '',
+            ])
+        return response
+
+    export_login_csv.short_description = '导出选中记录为 CSV'
 
     # —— 超管门槛：普通 staff 看不到「登录记录」模块 ——
     def has_module_permission(self, request):
@@ -133,72 +215,3 @@ class LogEntryAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-
-class RestrictedUserAdmin(SuperuserOnlyAdminMixin, UserAdmin):
-    """用户管理：仅超级管理员可见/可操作，且带超管自保护。
-
-    - 不能删除自己；
-    - 不能删除/降级系统里唯一的超级管理员；
-    - 新增用户走 Django 默认表单（不含 is_superuser 字段，默认即普通 staff）。
-    """
-
-    def has_delete_permission(self, request, obj=None):
-        if not super().has_delete_permission(request, obj):
-            return False
-        # 禁止删除自己
-        if obj is not None and obj.pk == request.user.pk:
-            return False
-        # 禁止删除系统里唯一的超级管理员
-        if obj is not None and obj.is_superuser and User.objects.filter(is_superuser=True).count() <= 1:
-            return False
-        return True
-
-    def save_model(self, request, obj, form, change):
-        if change:
-            try:
-                orig = User.objects.get(pk=obj.pk)
-            except User.DoesNotExist:
-                orig = None
-            # 阻止把系统里唯一的超管降级为普通管理员（忽略该变更）
-            if (
-                orig is not None
-                and orig.is_superuser
-                and not obj.is_superuser
-                and User.objects.filter(is_superuser=True).count() <= 1
-            ):
-                obj.is_superuser = True
-                obj.is_staff = True
-                self.message_user(
-                    request,
-                    '该用户是系统里唯一的超级管理员，无法降级为普通管理员（已保留超管权限）。',
-                    level=messages.WARNING,
-                )
-        super().save_model(request, obj, form, change)
-
-    def delete_model(self, request, obj):
-        if obj.pk == request.user.pk:
-            return
-        if obj.is_superuser and User.objects.filter(is_superuser=True).count() <= 1:
-            return
-        super().delete_model(request, obj)
-
-    def delete_queryset(self, request, queryset):
-        # 批量删除时排除自己与唯一的超管
-        protected_ids = {request.user.pk}
-        if User.objects.filter(is_superuser=True).count() <= 1:
-            protected_ids.update(
-                User.objects.filter(is_superuser=True).values_list('pk', flat=True)
-            )
-        queryset.exclude(pk__in=protected_ids).delete()
-
-
-class RestrictedGroupAdmin(SuperuserOnlyAdminMixin, GroupAdmin):
-    """组管理：仅超级管理员可见/可操作。"""
-
-
-# 用受限版本替换默认的 User / Group 管理（默认由 django.contrib.auth 注册）
-admin.site.unregister(User)
-admin.site.register(User, RestrictedUserAdmin)
-admin.site.unregister(Group)
-admin.site.register(Group, RestrictedGroupAdmin)

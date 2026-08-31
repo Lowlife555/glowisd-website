@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth.signals import user_logged_in, user_login_failed
 from django.dispatch import receiver
 
 from .models import LoginRecord
@@ -98,11 +98,20 @@ def _resolve_region(ip):
     return province or city or ''
 
 
-@receiver(user_logged_in)
-def log_user_login(sender, request, user, **kwargs):
-    """管理员登录后台时，记录 IP、设备、系统、浏览器与登录地区。"""
-    if not user or not request:
-        return
+def _extract_request_context(request):
+    """从 request 提取登录上下文（IP、UA、设备类型、系统、浏览器、地区）。
+
+    成功/失败登录共用，避免重复解析逻辑。request 为 None 时返回空上下文。
+    """
+    if not request:
+        return {
+            'ip_address': None,
+            'user_agent': '',
+            'device_type': '',
+            'os_name': '',
+            'browser': '',
+            'region': '',
+        }
     # 生产环境经 nginx 反代，真实 IP 在 X-Forwarded-For 头
     xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
     ip = xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR', '')
@@ -111,12 +120,45 @@ def log_user_login(sender, request, user, **kwargs):
     device_type, os_name, browser = _parse_user_agent(raw_ua)
     region = _resolve_region(ip) if ip else ''
 
+    return {
+        'ip_address': ip or None,
+        'user_agent': raw_ua,
+        'device_type': device_type,
+        'os_name': os_name,
+        'browser': browser,
+        'region': region,
+    }
+
+
+@receiver(user_logged_in)
+def log_user_login(sender, request, user, **kwargs):
+    """登录成功时，记录用户名、IP、设备、系统、浏览器与登录地区。"""
+    if not user or not request:
+        return
+
+    ctx = _extract_request_context(request)
     LoginRecord.objects.create(
         user=user,
-        ip_address=ip or None,
-        user_agent=raw_ua,
-        device_type=device_type,
-        os_name=os_name,
-        browser=browser,
-        region=region,
+        username_attempted=user.username,
+        success=True,
+        **ctx,
+    )
+
+
+@receiver(user_login_failed)
+def log_user_login_failed(sender, credentials, request=None, **kwargs):
+    """登录失败时，记录尝试用户名、失败原因、IP、设备、系统、浏览器与地区。
+
+    失败登录没有 User 对象，user 置空；尝试用户名从 credentials 取。
+    """
+    credentials = credentials or {}
+    username = credentials.get('username', '') or ''
+
+    ctx = _extract_request_context(request)
+    LoginRecord.objects.create(
+        user=None,
+        username_attempted=username,
+        success=False,
+        fail_reason='用户不存在' if not username else '密码错误或用户不存在',
+        **ctx,
     )

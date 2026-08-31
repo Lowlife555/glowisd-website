@@ -1,0 +1,39 @@
+{% extends "admin/change_form.html" %}
+
+{% block submit_buttons_bottom %}
+    {% if change %}
+    <fieldset class="module aligned" style="margin:0 0 15px;">
+        <h2>最近登录记录（最近 10 条）</h2>
+        <div class="form-row">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;background:#fff;">
+                <thead>
+                    <tr>
+                        <th style="padding:8px 10px;border-bottom:1px solid #E4E9F5;text-align:left;color:#606266;background:#F5F7FA;">登录时间</th>
+                        <th style="padding:8px 10px;border-bottom:1px solid #E4E9F5;text-align:left;color:#606266;background:#F5F7FA;">地区</th>
+                        <th style="padding:8px 10px;border-bottom:1px solid #E4E9F5;text-align:left;color:#606266;background:#F5F7FA;">设备 / 系统 / 浏览器</th>
+                        <th style="padding:8px 10px;border-bottom:1px solid #E4E9F5;text-align:left;color:#606266;background:#F5F7FA;">结果</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in recent_logins %}
+                    <tr>
+                        <td style="padding:8px 10px;border-bottom:1px solid #F0F2F5;color:#303133;">{{ rec.time }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #F0F2F5;color:#303133;">{{ rec.region }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #F0F2F5;color:#303133;">{{ rec.device }}</td>
+                        <td style="padding:8px 10px;border-bottom:1px solid #F0F2F5;">{% if rec.success %}<span style="color:#2E7D32;">✅ 成功</span>{% else %}<span style="color:#C62828;">❌ 失败</span>{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="padding:14px 10px;text-align:center;color:#9E9E9E;">暂无登录记录</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="form-row" style="text-align:right;padding:10px 0 0;">
+            <a href="{% url 'admin:core_loginrecord_changelist' %}?q={{ original.username|urlencode }}" style="color:#1976D2;">查看该管理员全部登录记录 →</a>
+        </div>
+    </fieldset>
+    {% endif %}
+    {{ block.super }}
+{% endblock %}
