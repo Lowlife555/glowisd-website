@@ -119,7 +119,15 @@ def contact(request):
 
         form = ContactForm(request.POST)
         if form.is_valid():
-            form.save()
+            instance = form.save(commit=False)
+            # 关联询价产品 + 记录来源：隐藏字段 product 携带产品详情页跳转时的 sku
+            sku = (form.cleaned_data.get('product') or '').strip()
+            if sku:
+                instance.inquired_product = Product.objects.filter(sku=sku).first()
+                instance.source_page = f'product_detail:{sku}'
+            else:
+                instance.source_page = 'contact_page'
+            instance.save()
             if is_ajax:
                 return JsonResponse({'ok': True})
             return HttpResponseRedirect('/contact/?ok=1')

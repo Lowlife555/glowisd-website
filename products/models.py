@@ -58,6 +58,25 @@ class ContactMessage(models.Model):
     is_read = models.BooleanField('已读', default=False)
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
 
+    STATUS_CHOICES = [
+        ('new', '新询价'),
+        ('contacted', '已联系'),
+        ('quoted', '已报价'),
+        ('won', '已成交'),
+        ('lost', '已流失'),
+    ]
+    status = models.CharField('状态', max_length=20, choices=STATUS_CHOICES, default='new')
+    quote_amount = models.DecimalField('报价金额', max_digits=12, decimal_places=2, null=True, blank=True)
+    lost_reason = models.CharField('流失原因', max_length=200, blank=True, default='')
+    inquired_product = models.ForeignKey(
+        'products.Product',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='询价产品',
+    )
+    source_page = models.CharField('来源页面', max_length=200, blank=True, default='')
+
     class Meta:
         verbose_name = '询价留言'
         verbose_name_plural = '询价留言'

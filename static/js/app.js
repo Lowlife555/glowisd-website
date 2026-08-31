@@ -1,5 +1,5 @@
 /* =========================================================
-   GLOWISD — front-end scripts (Vue 3 global build)   V0.3.5
+   GLOWISD — front-end scripts (Vue 3 global build)   V0.3.6
    组件：语言切换 · 移动导航 · 询价表单（fetch POST）
    ========================================================= */
 (function () {
@@ -64,6 +64,7 @@
             country: '',
             category: prefCategory,
             message: prefProduct ? '[Product: ' + prefProduct + ']\n' : '',
+            product: prefProduct, /* 隐藏字段：产品详情页跳转带来的 sku，随表单提交用于关联 inquired_product */
             website: '' /* honeypot */
           },
           submitting: false,
@@ -120,7 +121,7 @@
                 self.ok = true;
                 self.form.name = ''; self.form.company = ''; self.form.email = '';
                 self.form.phone = ''; self.form.country = ''; self.form.category = '';
-                self.form.message = ''; self.form.website = '';
+                self.form.message = ''; self.form.product = ''; self.form.website = '';
               } else {
                 self.error = (r.data && r.data.error) ||
                   self.i18n('提交失败，请稍后再试', 'Submission failed. Please try again later.');

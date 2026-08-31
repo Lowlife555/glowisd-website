@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db.models import Count
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -50,7 +51,58 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ContactMessage)
 class ContactMessageAdmin(admin.ModelAdmin):
-    list_display = ['name', 'company', 'email', 'category', 'is_read', 'created_at']
-    list_filter = ['is_read']
+    list_display = [
+        'name', 'company', 'email', 'status_badge', 'status',
+        'inquired_product', 'quote_amount', 'is_read', 'created_at',
+    ]
+    list_editable = ['status']
+    list_filter = ['status', 'country']
     search_fields = ['name', 'email', 'company', 'message']
-    readonly_fields = ['name', 'company', 'email', 'phone', 'country', 'category', 'message', 'created_at']
+    readonly_fields = [
+        'name', 'company', 'email', 'phone', 'country', 'category',
+        'message', 'source_page', 'created_at',
+    ]
+    fieldsets = (
+        ('基本信息', {'fields': ('name', 'company', 'email', 'phone', 'country', 'created_at')}),
+        ('询价内容', {'fields': ('inquired_product', 'category', 'message', 'source_page')}),
+        ('跟进状态', {'fields': ('status', 'quote_amount', 'lost_reason', 'is_read')}),
+    )
+
+    STATUS_COLORS = {
+        'new': '#1976D2',        # 蓝
+        'contacted': '#E67E22',  # 橙
+        'quoted': '#8E44AD',     # 紫
+        'won': '#27AE60',        # 绿
+        'lost': '#A93226',       # 灰红
+    }
+
+    @admin.display(description='状态', ordering='status')
+    def status_badge(self, obj):
+        color = self.STATUS_COLORS.get(obj.status, '#1976D2')
+        label = dict(ContactMessage.STATUS_CHOICES).get(obj.status, obj.status)
+        return format_html(
+            '<span style="display:inline-block;padding:2px 8px;border-radius:10px;'
+            'color:#fff;background:{};font-size:12px;line-height:1.4;">{}</span>',
+            color,
+            label,
+        )
+
+    # —— 按国家分组统计面板（Top 10 国家 + 总数） ——
+
+    def _build_country_stats(self):
+        rows = (
+            ContactMessage.objects
+            .exclude(country='')
+            .values('country')
+            .annotate(count=Count('id'))
+            .order_by('-count', 'country')
+        )
+        return {
+            'total': ContactMessage.objects.count(),
+            'top': list(rows[:10]),
+        }
+
+    def get_changelist_instance(self, request):
+        cl = super().get_changelist_instance(request)
+        cl.country_stats = self._build_country_stats()
+        return cl
