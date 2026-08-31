@@ -16,7 +16,7 @@
   {% endif %}
   <div class="hero-veil" aria-hidden="true"></div>
   <div class="container">
-    <span class="eyebrow hero-brand">{% if lang == 'en' %}{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}{% else %}{{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }}{% endif %}</span>
+    <span class="eyebrow hero-brand">{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}</span>
     <h1>
       {% if lang == 'en' %}
       Construction Machinery Control Systems<br>Manufacturing &amp; Parts Warehousing
