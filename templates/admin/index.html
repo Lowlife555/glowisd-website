@@ -211,34 +211,94 @@
                         <div v-if="index==0" style="height:100%">
                             {% block home_content %}
                                 {% load admin_stats %}
-                                {% admin_stats as stats %}
-                                <div style="display:flex;gap:16px;padding:18px 22px 6px;flex-wrap:wrap;">
-                                    <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
-                                        <div style="font-size:28px;font-weight:700;color:#162A87;">{{ stats.products }}</div>
-                                        <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">产品总数</div>
+                                {% admin_dashboard as dash %}
+                                <div style="padding:18px 22px 12px;">
+                                    <!-- 顶部 6 个统计卡片 -->
+                                    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                                        <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
+                                            <div style="font-size:28px;font-weight:700;color:#162A87;">{{ dash.product_total }}</div>
+                                            <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">产品总数</div>
+                                        </div>
+                                        <a href="/admin/products/contactmessage/?is_read__exact=0" style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;text-decoration:none;display:block;">
+                                            <div style="font-size:28px;font-weight:700;color:#c0392b;">{{ dash.unread_inquiries }}</div>
+                                            <div style="font-size:13px;color:#c0392b;margin-top:4px;">未读询价</div>
+                                        </a>
+                                        <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
+                                            <div style="font-size:28px;font-weight:700;color:#162A87;">{{ dash.week_inquiries }}</div>
+                                            <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">本周新增询价</div>
+                                        </div>
+                                        <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
+                                            <div style="font-size:28px;font-weight:700;color:#D2AE00;">{{ dash.incomplete_products }}</div>
+                                            <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">资料待完善产品</div>
+                                        </div>
+                                        <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
+                                            <div style="font-size:28px;font-weight:700;color:#162A87;">{{ dash.month_inquiries }}</div>
+                                            <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">本月询价总数</div>
+                                        </div>
+                                        <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
+                                            <div style="font-size:28px;font-weight:700;color:#162A87;">{{ dash.active_categories }}</div>
+                                            <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">活跃产品线</div>
+                                        </div>
                                     </div>
-                                    <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
-                                        <div style="font-size:28px;font-weight:700;color:#D2AE00;">{{ stats.featured }}</div>
-                                        <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">首页推荐</div>
-                                    </div>
-                                    <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
-                                        <div style="font-size:28px;font-weight:700;color:#162A87;">{{ stats.categories }}</div>
-                                        <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">产品线</div>
-                                    </div>
-                                    <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
-                                        <div style="font-size:28px;font-weight:700;color:#c0392b;">{{ stats.inquiries }}</div>
-                                        <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">未读询价</div>
-                                    </div>
-                                    <div style="flex:1;min-width:150px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;padding:16px 18px;">
-                                        <div style="font-size:28px;font-weight:700;color:#162A87;">{{ stats.logins }}</div>
-                                        <div style="font-size:13px;color:#5a6b9e;margin-top:4px;">登录次数</div>
+
+                                    <!-- 下方左右两栏 -->
+                                    <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;align-items:flex-start;">
+                                        <!-- 左栏：最近询价动态 -->
+                                        <div style="flex:1.6;min-width:420px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;">
+                                            <div style="padding:14px 18px;border-bottom:1px solid #e4e9f5;font-size:15px;font-weight:700;color:#162A87;">最近询价动态</div>
+                                            <table style="width:100%;border-collapse:collapse;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">公司</th>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">国家/地区</th>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">分类</th>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">留言</th>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">状态</th>
+                                                        <th style="background:#F4F6FB;color:#162A87;font-size:12px;font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid #e4e9f5;">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for q in dash.recent_inquiries %}
+                                                    <tr>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;font-size:13px;color:#3a4a6b;">{{ q.company }}</td>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;font-size:13px;color:#3a4a6b;">{{ q.country }}</td>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;font-size:13px;color:#3a4a6b;">{{ q.category }}</td>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;font-size:13px;color:#3a4a6b;">{{ q.excerpt }}</td>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;font-size:13px;white-space:nowrap;">
+                                                            {% if q.is_read %}
+                                                                <span style="color:#9aa3b8;">● 已读</span>
+                                                            {% else %}
+                                                                <span style="color:#c0392b;">● 未读</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td style="padding:10px 12px;border-bottom:1px solid #e4e9f5;">
+                                                            <a href="/admin/products/contactmessage/{{ q.id }}/change/" style="display:inline-block;background:#162A87;color:#fff;font-size:12px;padding:4px 12px;border-radius:3px;text-decoration:none;">查看</a>
+                                                        </td>
+                                                    </tr>
+                                                    {% empty %}
+                                                    <tr>
+                                                        <td colspan="6" style="padding:20px 12px;text-align:center;font-size:13px;color:#9aa3b8;">暂无询价</td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <!-- 右栏：待办事项 -->
+                                        <div style="flex:1;min-width:280px;background:#fff;border:1px solid #e4e9f5;border-radius:4px;">
+                                            <div style="padding:14px 18px;border-bottom:1px solid #e4e9f5;font-size:15px;font-weight:700;color:#162A87;">待办事项</div>
+                                            {% for t in dash.todos %}
+                                            <a href="{{ t.url }}" style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid #e4e9f5;text-decoration:none;">
+                                                <div style="min-width:44px;text-align:center;font-size:22px;font-weight:700;color:{% if t.status == 'warn' %}#c0392b{% elif t.status == 'done' %}#2e7d32{% else %}#9aa3b8{% endif %};">{{ t.count }}</div>
+                                                <div>
+                                                    <div style="font-size:13px;font-weight:600;color:#162A87;">{{ t.title }}{% if t.status == 'done' %} ✓{% endif %}</div>
+                                                    {% if t.note %}<div style="font-size:12px;color:#5a6b9e;margin-top:2px;">{{ t.note }}</div>{% endif %}
+                                                </div>
+                                            </a>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
-                                {% if home %}
-                                    <iframe :src="'{{ home }}'"></iframe>
-                                {% else %}
-                                    {% include './home.html' %}
-                                {% endif %}
                             {% endblock %}
                         </div>
                         <div v-else class="iframe-wrap">

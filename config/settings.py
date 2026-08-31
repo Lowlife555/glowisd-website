@@ -170,6 +170,7 @@ SIMPLEUI_CONFIG = {
             'models': [
                 {'name': '管理员列表', 'icon': 'far fa-user', 'url': '/admin/auth/user/'},
                 {'name': '登录记录', 'icon': 'fas fa-history', 'url': '/admin/core/loginrecord/'},
+                {'name': '操作日志', 'icon': 'fas fa-clipboard-list', 'url': '/admin/admin/logentry/'},
             ],
         },
     ],
