@@ -53,7 +53,16 @@ class LoginRecord(models.Model):
 
 
 class SiteSettings(models.Model):
-    """站点设置单例：公司信息 / 联系方式 / SEO / 生产信息（始终只有 pk=1 一条）。"""
+    """站点设置单例：公司信息 / 联系方式 / SEO / 生产信息 / 水印（始终只有 pk=1 一条）。"""
+
+    WATERMARK_POSITION_CHOICES = [
+        ('bottom_right', '右下角'),
+        ('bottom_left', '左下角'),
+        ('top_right', '右上角'),
+        ('top_left', '左上角'),
+        ('center', '居中'),
+    ]
+
     company_name_zh = models.CharField('公司名(中文)', max_length=200, blank=True, default='')
     company_name_en = models.CharField('公司名(英文)', max_length=200, blank=True, default='')
     address_zh = models.CharField('地址(中文)', max_length=200, blank=True, default='')
@@ -69,6 +78,15 @@ class SiteSettings(models.Model):
     seo_title_en = models.CharField('SEO标题(英文)', max_length=200, blank=True, default='')
     seo_desc_zh = models.TextField('SEO描述(中文)', blank=True, default='')
     seo_desc_en = models.TextField('SEO描述(英文)', blank=True, default='')
+    # —— 水印设置（产品图水印）——
+    watermark_enabled = models.BooleanField('启用水印', default=False)
+    watermark_image = models.ImageField('水印图片', upload_to='watermark/', blank=True, null=True)
+    watermark_position = models.CharField(
+        '水印位置', max_length=20, choices=WATERMARK_POSITION_CHOICES, default='bottom_right',
+    )
+    watermark_opacity = models.IntegerField('水印透明度(%)', default=45)
+    watermark_width_pct = models.PositiveIntegerField('水印宽度(%)', default=18)
+    watermark_margin = models.PositiveIntegerField('水印边距(px)', default=20)
 
     class Meta:
         verbose_name = '站点设置'

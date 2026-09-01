@@ -1,5 +1,7 @@
 from django.db import models
 
+from products.utils.watermark import WATERMARK_LOGO_PATH, add_watermark
+
 
 class Category(models.Model):
     name = models.CharField('中文名', max_length=100)
@@ -30,6 +32,7 @@ class Product(models.Model):
         Category, on_delete=models.CASCADE, related_name='products', verbose_name='分类'
     )
     image = models.ImageField('产品图片', upload_to='products/', blank=True, null=True)
+    is_watermarked = models.BooleanField('已打水印', default=False)
     featured = models.BooleanField('首页推荐', default=False)
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
     updated_at = models.DateTimeField('更新时间', auto_now=True)
@@ -41,6 +44,24 @@ class Product(models.Model):
 
     def __str__(self):
         return self.sku
+
+    def save(self, *args, **kwargs):
+        # 图片变更检测：已存在的记录，若图片文件名与库中不同 → 视为换图，需重新打水印
+        if self.pk:
+            old_image = Product.objects.filter(pk=self.pk).values_list('image', flat=True).first() or ''
+            new_image = self.image.name if self.image else ''
+            if old_image != new_image:
+                self.is_watermarked = False
+
+        super().save(*args, **kwargs)
+
+        # 自动打水印：有图且尚未标记已打 → 打水印成功后写回标记。
+        # 写回用 update_fields 只更新标记字段，且走 super() 而非 self.save()，
+        # 避免二次进入本方法造成递归；即使再进来 is_watermarked 已为 True，也不会再触发。
+        if self.image and not self.is_watermarked:
+            if add_watermark(self.image.path, WATERMARK_LOGO_PATH):
+                self.is_watermarked = True
+                super().save(update_fields=['is_watermarked', 'updated_at'])
 
     def display_name(self, lang='zh'):
         name = self.part_name if lang == 'zh' else self.part_name_en
