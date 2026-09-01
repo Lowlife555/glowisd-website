@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.3.4）
+# Glowisd 官网（V0.3.8）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -67,11 +67,12 @@ glowisd-website/
 | 模型 | 关键字段 | 说明 |
 |------|---------|------|
 | `products.Category` | name/name_en/slug/sort_order | 产品线（传感器/线缆/手柄/显示器/接线盒/找平臂/电路板/膜开关/套件/未分类） |
-| `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured | 产品（182 个，中英文品名齐全）；`featured=True` 首页推荐展示 |
-| `products.ContactMessage` | name/company/email/phone/country/category/message/is_read | 前台询价留言 |
+| `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked | 产品（182 个，中英文品名齐全）；`featured=True` 首页推荐展示；`is_watermarked` 标记图片已打水印（save 钩子自动打 + 换图重打） |
+| `products.ContactMessage` | name/company/email/phone/country/category/message/is_read/status(新/已联系/已报价/已成交/已流失)/quote_amount/lost_reason/inquired_product(FK)/source_page | 前台询价留言（跟进状态管理 + 产品自动关联 + 来源页面记录） |
 | `core.HeroSlide` | image/title_zh/title_en/sort_order/is_active | 首页轮播图（后台上传） |
 | `core.LoginRecord` | user/username_attempted/login_time/ip_address(仅存不展示)/region/device_type/os_name/browser/user_agent(仅存)/success/fail_reason | 登录审计（成功+失败都记录；页面零 IP 显示） |
 | `accounts.AdminProfile` | user(OneToOne)/role/phone/must_change_password/created_at | 管理员角色：super_admin 超管 / admin 普通 / viewer 只读 |
+| `core.SiteSettings` | company_name/address/phone/email/whatsapp/factory_area/moq/about/seo(中英)/watermark_enabled/watermark_width_pct/watermark_opacity/watermark_margin | 站点设置单例（后台一处修改全站生效；水印参数可配置） |
 
 ---
 
@@ -95,10 +96,12 @@ glowisd-website/
 - 产品详情：参数表（SKU/P/N/品牌/重量/质保/分类）+ 描述 + 相关产品 + 询价入口
 - 工厂 / 定制 / 联系（询价表单：蜜罐 + 会话限流）
 
-**后台（simpleui 中文，三组菜单）**：
-- 产品管理：产品（缩略图/件号/首页推荐勾选）、产品分类、首页轮播
-- 客户消息：询价留言
-- 管理员中心（仅超管）：管理员列表（角色彩色标签/状态/上次登录地区/重置密码/编辑页内嵌最近 10 次登录记录）、登录记录（4 统计卡片 + 异常登录黄色高亮 + CSV 导出 + 失败原因）
+**后台（simpleui 中文，菜单分组）**：
+- 首页仪表盘：6 统计卡片（产品总数/未读询价红色可点/本周新增/资料待完善/本月询价/活跃产品线）+ 最近询价动态 + 待办事项自动检测
+- 产品管理：产品（缩略图/件号/首页推荐勾选/已打水印标记/重新打水印 action + 上传自动打水印 + 编辑页完整度进度条）、产品分类、首页轮播、**数据质量检查**（7 项统计可点击预筛选）
+- 客户消息：询价留言（状态五态彩色标签/筛选/列表直接改状态/报价金额/流失原因/国家统计面板）
+- 站点设置：公司信息中英/联系方式/SEO/水印参数（单例，前台同步）
+- 管理员中心（仅超管）：管理员列表（角色彩色标签/状态/上次登录地区/重置密码/编辑页内嵌最近 10 次登录记录）、登录记录（4 统计卡片 + 异常登录黄色高亮 + CSV 导出 + 失败原因）、操作日志
 
 ---
 
@@ -111,7 +114,11 @@ glowisd-website/
 | V0.2.0 | 首页推荐 + 产品线陈列 + 后台增强 + 160 品名 OCR + 英文版去中文 |
 | V0.2.1–V0.2.2 | 版本纪律强化 + 后台排版修复 + 轮播图缩略图 |
 | V0.3.0 | 超管体系初版：权限收口 + 登录审计（IP 隐藏/设备地区解析）+ 超管保护 |
-| **V0.3.4** | 后台四阶段重构：accounts 角色体系（三角色）+ 失败登录记录 + 编辑页重设计（内嵌登录记录/重置密码）+ 菜单三组重组 + 统计卡片/异常高亮/CSV |
+| V0.3.4 | 后台四阶段重构：accounts 角色体系（三角色）+ 失败登录记录 + 编辑页重设计（内嵌登录记录/重置密码）+ 菜单三组重组 + 统计卡片/异常高亮/CSV |
+| V0.3.5 | 后台首页仪表盘（6 统计卡片+询价动态+待办）+ 操作日志入管理员中心 + 中文版公司名英文同步 |
+| V0.3.6 | 询价管理升级：status 五态+报价金额+流失原因+产品关联+来源页面+状态彩色标签+国家统计 |
+| V0.3.7 | 产品数据质量检查页（7 项统计+预筛选+完整度进度条）+ SiteSettings 站点设置（前台去硬编码） |
+| **V0.3.8** | 产品图自动打水印：is_watermarked+save()自动触发（换图防重复）+watermark_all 批量命令+178 张图打水印（宽18%/不透明75%/右下角25px，vision 采样） |
 
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -234,4 +241,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.3.4（2026-08-31）*
+*最后更新：V0.3.8（2026-08-31）*
