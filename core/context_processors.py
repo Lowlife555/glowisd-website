@@ -14,6 +14,10 @@ def lang_context(request):
 
 
 def site_settings(request):
-    """向前台模板提供 site_settings 全局变量（单例，不存在时自动创建 pk=1）。"""
+    """向前台模板提供 site_settings 全局变量（单例，不存在时自动创建 pk=1）+ 站点版本（cache busting）。"""
+    from django.conf import settings
     from core.models import SiteSettings
-    return {'site_settings': SiteSettings.load()}
+    return {
+        'site_settings': SiteSettings.load(),
+        'site_version': getattr(settings, 'SITE_VERSION', '0.0.0'),
+    }

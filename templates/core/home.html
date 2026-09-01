@@ -10,7 +10,7 @@
   {% if hero_slides %}
   <div class="hero-slides" aria-hidden="true">
     {% for slide in hero_slides %}
-    <img class="hero-slide{% if forloop.first %} is-active{% endif %}" src="{{ slide.image.url }}" alt="" loading="eager">
+    <img class="hero-slide{% if forloop.first %} is-active{% endif %}" src="{{ slide.image.url }}?v={{ site_version }}" alt="" loading="eager">
     {% endfor %}
   </div>
   {% endif %}

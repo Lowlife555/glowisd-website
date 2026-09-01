@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.4.0）
+# Glowisd 官网（V0.4.1）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -120,6 +120,7 @@ glowisd-website/
 | V0.3.7 | 产品数据质量检查页（7 项统计+预筛选+完整度进度条）+ SiteSettings 站点设置（前台去硬编码） |
 | **V0.3.8** | 产品图自动打水印：is_watermarked+save()自动触发（换图防重复）+watermark_all 批量命令+178 张图打水印（宽18%/不透明75%/右下角25px，vision 采样） |
 | **V0.4.0** | 水印位置改左上角（183 张图从 git 原图恢复后全量重打，SiteSettings 默认 top_left+数据迁移）+ 全站缓存策略修复（nginx 30 天强缓存 → no-cache+ETag/304，更新后访客立即可见） |
+| **V0.4.1** | 缓存根治 cache busting：SITE_VERSION 常量+context processor，前台所有静态/媒体资源 URL 加 `?v=版本`（logo/favicon/css/js/产品图/轮播图），footer 版本号动态显示；修复老设备强缓存不过期导致刷不到新图 |
 
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -242,4 +243,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.4.0（2026-09-01）*
+*最后更新：V0.4.1（2026-09-01）*

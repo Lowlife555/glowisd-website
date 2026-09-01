@@ -19,7 +19,7 @@
     <div class="p-detail">
       <div class="p-media">
         {% if product.image %}
-        <img src="{{ product.image.url }}" alt="{{ product.sku }} — {{ product|pname:lang }}">
+        <img src="{{ product.image.url }}?v={{ site_version }}" alt="{{ product.sku }} — {{ product|pname:lang }}">
         {% else %}
         <img src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
         {% endif %}
