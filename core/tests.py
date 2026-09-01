@@ -9,6 +9,8 @@
 
 运行：python manage.py test core
 """
+from datetime import datetime, timezone as dt_timezone
+
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.urls import reverse
@@ -194,3 +196,56 @@ class AdminPermissionTests(TestCase):
         # 测试环境 REMOTE_ADDR=127.0.0.1（私有 IP）→ 不触发在线解析，region 空、is_proxy False
         self.assertEqual(rec.region, '')
         self.assertFalse(rec.is_proxy)
+
+
+class TimezoneTests(TestCase):
+    """V0.5.1 时区修复回归：DB 按 UTC 存储（USE_TZ=True），显示须转北京时间（+8）。"""
+
+    def test_login_record_displays_beijing_time(self):
+        from django.contrib import admin
+        import core.admin  # noqa: F401 — 触发 @admin.register(LoginRecord) 注册
+
+        user = User.objects.create_user('tztest', 'tz@example.com', 'Pass!123')
+        rec = LoginRecord.objects.create(user=user, username_attempted='tztest', success=True)
+        # 北京时间 2026-09-01 15:46:56 = UTC 07:46:56（USE_TZ=True 时 DB 存 UTC）
+        utc = datetime(2026, 9, 1, 7, 46, 56, tzinfo=dt_timezone.utc)
+        # update() 绕过 auto_now_add，模拟历史记录已按 UTC 落库
+        LoginRecord.objects.filter(pk=rec.pk).update(login_time=utc)
+        rec.refresh_from_db()
+
+        # 模型 __str__ 应转北京时间（V0.5.1 修复点之一）
+        self.assertEqual(str(rec), 'tztest @ 2026-09-01 15:46:56')
+        # 后台列表时间列 formatted_time 应转北京时间（V0.5.1 修复点之二）
+        admin_instance = admin.site._registry[LoginRecord]
+        self.assertEqual(admin_instance.formatted_time(rec), '2026-09-01 15:46:56')
+
+    def test_export_login_csv_uses_beijing_time(self):
+        """CSV 导出时间列须转北京时间（V0.5.1 已正确，回归防回退）。"""
+        from django.contrib import admin
+        import core.admin  # noqa: F401 — 触发 @admin.register(LoginRecord) 注册
+
+        user = User.objects.create_user('csvtest', 'csv@example.com', 'Pass!123')
+        rec = LoginRecord.objects.create(user=user, username_attempted='csvtest', success=True)
+        utc = datetime(2026, 9, 1, 7, 46, 56, tzinfo=dt_timezone.utc)
+        LoginRecord.objects.filter(pk=rec.pk).update(login_time=utc)
+        rec.refresh_from_db()
+
+        admin_instance = admin.site._registry[LoginRecord]
+        resp = admin_instance.export_login_csv(None, LoginRecord.objects.filter(pk=rec.pk))
+        content = resp.content.decode('utf-8')
+        self.assertIn('2026-09-01 15:46:56', content, 'CSV 时间列应转北京时间')
+
+    def test_date_hierarchy_groups_by_local_date(self):
+        """已确认无此问题：date_hierarchy 按北京时间（本地日期）分组。
+
+        UTC 2026-08-31 23:30 = 北京时间 2026-09-01 07:30，dates('login_time','day')
+        实测归 2026-09-01（本地日期），而非 08-31（UTC 日期）。
+        """
+        user = User.objects.create_user('dhtest', 'dh@example.com', 'Pass!123')
+        rec = LoginRecord.objects.create(user=user, username_attempted='dhtest', success=True)
+        utc = datetime(2026, 8, 31, 23, 30, 0, tzinfo=dt_timezone.utc)
+        LoginRecord.objects.filter(pk=rec.pk).update(login_time=utc)
+
+        dates = LoginRecord.objects.filter(pk=rec.pk).dates('login_time', 'day')
+        self.assertIn(datetime(2026, 9, 1).date(), list(dates),
+                      'date_hierarchy 应按本地日期（北京时间）分组归 9-1')

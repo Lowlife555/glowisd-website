@@ -1,6 +1,11 @@
 #!/bin/bash
 # Glowisd 官网 — 腾讯云服务器首次初始化脚本（root 执行一次）
 # 用法: ssh root@43.135.22.140 "bash -s" < deploy/deploy_init.sh
+# 数据初始化（与 README 第八节一致，全新部署按顺序重建）：
+#   [4/8] migrate 建表
+#   [5/8] seed_data 建产品线 → import_pdf 导入 183 张产品图（读 products/fixtures/extracted_products.json，非直接读 PDF）
+#         → import_annotations 导入件号（R→GW 改写）+ 品名 → import_product_names 导入 OCR 品名
+#   [6/8] 超级管理员（密码从环境变量 DJANGO_SUPERUSER_PASSWORD 读取 + ensure_super_admin 补角色）
 set -e
 echo "=== [1/8] clone 代码 ==="
 cd /var/www
@@ -23,9 +28,11 @@ venv/bin/pip install -q -r requirements.txt
 echo "=== [4/8] 数据库迁移 ==="
 venv/bin/python manage.py migrate
 
-echo "=== [5/8] 初始化产品数据（9分类+10示例+183 PDF产品）==="
+echo "=== [5/8] 初始化产品数据（迁移已在前一步；此处导入产品线与产品数据）==="
 venv/bin/python manage.py seed_data
 venv/bin/python manage.py import_pdf
+venv/bin/python manage.py import_annotations
+venv/bin/python manage.py import_product_names
 
 echo "=== [6/8] 超级管理员（密码从环境变量读取，不入库）==="
 if [ -z "$DJANGO_SUPERUSER_PASSWORD" ]; then
@@ -33,7 +40,9 @@ if [ -z "$DJANGO_SUPERUSER_PASSWORD" ]; then
   echo "  示例：export DJANGO_SUPERUSER_PASSWORD='你的密码'"
   exit 1
 fi
-DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD venv/bin/python manage.py createsuperuser --username lowlife --email "${DJANGO_SUPERUSER_EMAIL:-admin@example.com}" --noinput 2>/dev/null || echo "lowlife 已存在，跳过"
+DJANGO_SUPERUSER_PASSWORD=$DJANGO_SUPERUSER_PASSWORD venv/bin/python manage.py createsuperuser --username glowisd --email "${DJANGO_SUPERUSER_EMAIL:-admin@example.com}" --noinput 2>/dev/null || echo "glowisd 已存在，跳过"
+# 补 super_admin 角色 + AdminProfile（ensure_super_admin 单独建号时初始密码=用户名，不安全，故只用于补角色）
+venv/bin/python manage.py ensure_super_admin
 
 echo "=== [7/8] 收集静态 + 启动 pm2 + nginx ==="
 venv/bin/python manage.py collectstatic --noinput

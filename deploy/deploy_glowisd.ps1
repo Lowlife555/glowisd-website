@@ -13,8 +13,11 @@ $DEPLOY_DIR = "/var/www/glowisd"
 $LOCAL_BRANCH = (git branch --show-current)
 
 Write-Host "=== [1/6] 本地 git push ($LOCAL_BRANCH) ===" -ForegroundColor Cyan
-git add -A
-git commit -m "chore: deploy checkpoint" --allow-empty | Out-Null
+$dirty = git status --porcelain
+if ($dirty) {
+    git add -A
+    git commit -m "chore: deploy checkpoint"
+}
 git push origin $LOCAL_BRANCH
 if ($LASTEXITCODE -ne 0) { throw "git push failed" }
 

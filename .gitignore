@@ -11,7 +11,6 @@ build/
 # Django
 db.sqlite3
 /staticfiles/
-/media/products_backup/
 /media/products_original/
 
 # ip2region 离线 IP 库（约 11MB，不入库，获取方式见 core/signals.py 注释）
@@ -28,9 +27,3 @@ Thumbs.db
 
 # 日志
 *.log
-# 遗留待清理（Next.js 残留，物理文件被进程锁定时先忽略，勿提交进库）
-/node_modules/
-/prisma/
-/static/img/favicon_backup/
-/db.sqlite3.bak.watermark
-/media/products_original_backup/
