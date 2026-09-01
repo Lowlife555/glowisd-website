@@ -77,7 +77,7 @@ class LoginRecordAdmin(admin.ModelAdmin):
     超管如需自查请用 Django shell。
     """
     list_display = [
-        'display_user', 'formatted_time', 'region', 'device_type', 'os_name',
+        'display_user', 'formatted_time', 'region_display', 'device_type', 'os_name',
         'browser', 'success_display', 'fail_reason',
     ]
     list_filter = ['success', 'user', 'login_time']
@@ -87,11 +87,11 @@ class LoginRecordAdmin(admin.ModelAdmin):
     # 详情页只展示审计增强后的字段，隐藏 ip_address / user_agent
     fields = [
         'user', 'username_attempted', 'login_time', 'success', 'fail_reason',
-        'device_type', 'os_name', 'browser', 'region',
+        'device_type', 'os_name', 'browser', 'region', 'is_proxy',
     ]
     readonly_fields = [
         'user', 'username_attempted', 'login_time', 'success', 'fail_reason',
-        'device_type', 'os_name', 'browser', 'region',
+        'device_type', 'os_name', 'browser', 'region', 'is_proxy',
     ]
     date_hierarchy = 'login_time'
 
@@ -109,6 +109,14 @@ class LoginRecordAdmin(admin.ModelAdmin):
     @admin.display(description='登录成功', ordering='success')
     def success_display(self, obj):
         return '✅ 成功' if obj.success else '❌ 失败'
+
+    @admin.display(description='登录地区', ordering='region')
+    def region_display(self, obj):
+        """登录地区 + 疑似代理出口红色警示标记。"""
+        region = obj.region or '—'
+        if obj.is_proxy:
+            return format_html('<span style="color:#D32F2F;" title="IP 归属数据中心/代理服务商，可能为 VPN/代理出口">{} ⚠️代理</span>', region)
+        return region
 
     # —— 统计卡片 + 异常登录判定 ——
 

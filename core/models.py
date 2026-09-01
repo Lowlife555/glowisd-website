@@ -34,6 +34,8 @@ class LoginRecord(models.Model):
     os_name = models.CharField('操作系统', max_length=50, blank=True, default='')
     browser = models.CharField('浏览器', max_length=50, blank=True, default='')
     region = models.CharField('登录地区', max_length=100, blank=True, default='')
+    # 登录 IP 疑似代理/VPN/数据中心出口（在线解析 isp/org 关键词启发式判断），历史记录默认 False
+    is_proxy = models.BooleanField('疑似代理出口', default=False)
     # 阶段二：登录追踪增强（成功/失败都记录），历史数据留空/默认成功，不回填
     username_attempted = models.CharField('尝试用户名', max_length=150, blank=True, default='')
     success = models.BooleanField('登录成功', default=True)
