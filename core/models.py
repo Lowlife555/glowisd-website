@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class HeroSlide(models.Model):
@@ -47,11 +48,13 @@ class LoginRecord(models.Model):
         ordering = ['-login_time']
 
     def __str__(self):
+        # DB 按 UTC 存储（USE_TZ=True），显示须转北京时间
+        local_time = timezone.localtime(self.login_time).strftime('%Y-%m-%d %H:%M:%S')
         if self.user_id:
-            return f'{self.user.username} @ {self.login_time.strftime("%Y-%m-%d %H:%M:%S")}'
+            return f'{self.user.username} @ {local_time}'
         label = self.username_attempted or '未知用户'
         status = '成功' if self.success else '失败'
-        return f'{label}({status}) @ {self.login_time.strftime("%Y-%m-%d %H:%M:%S")}'
+        return f'{label}({status}) @ {local_time}'
 
 
 class SiteSettings(models.Model):

@@ -104,7 +104,8 @@ class LoginRecordAdmin(admin.ModelAdmin):
 
     @admin.display(description='登录时间', ordering='login_time')
     def formatted_time(self, obj):
-        return obj.login_time.strftime('%Y-%m-%d %H:%M:%S')
+        # DB 按 UTC 存储（USE_TZ=True），显示须转北京时间（TIME_ZONE=Asia/Shanghai）
+        return timezone.localtime(obj.login_time).strftime('%Y-%m-%d %H:%M:%S')
 
     @admin.display(description='登录成功', ordering='success')
     def success_display(self, obj):

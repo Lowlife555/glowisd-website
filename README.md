@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.5.0）
+# Glowisd 官网（V0.5.1）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -125,6 +125,7 @@ glowisd-website/
 | **V0.4.1** | 缓存根治 cache busting：SITE_VERSION 常量+context processor，前台所有静态/媒体资源 URL 加 `?v=版本`（logo/favicon/css/js/产品图/轮播图），footer 版本号动态显示；修复老设备强缓存不过期导致刷不到新图 |
 | **V0.4.2** | 登录地点双引擎解析：大陆走离线 ip2region（省·市），海外/港澳台走在线 ip-api.com（国家·州·市 城市级中文，3 秒超时+离线兜底）；新增 is_proxy 字段，ISP 命中代理/数据中心关键词时登录记录红色标"⚠️代理"；修复香港机场 IP 被离线库误判成 Delhi·Delhi |
 | **V0.5.0** | 纯清理型重构：P0 物理删除残留（node_modules 173MB/prisma/两个图片备份目录 11MB/favicon_backup/db 水印备份/accounts.views 样板/3 个空 tests.py/MAILERS 死配置）；P1 requirements.txt 全版本锁定（含 gunicorn），部署脚本只依赖 requirements.txt，新增 14 项冒烟测试套件（core/tests.py：前台 5 页双语/询价蜜罐限流/三角色权限隔离/超管保护/菜单可见性），修复 watermark 死引用注释；P2 登录审计拆出 core/audit.py（信号与解析分离），一次性脚本归档 scripts/archive/ |
+| **V0.5.1** | 登录记录时间显示修复：DB 按 UTC 存储（USE_TZ=True），列表页时间列与模型 __str__ 未转时区导致少 8 小时，统一 timezone.localtime 转北京时间（Asia/Shanghai）；历史记录自动显示正确，CSV 导出/编辑页原本已正确 |
 
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -252,4 +253,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.5.0（2026-09-01）*
+*最后更新：V0.5.1（2026-09-01）*
