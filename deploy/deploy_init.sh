@@ -16,9 +16,9 @@ cd glowisd
 echo "=== [2/8] Python venv ==="
 [ -d venv ] || python3 -m venv venv
 
-echo "=== [3/8] 安装依赖 ==="
+echo "=== [3/8] 安装依赖（requirements.txt 含 gunicorn）==="
 venv/bin/pip install -q --upgrade pip
-venv/bin/pip install -q -r requirements.txt gunicorn
+venv/bin/pip install -q -r requirements.txt
 
 echo "=== [4/8] 数据库迁移 ==="
 venv/bin/python manage.py migrate

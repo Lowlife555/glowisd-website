@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.4.2）
+# Glowisd 官网（V0.5.0）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -32,7 +32,9 @@ glowisd-website/
 ├── config/              # Django 配置（settings.py / urls.py / wsgi）
 ├── core/                # 网站核心：首页/工厂/定制/联系视图 + 轮播图 + 登录记录
 │   ├── models.py        #   HeroSlide(轮播图) / LoginRecord(登录记录)
-│   ├── signals.py       #   登录成功/失败信号 → 自动写登录记录（IP→地区、UA→设备）
+│   ├── signals.py       #   登录成功/失败信号 → 自动写登录记录
+│   ├── audit.py         #   审计上下文：UA解析 + IP双引擎地区解析（离线ip2region/在线ip-api.com/代理标注）
+│   ├── tests.py         #   冒烟测试套件（前台5页/双语/询价/权限隔离/超管保护）
 │   ├── admin.py         #   轮播图/登录记录/操作日志的后台注册
 │   └── templatetags/    #   后台统计/异常高亮模板标签
 ├── products/            # 产品模块
@@ -50,7 +52,7 @@ glowisd-website/
 ├── static/              # 静态资源（css/style.css + js/app.js + Vue 全局构建 + logo/favicon）
 ├── media/               # 运行时上传（products/ 182张产品图 + hero/ 轮播图）
 ├── deploy/              # 部署脚本（deploy_glowisd.ps1 / deploy_init.sh / nginx / pm2 ecosystem）
-├── scripts/             # 工具脚本（产品图重裁 recrop_final.py 等）
+├── scripts/             # 工具脚本（一次性历史脚本已归档至 scripts/archive/）
 └── manage.py
 ```
 
@@ -122,6 +124,7 @@ glowisd-website/
 | **V0.4.0** | 水印位置改左上角（183 张图从 git 原图恢复后全量重打，SiteSettings 默认 top_left+数据迁移）+ 全站缓存策略修复（nginx 30 天强缓存 → no-cache+ETag/304，更新后访客立即可见） |
 | **V0.4.1** | 缓存根治 cache busting：SITE_VERSION 常量+context processor，前台所有静态/媒体资源 URL 加 `?v=版本`（logo/favicon/css/js/产品图/轮播图），footer 版本号动态显示；修复老设备强缓存不过期导致刷不到新图 |
 | **V0.4.2** | 登录地点双引擎解析：大陆走离线 ip2region（省·市），海外/港澳台走在线 ip-api.com（国家·州·市 城市级中文，3 秒超时+离线兜底）；新增 is_proxy 字段，ISP 命中代理/数据中心关键词时登录记录红色标"⚠️代理"；修复香港机场 IP 被离线库误判成 Delhi·Delhi |
+| **V0.5.0** | 纯清理型重构：P0 物理删除残留（node_modules 173MB/prisma/两个图片备份目录 11MB/favicon_backup/db 水印备份/accounts.views 样板/3 个空 tests.py/MAILERS 死配置）；P1 requirements.txt 全版本锁定（含 gunicorn），部署脚本只依赖 requirements.txt，新增 14 项冒烟测试套件（core/tests.py：前台 5 页双语/询价蜜罐限流/三角色权限隔离/超管保护/菜单可见性），修复 watermark 死引用注释；P2 登录审计拆出 core/audit.py（信号与解析分离），一次性脚本归档 scripts/archive/ |
 
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -130,13 +133,18 @@ glowisd-website/
 ## 七、快速开始（本地开发）
 
 ```bash
-pip install -r requirements.txt
-pip install user-agents py-ip2region   # 登录审计依赖
+pip install -r requirements.txt      # 全部依赖（Django/simpleui/Pillow/user-agents/py-ip2region/gunicorn 已锁定版本）
 python manage.py migrate
 python manage.py ensure_super_admin    # 初始化 glowisd 超管 + 补 AdminProfile
 python manage.py runserver
 # 访问 http://localhost:8000（前台）/ http://localhost:8000/admin（后台）
 ```
+
+冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护，共 14 项）：
+```bash
+python manage.py test core
+```
+> 测试使用独立测试库，不会碰 `db.sqlite3` 或任何产品数据。
 
 环境变量（生产必须）：
 ```bash
@@ -244,4 +252,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.4.2（2026-09-01）*
+*最后更新：V0.5.0（2026-09-01）*

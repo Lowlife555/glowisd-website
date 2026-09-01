@@ -7,7 +7,7 @@
 | 组件 | 说明 |
 |------|------|
 | 部署目录 | `/var/www/glowisd`（git clone `https://github.com/Lowlife555/glowisd-website.git`）|
-| Python 环境 | `/var/www/glowisd/venv`，装 `requirements.txt` + `gunicorn` |
+| Python 环境 | `/var/www/glowisd/venv`，装 `requirements.txt`（含 gunicorn） |
 | 应用进程 | gunicorn 跑 `127.0.0.1:8000`，wsgi 入口 `config.wsgi:application`，由 **pm2** 管理（app 名 `glowisd`）|
 | Web 入口 | nginx 监听 `0.0.0.0:8080`，反代 `127.0.0.1:8000`，并直接 serve `/static/` 和 `/media/` |
 | 数据库 | SQLite `db.sqlite3`（已 gitignore，服务器首次 `migrate` 自动生成）|
@@ -60,7 +60,7 @@ apt-get update
 apt-get install -y python3-pip python3-venv
 python3 -m venv venv
 venv/bin/pip install --upgrade pip
-venv/bin/pip install -r requirements.txt gunicorn
+venv/bin/pip install -r requirements.txt
 
 # 4. 首次建库 + 收集静态
 venv/bin/python manage.py migrate
@@ -95,7 +95,7 @@ powershell -File deploy/deploy_glowisd.ps1
 
 1. **本地 git push** —— `git add -A && commit --allow-empty && push origin <当前分支>`
 2. **服务器 git pull** —— `cd /var/www/glowisd && git pull --ff-only`
-3. **依赖安装** —— 缺则 apt 装 `python3-venv/python3-pip` → 建/复用 `venv` → `pip install -r requirements.txt gunicorn`
+3. **依赖安装** —— 缺则 apt 装 `python3-venv/python3-pip` → 建/复用 `venv` → `pip install -r requirements.txt`
 4. **数据库迁移** —— `venv/bin/python manage.py migrate`
 5. **构建** —— `venv/bin/python manage.py collectstatic --noinput`（Django 的“构建”步骤）
 6. **重启 + 健康检查** —— pm2 重启 `glowisd`（首次自动 `pm2 start`）→ `curl http://127.0.0.1:8080/` 期望 200

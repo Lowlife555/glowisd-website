@@ -1,6 +1,6 @@
 """产品图自动打水印工具。
 
-水印参数来源（阶段1 vision 采样确定，采样脚本见根目录 _wm_gen_test.py）：
+水印参数来源（阶段1 vision 采样确定）：
     - logo：static/img/logo.png（RGBA 透明底）
     - 宽度：产品图宽的 18%（等比缩放）
     - 不透明度：75%（对 logo 的 alpha 通道 point(lambda a: a * 75 // 100)）
