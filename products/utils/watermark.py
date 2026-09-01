@@ -4,7 +4,7 @@
     - logo：static/img/logo.png（RGBA 透明底）
     - 宽度：产品图宽的 18%（等比缩放）
     - 不透明度：75%（对 logo 的 alpha 通道 point(lambda a: a * 75 // 100)）
-    - 位置：右下角，距右/下边缘 25px
+    - 位置：左上角，距左/上边缘 25px
     - 用途：B2B 工业配件，水印用于品牌保护防盗图
 
 只做「就地覆盖保存」的单张图处理，供 Product.save() 自动调用；批量/可配置水印
@@ -24,7 +24,7 @@ WATERMARK_LOGO_PATH = os.path.join(settings.BASE_DIR, 'static', 'img', 'logo.png
 # 水印参数（阶段1 vision 采样确定，勿随意改动）
 WATERMARK_WIDTH_PCT = 18        # 水印宽度 = 产品图宽的 18%
 WATERMARK_OPACITY = 75          # 不透明度 75%
-WATERMARK_MARGIN_PX = 25        # 距右/下边缘 25px
+WATERMARK_MARGIN_PX = 25        # 距左/上边缘 25px
 
 # 近白阈值：仅当 logo 为不透明白底时用于去底
 _WHITE_THRESHOLD = 245
@@ -65,9 +65,9 @@ def add_watermark(image_path, logo_path):
         alpha = logo.getchannel('A').point(lambda a: a * WATERMARK_OPACITY // 100)
         logo.putalpha(alpha)
 
-        # 5. 粘贴到右下角（距右/下边缘 25px）
-        x = w - target_w - WATERMARK_MARGIN_PX
-        y = h - target_h - WATERMARK_MARGIN_PX
+        # 5. 粘贴到左上角（距左/上边缘 25px）
+        x = WATERMARK_MARGIN_PX
+        y = WATERMARK_MARGIN_PX
         base.paste(logo, (x, y), logo)
 
         # 6. 存回：JPEG quality=90，PNG 保持 PNG，其余一律按 PNG 存

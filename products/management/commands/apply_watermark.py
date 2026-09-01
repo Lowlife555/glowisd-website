@@ -65,7 +65,7 @@ class Command(BaseCommand):
         opacity = max(1, min(100, int(site.watermark_opacity or 45)))
         width_pct = max(1, min(100, int(site.watermark_width_pct or 18)))
         margin_px = max(0, int(site.watermark_margin or 20))
-        position = site.watermark_position or 'bottom_right'
+        position = site.watermark_position or 'top_left'
 
         backup_root = os.path.join(settings.MEDIA_ROOT, 'products_original')
 
@@ -146,5 +146,5 @@ class Command(BaseCommand):
             return margin, h - th - margin
         if position == 'center':
             return (w - tw) // 2, (h - th) // 2
-        # bottom_right（默认）
-        return w - tw - margin, h - th - margin
+        # top_left（默认）
+        return margin, margin

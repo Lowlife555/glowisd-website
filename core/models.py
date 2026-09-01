@@ -82,7 +82,7 @@ class SiteSettings(models.Model):
     watermark_enabled = models.BooleanField('启用水印', default=False)
     watermark_image = models.ImageField('水印图片', upload_to='watermark/', blank=True, null=True)
     watermark_position = models.CharField(
-        '水印位置', max_length=20, choices=WATERMARK_POSITION_CHOICES, default='bottom_right',
+        '水印位置', max_length=20, choices=WATERMARK_POSITION_CHOICES, default='top_left',
     )
     watermark_opacity = models.IntegerField('水印透明度(%)', default=45)
     watermark_width_pct = models.PositiveIntegerField('水印宽度(%)', default=18)
