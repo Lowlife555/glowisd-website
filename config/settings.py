@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.5.2'
+SITE_VERSION = '0.6.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -147,7 +147,7 @@ SIMPLEUI_HOME_QUICK = False
 # 「认证和授权 / core / products」等按 app 分组的原始菜单）。
 # 「管理员中心」加了 permission 字段：simpleui 会按 request.user.get_all_permissions()
 # 过滤——超级管理员拥有全部权限（含 auth.view_user），故能看到该组；普通管理员
-# （role=admin/viewer、is_superuser=False）没有 auth.view_user 权限，整组被隐藏，
+# （role=admin、is_superuser=False）没有 auth.view_user 权限，整组被隐藏，
 # 与阶段一 CustomUserAdmin.has_module_permission / LoginRecordAdmin.has_module_permission 的门槛保持一致。
 SIMPLEUI_CONFIG = {
     'system_keep': False,

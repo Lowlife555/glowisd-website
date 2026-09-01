@@ -62,9 +62,9 @@ class AdminProfileForm(forms.ModelForm):
             # glowisd：角色只读（配合 inline 的 readonly_fields 展示「超级管理员」）
             role_field.disabled = True
         else:
-            # 编辑其他管理员 / 新增：role 只能选 普通管理员 / 只读管理员，不能设成超管
+            # 编辑其他管理员 / 新增：role 只能选 普通管理员，不能设成超管
             role_field.choices = [
-                c for c in AdminProfile.ROLE_CHOICES if c[0] in ('admin', 'viewer')
+                c for c in AdminProfile.ROLE_CHOICES if c[0] in ('admin',)
             ]
 
     def _parent_user(self):

@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.5.2）
+# Glowisd 官网（V0.6.0）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -31,7 +31,7 @@
 glowisd-website/
 ├── config/              # Django 配置（settings.py / urls.py / wsgi）
 ├── core/                # 网站核心：首页/工厂/定制/联系视图 + 轮播图 + 登录记录
-│   ├── models.py        #   HeroSlide(轮播图) / LoginRecord(登录记录)
+│   ├── models.py        #   HeroSlide(轮播图) / LoginRecord(登录记录) / SiteSettings(站点设置单例)
 │   ├── signals.py       #   登录成功/失败信号 → 自动写登录记录
 │   ├── audit.py         #   审计上下文：UA解析 + IP双引擎地区解析（离线ip2region/在线ip-api.com/代理标注）
 │   ├── tests.py         #   冒烟测试套件（前台5页/双语/询价/权限隔离/超管保护）
@@ -41,7 +41,8 @@ glowisd-website/
 │   ├── models.py        #   Category(产品线) / Product(产品) / ContactMessage(询价)
 │   ├── admin.py         #   产品/分类/询价后台（图片缩略图、首页推荐勾选）
 │   ├── management/      #   数据命令：seed_data / import_pdf / import_annotations / import_product_names
-│   └── fixtures/        #   PDF 提取数据 + 品名 OCR 数据（JSON）
+│   ├── fixtures/        #   PDF 提取数据 + 品名 OCR 数据（JSON）
+│   └── utils/watermark.py # 产品图自动打水印工具函数（save 钩子调用）
 ├── accounts/            # 管理员角色体系（V0.3.4 新增）
 │   ├── models.py        #   AdminProfile（OneToOne User：role 角色 / phone / must_change_password）
 │   ├── admin.py         #   CustomUserAdmin（角色管理/超管保护/编辑页重设计/重置密码 action）
@@ -50,7 +51,7 @@ glowisd-website/
 │   └── templates/       #   管理员编辑页模板（内嵌最近登录记录）
 ├── templates/           # 前台 HTML（base.html + core/ 4页 + products/ 列表详情 + admin/ 后台覆盖）
 ├── static/              # 静态资源（css/style.css + js/app.js + Vue 全局构建 + logo/favicon）
-├── media/               # 运行时上传（products/ 182张产品图 + hero/ 轮播图）
+├── media/               # 运行时上传（products/ 183张产品图 + hero/ 轮播图）
 ├── deploy/              # 部署脚本（deploy_glowisd.ps1 / deploy_init.sh / nginx / pm2 ecosystem）
 ├── scripts/             # 工具脚本（一次性历史脚本已归档至 scripts/archive/）
 └── manage.py
@@ -69,24 +70,24 @@ glowisd-website/
 | 模型 | 关键字段 | 说明 |
 |------|---------|------|
 | `products.Category` | name/name_en/slug/sort_order | 产品线（传感器/线缆/手柄/显示器/接线盒/找平臂/电路板/膜开关/套件/未分类） |
-| `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked | 产品（182 个，中英文品名齐全）；`featured=True` 首页推荐展示；`is_watermarked` 标记图片已打水印（save 钩子自动打 + 换图重打） |
+| `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked | 产品（182 个：178 有图 + 4 无图，中英文品名齐全）；`featured=True` 首页推荐展示；`is_watermarked` 标记图片已打水印（save 钩子自动打 + 换图重打） |
 | `products.ContactMessage` | name/company/email/phone/country/category/message/is_read/status(新/已联系/已报价/已成交/已流失)/quote_amount/lost_reason/inquired_product(FK)/source_page | 前台询价留言（跟进状态管理 + 产品自动关联 + 来源页面记录） |
 | `core.HeroSlide` | image/title_zh/title_en/sort_order/is_active | 首页轮播图（后台上传） |
-| `core.LoginRecord` | user/username_attempted/login_time/ip_address(仅存不展示)/region/device_type/os_name/browser/user_agent(仅存)/success/fail_reason | 登录审计（成功+失败都记录；页面零 IP 显示） |
+| `core.LoginRecord` | user/username_attempted/login_time/ip_address(仅存不展示)/region/is_proxy(疑似代理出口)/device_type/os_name/browser/user_agent(仅存)/success/fail_reason | 登录审计（成功+失败都记录；页面零 IP 显示） |
 | `accounts.AdminProfile` | user(OneToOne)/role/phone/must_change_password/created_at | 管理员角色：super_admin 超管 / admin 普通 / viewer 只读 |
 | `core.SiteSettings` | company_name/address/phone/email/whatsapp/factory_area/moq/about/seo(中英)/watermark_enabled/watermark_width_pct/watermark_opacity/watermark_margin | 站点设置单例（后台一处修改全站生效；水印参数可配置） |
 
 ---
 
-## 四、权限体系（V0.3.4）
+## 四、权限体系
 
 | 角色 | 权限 |
 |------|------|
 | **超级管理员**（super_admin，如 glowisd） | 全部：产品/分类/询价/轮播 + 管理员列表 + 登录记录 + 操作日志；可重置他人密码 |
 | **普通管理员**（admin） | 产品/分类/询价/轮播管理；**看不到**用户管理和审计模块（侧边栏隐藏 + 直接访问 403） |
-| **只读管理员**（viewer） | 预留角色（当前界面与 admin 相同，后续可细化只读） |
+| **只读管理员**（viewer） | 已移除（V0.6.0 起后台不再新增，历史 viewer 已批量转 admin） |
 
-**超管保护规则**：禁止删除自己；禁止把最后一个超管降级/删除；编辑他人时角色下拉只出现"普通/只读"（不能把别人提为超管）；新增管理员默认普通角色。
+**超管保护规则**：禁止删除自己；禁止把最后一个超管降级/删除；编辑他人时角色下拉只出现"普通"（不能把别人提为超管）；新增管理员默认普通角色。
 
 ---
 
@@ -107,27 +108,12 @@ glowisd-website/
 
 ---
 
-## 六、版本历史（摘要）
+## 六、当前版本摘要
 
-| 版本 | 核心改动 |
-|------|---------|
-| V0.1.0–V0.1.7 | Next.js 雏形 → Django 重构 → 部署/公司信息/件号 GW/产品图裁剪/配色/Hero 轮播 |
-| V0.1.8 | 产品图居中占 90% + footer 黑灰 + favicon |
-| V0.2.0 | 首页推荐 + 产品线陈列 + 后台增强 + 160 品名 OCR + 英文版去中文 |
-| V0.2.1–V0.2.2 | 版本纪律强化 + 后台排版修复 + 轮播图缩略图 |
-| V0.3.0 | 超管体系初版：权限收口 + 登录审计（IP 隐藏/设备地区解析）+ 超管保护 |
-| V0.3.4 | 后台四阶段重构：accounts 角色体系（三角色）+ 失败登录记录 + 编辑页重设计（内嵌登录记录/重置密码）+ 菜单三组重组 + 统计卡片/异常高亮/CSV |
-| V0.3.5 | 后台首页仪表盘（6 统计卡片+询价动态+待办）+ 操作日志入管理员中心 + 中文版公司名英文同步 |
-| V0.3.6 | 询价管理升级：status 五态+报价金额+流失原因+产品关联+来源页面+状态彩色标签+国家统计 |
-| V0.3.7 | 产品数据质量检查页（7 项统计+预筛选+完整度进度条）+ SiteSettings 站点设置（前台去硬编码） |
-| **V0.3.8** | 产品图自动打水印：is_watermarked+save()自动触发（换图防重复）+watermark_all 批量命令+178 张图打水印（宽18%/不透明75%/右下角25px，vision 采样） |
-| **V0.4.0** | 水印位置改左上角（183 张图从 git 原图恢复后全量重打，SiteSettings 默认 top_left+数据迁移）+ 全站缓存策略修复（nginx 30 天强缓存 → no-cache+ETag/304，更新后访客立即可见） |
-| **V0.4.1** | 缓存根治 cache busting：SITE_VERSION 常量+context processor，前台所有静态/媒体资源 URL 加 `?v=版本`（logo/favicon/css/js/产品图/轮播图），footer 版本号动态显示；修复老设备强缓存不过期导致刷不到新图 |
-| **V0.4.2** | 登录地点双引擎解析：大陆走离线 ip2region（省·市），海外/港澳台走在线 ip-api.com（国家·州·市 城市级中文，3 秒超时+离线兜底）；新增 is_proxy 字段，ISP 命中代理/数据中心关键词时登录记录红色标"⚠️代理"；修复香港机场 IP 被离线库误判成 Delhi·Delhi |
-| **V0.5.0** | 纯清理型重构：P0 物理删除残留（node_modules 173MB/prisma/两个图片备份目录 11MB/favicon_backup/db 水印备份/accounts.views 样板/3 个空 tests.py/发现 MAILERS 死配置（V0.5.2 删除））；P1 requirements.txt 全版本锁定（含 gunicorn），部署脚本只依赖 requirements.txt，新增 14 项冒烟测试套件（core/tests.py：前台 5 页双语/询价蜜罐限流/三角色权限隔离/超管保护/菜单可见性），修复 watermark 死引用注释；P2 登录审计拆出 core/audit.py（信号与解析分离），一次性脚本归档 scripts/archive/ |
-| **V0.5.1** | 登录记录时间显示修复：DB 按 UTC 存储（USE_TZ=True），列表页时间列与模型 __str__ 未转时区导致少 8 小时，统一 timezone.localtime 转北京时间（Asia/Shanghai）；历史记录自动显示正确，CSV 导出/编辑页原本已正确 |
-| **V0.5.2** | 收尾清理 + 回归：真正删除 settings.py MAILERS 死配置（V0.5.0 清单遗漏）+ 删除 .gitignore 6 条失效规则（对应已物理删除的 node_modules/prisma/products_backup/products_original_backup/favicon_backup/db 水印备份）+ 部署脚本对齐 ensure_super_admin（原 createsuperuser 不建 AdminProfile）+ deploy_glowisd.ps1 条件提交（无改动不产生空提交）+ 时区回归测试（formatted_time/__str__/CSV 北京时间 + date_hierarchy 分组结论） |
+- **V0.6.0**（2026-09-01）：角色体系精简（后台不再新增 viewer，历史 viewer 可批量转 admin）+ README 四组菜单重写 + CHANGELOG 拆分 + .env.example + 产品图数量口径统一。
 
+> 完整版本历史（V0.1.0–V0.6.0）见 [CHANGELOG.md](CHANGELOG.md)。
+>
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
 ---
@@ -142,7 +128,7 @@ python manage.py runserver
 # 访问 http://localhost:8000（前台）/ http://localhost:8000/admin（后台）
 ```
 
-冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护，共 14 项）：
+冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护，共 18 项）：
 ```bash
 python manage.py test core
 ```
@@ -164,7 +150,7 @@ DJANGO_DEBUG=False
 |------|------|------|
 | 1 | `python manage.py migrate` | 建表 |
 | 2 | `python manage.py seed_data` | 建 10 个产品线 |
-| 3 | `python manage.py import_pdf` | 从 products/fixtures/extracted_products.json 导入 183 张产品图数据（读 JSON 文件，非直接读 PDF） |
+| 3 | `python manage.py import_pdf` | 从 products/fixtures/extracted_products.json 导入 183 条产品记录（含产品图路径；其中 5 条空白记录已于 V0.1.8 删除，现库 182 个产品） |
 | 4 | `python manage.py import_annotations` | 导入件号（R→GW 改写）+ 品名 |
 | 5 | `python manage.py import_product_names` | 导入 160 个 OCR 中英文品名 |
 | 6 | `python manage.py ensure_super_admin` | 创建 glowisd 超管 + AdminProfile |
@@ -185,16 +171,21 @@ DJANGO_DEBUG=False
 
 ## 十、后台使用指南
 
-登录 `/admin`（超管 glowisd），侧边栏三组菜单：
+登录 `/admin`（超管 glowisd），进入后即**首页仪表盘**，侧边栏共**四组菜单 9 项**：
 
-| 菜单 | 可做什么 |
+**首页仪表盘**：6 统计卡片（产品总数 / 未读询价 / 本周新增 / 资料待完善 / 本月询价 / 活跃产品线）+ 最近询价动态 + 待办事项自动检测。
+
+| 入口 | 能做什么 |
 |------|----------|
-| 产品管理 → 产品 | 增删改查；品名(中/英)、P/N 件号、SKU、品牌、重量、质保、描述、图片、所属分类、**首页推荐**（列表页勾选）；列表有图片缩略图 |
+| 产品管理 → 产品 | 产品增删改：品名(中/英)、P/N 件号、SKU、品牌、重量、质保、描述、图片、所属分类；列表含图片缩略图、**首页推荐**勾选、已打水印标记、完整度进度条；**重新打水印** action；上传自动打水印 |
 | 产品管理 → 产品分类 | 产品线增删改 + 排序 |
-| 产品管理 → 首页轮播 | 轮播图上传/排序/启用（含缩略图） |
-| 客户消息 → 询价留言 | 查看/标记已读 |
-| 管理员中心 → 管理员列表 | 新增/编辑管理员；角色彩色标签；状态；上次登录地区；**重置密码** action；编辑页内嵌最近 10 次登录记录 |
-| 管理员中心 → 登录记录 | 4 统计卡片（今日/活跃/失败/异常）；成功✅失败❌+失败原因；**异常登录黄色高亮**；CSV 导出（无 IP） |
+| 产品管理 → 首页轮播 | 轮播图上传 / 排序 / 启用（含缩略图） |
+| 产品管理 → 数据质量检查 | 7 项统计（缺英文品名 / 缺英文描述 / 缺重量 / 缺质保 / 缺品牌 / 未分类 / SKU 重复），每项可点击预筛选问题产品 |
+| 客户消息 → 询价留言 | 五态管理（新 / 已联系 / 已报价 / 已成交 / 已流失）+ 国家统计 + 报价金额 + 流失原因 + 产品关联 |
+| 站点设置 → 站点设置 | 公司信息中英 / 联系方式 / SEO / 水印参数（单例，改一处全站生效） |
+| 管理员中心 → 管理员列表 | 三角色彩色标签 + 账号状态 + 上次登录地区 + **重置密码** action + 编辑页内嵌最近登录记录 |
+| 管理员中心 → 登录记录 | 审计统计卡片 + 异常登录黄色高亮 + CSV 导出（无 IP）+ ⚠️代理标注 |
+| 管理员中心 → 操作日志 | 查看后台操作记录 |
 
 **首页推荐**：产品列表勾选「首页推荐」→ 首页 Featured 区块自动展示（最多 8 个）。
 
@@ -248,10 +239,10 @@ DJANGO_DEBUG=False
 ## 十四、维护清单（每次版本更新）
 
 1. 升版本号（`Va.b.c` 十进制递增）+ commit 以 `V X.Y.Z:` 开头 + 打 tag
-2. 更新本 README（版本历史/特性）
+2. 更新 CHANGELOG.md 版本历史（README 特性/使用指南有变化时同步）
 3. 更新看板「版本迭代流程图」mermaid
 4. 部署腾讯云 + 微信简报（hermes）
 
 ---
 
-*最后更新：V0.5.2（2026-09-01）*
+*最后更新：V0.6.0（2026-09-01）*

@@ -10,8 +10,10 @@
 运行：python manage.py test core
 """
 from datetime import datetime, timezone as dt_timezone
+from io import StringIO
 
 from django.contrib.auth.models import Permission, User
+from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
 
@@ -196,6 +198,27 @@ class AdminPermissionTests(TestCase):
         # 测试环境 REMOTE_ADDR=127.0.0.1（私有 IP）→ 不触发在线解析，region 空、is_proxy False
         self.assertEqual(rec.region, '')
         self.assertFalse(rec.is_proxy)
+
+
+class ConvertViewersToAdminTests(TestCase):
+    """V0.6.0：历史 viewer 批量转 admin 命令（幂等）。"""
+
+    def test_convert_viewers_to_admin_idempotent(self):
+        viewer_user = User.objects.create_user('viewer1', 'v@example.com', 'Pass!123', is_staff=True)
+        viewer_profile = AdminProfile.objects.create(user=viewer_user, role='viewer')
+
+        out = StringIO()
+        call_command('convert_viewers_to_admin', stdout=out)
+        viewer_profile.refresh_from_db()
+        self.assertEqual(viewer_profile.role, 'admin')
+        self.assertIn('已转换 1 条 viewer → admin', out.getvalue())
+
+        out2 = StringIO()
+        call_command('convert_viewers_to_admin', stdout=out2)
+        viewer_profile.refresh_from_db()
+        self.assertEqual(viewer_profile.role, 'admin', '再跑一次不应改变已是 admin 的角色')
+        self.assertIn('已转换 0 条', out2.getvalue())
+        self.assertIn('跳过', out2.getvalue())
 
 
 class TimezoneTests(TestCase):
