@@ -31,7 +31,7 @@ module.exports = {
       name: 'glowisd',
       cwd: '/var/www/glowisd',
       script: 'venv/bin/gunicorn',
-      args: 'config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 120',
+      args: 'config.wsgi:application --bind 127.0.0.1:8000 --workers 1 --timeout 120',
       interpreter: 'none',           // gunicorn 是 venv 里的可执行脚本，不要用 node 解释
       exec_mode: 'fork',
       autorestart: true,
