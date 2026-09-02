@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.6.0'
+SITE_VERSION = '0.6.1'
 
 
 # Quick-start development settings - unsuitable for production
@@ -50,13 +50,42 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # 显式安全响应头（X-Frame-Options 兜底 + CSP）；详见 core/middleware.py 注释——
+    # Django 6.1 下 XFrameOptionsMiddleware 实测不再输出 X-Frame-Options，故自定义兜底，
+    # 并移除原 clickjacking 中间件（由本中间件 + CSP frame-ancestors 'none' 双重防护）。
+    'core.middleware.SecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 后台登录限流 + 首登强制改密：注册在 Session 之后、Authentication 之前（任务书要求）。
+    'core.middleware.LoginRateLimitMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# —— 缓存：登录限流计数/封禁标记用（locmem 单进程够用）——
+# 生产多进程（gunicorn workers）或多机部署时建议换成共享缓存，例如：
+#   CACHES = {'default': {'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+#                         'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1')}}
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'glowisd-login-ratelimit',
+    }
+}
+
+# —— 安全响应头（P2）——
+# 说明：X-Frame-Options 与 CSP 由 core.middleware.SecurityHeadersMiddleware 显式输出
+# （Django 6.1 的 XFrameOptionsMiddleware 实测不生效，见该中间件注释），此处显式配置供
+# SecurityMiddleware 与全局语义统一。
+X_FRAME_OPTIONS = 'DENY'
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = 'same-origin'
+# HSTS：仅生产上 HTTPS 后开启（本地开发默认关）。生产在服务器 .env 里设
+# DJANGO_HSTS_SECONDS=31536000 即启用；本地不设则关闭。
+SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_HSTS_SECONDS', '0'))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_SECONDS > 0
+SECURE_HSTS_PRELOAD = SECURE_HSTS_SECONDS > 0
 
 ROOT_URLCONF = 'config.urls'
 

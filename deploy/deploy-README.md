@@ -83,6 +83,13 @@ curl -I http://127.0.0.1:8080/        # 期望 200
 pm2 status                            # glowisd 应为 online
 ```
 
+> ⚠️ **部署后必须立即改掉默认超管密码（安全红线）**：`manage.py ensure_super_admin` 创建
+> 的 `glowisd` 初始密码 = 用户名（弱口令，第一轮攻防演练实测可被爆破进入后台）。
+> 首次用 `glowisd / glowisd` 登录后台后，系统会**强制跳转到「修改密码」页**（`must_change_password`
+> 机制），按提示改成强密码后才会放行其它后台页面。若因历史账号未触发强制改密，请立即手动：
+> 后台右上角「修改密码」，或 `venv/bin/python manage.py shell -c
+> "from django.contrib.auth.models import User; u=User.objects.get(username='glowisd'); u.set_password('你的强密码'); u.save()"`。
+
 ---
 
 ## 三、日常部署（本地开发机执行，6 步）

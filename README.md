@@ -1,4 +1,4 @@
-# Glowisd 官网（V0.6.0）
+# Glowisd 官网（V0.6.1）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -32,9 +32,10 @@ glowisd-website/
 ├── config/              # Django 配置（settings.py / urls.py / wsgi）
 ├── core/                # 网站核心：首页/工厂/定制/联系视图 + 轮播图 + 登录记录
 │   ├── models.py        #   HeroSlide(轮播图) / LoginRecord(登录记录) / SiteSettings(站点设置单例)
-│   ├── signals.py       #   登录成功/失败信号 → 自动写登录记录
+│   ├── signals.py       #   登录成功/失败信号 → 自动写登录记录 + 限流计数
 │   ├── audit.py         #   审计上下文：UA解析 + IP双引擎地区解析（离线ip2region/在线ip-api.com/代理标注）
-│   ├── tests.py         #   冒烟测试套件（前台5页/双语/询价/权限隔离/超管保护）
+│   ├── middleware.py    #   登录限流 + 首登强制改密 + 安全响应头（CSP/X-Frame-Options）
+│   ├── tests.py         #   冒烟测试套件（前台5页/双语/询价/权限隔离/超管保护/登录限流/安全头）
 │   ├── admin.py         #   轮播图/登录记录/操作日志的后台注册
 │   └── templatetags/    #   后台统计/异常高亮模板标签
 ├── products/            # 产品模块
@@ -110,9 +111,10 @@ glowisd-website/
 
 ## 六、当前版本摘要
 
+- **V0.6.1**（2026-09-03）：安全性开发（P1 后台登录限流 + 首登强制改密、P2 安全响应头 CSP/X-Frame-Options/HSTS 开关、P3 依赖安全审计）。
 - **V0.6.0**（2026-09-01）：角色体系精简（后台不再新增 viewer，历史 viewer 可批量转 admin）+ README 四组菜单重写 + CHANGELOG 拆分 + .env.example + 产品图数量口径统一。
 
-> 完整版本历史（V0.1.0–V0.6.0）见 [CHANGELOG.md](CHANGELOG.md)。
+> 完整版本历史（V0.1.0–V0.6.1）见 [CHANGELOG.md](CHANGELOG.md)。
 >
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -128,7 +130,7 @@ python manage.py runserver
 # 访问 http://localhost:8000（前台）/ http://localhost:8000/admin（后台）
 ```
 
-冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护，共 18 项）：
+冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护 / 登录限流 / 安全响应头 / 首登改密，共 22 项）：
 ```bash
 python manage.py test core
 ```
@@ -202,8 +204,12 @@ DJANGO_DEBUG=False
 
 ## 十二、安全特性
 
+- **后台登录限流**（V0.6.1）：`/admin/login/` 同一 IP 5 分钟窗口内失败满 5 次 → 封禁该 IP 15 分钟（第 6 次起 403）；登录成功自动清除计数；按 IP 与用户名双维度在 Django cache 计数（`core/middleware.py`）
+- **首登强制改密**（V0.6.1）：`AdminProfile.must_change_password=True` 时登录后台后强制跳转「修改密码」页，改密成功后放行（配合 `ensure_super_admin` 新账号自动开启，堵住「初始密码=用户名」弱口令）
+- **安全响应头**（V0.6.1）：`X-Frame-Options: DENY` + `Content-Security-Policy`（`default-src 'self'` + `frame-ancestors 'none'`，simpleui 兼容保留 `'unsafe-inline'`）+ nosniff + `Referrer-Policy: same-origin`；HSTS 生产 HTTPS 后经环境变量 `DJANGO_HSTS_SECONDS` 开启
+- **依赖安全审计**（V0.6.1）：`pip-audit` 扫描 `requirements.txt` 全量锁定依赖，报告见 `deploy/dependency-audit-2026-09.md`（当前无已知 CVE）
 - 询价表单：蜜罐字段（`website`）+ 会话限流（5 分钟 3 次）
-- 生产：`DEBUG=False`、`SECRET_KEY` 环境变量（服务器 .env）、nginx 反代（`$http_host` 保留端口防 CSRF）
+- 生产：`DEBUG=False`、`SECRET_KEY` 环境变量（服务器 .env）、nginx 反代（`$http_host` 保留端口防 CSRF）、`server_tokens off` / `proxy_hide_header Server` 建议（见 `deploy/nginx-glowisd.conf` 注释）
 - 后台：simpleui 登录鉴权；登录审计（成功/失败记录、异常地区高亮）；页面零 IP 显示
 - 超管保护：禁删自己、禁降级最后超管、角色下拉防提权
 
@@ -245,4 +251,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.6.0（2026-09-01）*
+*最后更新：V0.6.1（2026-09-03）*

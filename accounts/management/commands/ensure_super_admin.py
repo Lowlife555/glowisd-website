@@ -53,7 +53,18 @@ class Command(BaseCommand):
         else:
             self.stdout.write(f'{username} 的 AdminProfile 已就绪（role=super_admin）')
 
-        # 3) 为所有 staff 用户补齐 AdminProfile（role 按 is_superuser 映射）
+        # 3) 首登强制改密：新建账号（或新建 profile）时置 must_change_password=True，
+        #    由 core.middleware.LoginRateLimitMiddleware 在后台登录后重定向到改密页。
+        #    这样「初始密码=用户名」的弱口令在第一次人工登录后即被强制改掉（P1 密码策略）。
+        if created or profile_created:
+            if not profile.must_change_password:
+                profile.must_change_password = True
+                profile.save(update_fields=['must_change_password'])
+                self.stdout.write(self.style.SUCCESS(
+                    f'已为 {username} 开启「首登强制改密」（登录后台后将跳转修改密码页）'
+                ))
+
+        # 4) 为所有 staff 用户补齐 AdminProfile（role 按 is_superuser 映射）
         self._backfill_profiles()
 
         self.stdout.write(self.style.SUCCESS('ensure_super_admin 完成'))

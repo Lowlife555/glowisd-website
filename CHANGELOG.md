@@ -1,6 +1,14 @@
 # CHANGELOG
 
-Glowisd 官网版本历史（V0.1.0–V0.6.0，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+Glowisd 官网版本历史（V0.1.0–V0.6.1，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+
+## V0.6.1（2026-09-03）
+
+- P1 后台登录限流：`core/middleware.py::LoginRateLimitMiddleware` 拦截 `/admin/login/` 的 POST，同一 IP 5 分钟窗口内失败满 5 次封禁 15 分钟（第 6 次起 403）；复用 `user_login_failed` 信号按 IP + username 双维度计数，`user_logged_in` 成功登录清除计数
+- P1 首登强制改密：`AdminProfile.must_change_password` 在登录流程真正生效——认证后重定向到改密页、改密成功清除标记；`ensure_super_admin` 新账号自动开启该标记，堵住「初始密码=用户名」弱口令
+- P2 安全响应头：显式 `X-Frame-Options: DENY` + `Content-Security-Policy`（`frame-ancestors 'none'`，simpleui 兼容保留 `'unsafe-inline'`）+ nosniff + `Referrer-Policy: same-origin`；HSTS 生产环境变量开关；nginx 注释建议 `server_tokens off` / `proxy_hide_header Server`
+- P3 依赖安全审计：`pip-audit` 扫描 requirements.txt 全量锁定依赖，无已知 CVE，报告见 `deploy/dependency-audit-2026-09.md`
+- 测试：core 测试套件 18 → 22 项（新增登录限流/成功清除计数/安全响应头/首登改密）
 
 ## V0.6.0（2026-09-01）
 

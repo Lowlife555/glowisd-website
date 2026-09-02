@@ -13,6 +13,7 @@ from datetime import datetime, timezone as dt_timezone
 from io import StringIO
 
 from django.contrib.auth.models import Permission, User
+from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
 from django.urls import reverse
@@ -198,6 +199,77 @@ class AdminPermissionTests(TestCase):
         # 测试环境 REMOTE_ADDR=127.0.0.1（私有 IP）→ 不触发在线解析，region 空、is_proxy False
         self.assertEqual(rec.region, '')
         self.assertFalse(rec.is_proxy)
+
+
+class LoginRateLimitTests(TestCase):
+    """P1：后台登录限流（IP 失败满 5 次封禁 15 分钟）+ 安全响应头 + 首登强制改密。"""
+
+    def setUp(self):
+        cache.clear()
+
+    def _create_admin(self, username='rluser', password='RightPass123'):
+        user = User.objects.create_user(
+            username, f'{username}@example.com', password, is_staff=True, is_superuser=True,
+        )
+        AdminProfile.objects.create(user=user, role='super_admin')
+        return user
+
+    def test_sixth_failed_login_returns_403(self):
+        """连续 5 次失败后，第 6 次 POST /admin/login/ 应被限流返回 403。"""
+        self._create_admin()
+        for i in range(5):
+            resp = self.client.post('/admin/login/', {'username': 'rluser', 'password': f'bad{i}'})
+            self.assertEqual(resp.status_code, 200, f'第 {i + 1} 次失败应仍返回登录页 200')
+        resp = self.client.post('/admin/login/', {'username': 'rluser', 'password': 'bad5'})
+        self.assertEqual(resp.status_code, 403, '第 6 次失败应触发限流 403')
+
+    def test_successful_login_clears_count(self):
+        """4 次失败后正确密码登录成功（清计数），后续失败不再被封禁。"""
+        self._create_admin()
+        for i in range(4):
+            self.client.post('/admin/login/', {'username': 'rluser', 'password': f'bad{i}'})
+        # 第 5 次用正确密码登录成功 → 清除计数（302 跳转后台）
+        resp = self.client.post('/admin/login/', {'username': 'rluser', 'password': 'RightPass123'})
+        self.assertEqual(resp.status_code, 302, '正确密码应登录成功')
+        # 清计数后：再失败也不会因累计到 5 次而被封（只累计到 1）
+        resp = self.client.post('/admin/login/', {'username': 'rluser', 'password': 'bad-again'})
+        self.assertEqual(resp.status_code, 200, '成功登录后失败计数应已清零，不应 403')
+
+    def test_security_headers_on_home_and_admin_login(self):
+        """前台首页与 /admin/login/ 响应都应含安全响应头。"""
+        for url in ('/', '/admin/login/'):
+            with self.subTest(url=url):
+                resp = self.client.get(url)
+                self.assertEqual(resp.headers.get('X-Frame-Options'), 'DENY')
+                self.assertEqual(resp.headers.get('X-Content-Type-Options'), 'nosniff')
+                self.assertEqual(resp.headers.get('Referrer-Policy'), 'same-origin')
+                csp = resp.headers.get('Content-Security-Policy', '')
+                self.assertIn("default-src 'self'", csp)
+                self.assertIn("frame-ancestors 'none'", csp)
+
+    def test_must_change_password_redirects_and_clears(self):
+        """首登强制改密：must_change_password=True 时后台重定向改密页，改密后清除标记。"""
+        user = self._create_admin('forced', 'OldPass123')
+        profile = user.admin_profile
+        profile.must_change_password = True
+        profile.save(update_fields=['must_change_password'])
+
+        self.client.force_login(user)
+        # 访问后台任意页 → 重定向到改密页
+        resp = self.client.get('/admin/')
+        self.assertRedirects(resp, reverse('admin:password_change'), fetch_redirect_response=False)
+        # 改密页/完成页不重定向（避免死循环）
+        self.assertEqual(self.client.get(reverse('admin:password_change')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('admin:password_change_done')).status_code, 200)
+        # 提交改密成功（302 → password_change_done）→ 清除标记
+        resp = self.client.post(reverse('admin:password_change'), {
+            'old_password': 'OldPass123',
+            'new_password1': 'NewPass456!',
+            'new_password2': 'NewPass456!',
+        })
+        self.assertEqual(resp.status_code, 302)
+        profile.refresh_from_db()
+        self.assertFalse(profile.must_change_password, '改密成功后应清除 must_change_password')
 
 
 class ConvertViewersToAdminTests(TestCase):
