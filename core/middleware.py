@@ -29,10 +29,13 @@ FAIL_WINDOW = 300        # 5 分钟失败计数窗口
 FAIL_LIMIT = 5           # 同一 IP 失败达到 5 次即封禁
 BLOCK_DURATION = 900     # 封禁 15 分钟
 
-# CSP：simpleui 后台 + 前台 Vue 均有内联脚本/样式，必须保留 'unsafe-inline'（兼容妥协）
+# CSP：simpleui 后台 + 前台 Vue 均有内联脚本/样式，必须保留 'unsafe-inline'（兼容妥协）；
+# 'unsafe-eval'：vue.global.prod.js 是含编译器的完整构建（V0.6.4 实测缺它会抛
+# EvalError → Vue 挂载失败 → 语言切换按钮/询价表单插值/simpleui 登录表单全部不渲染），
+# 运行时字符串模板编译（new Function）必需；本项目无用户输入进脚本执行路径，风险可控。
 CSP_VALUE = (
     "default-src 'self'; "
-    "script-src 'self' 'unsafe-inline'; "
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
     "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data:; "
     "frame-ancestors 'none'"

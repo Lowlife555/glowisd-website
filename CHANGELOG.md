@@ -1,6 +1,19 @@
 # CHANGELOG
 
-Glowisd 官网版本历史（V0.1.0–V0.6.1，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+Glowisd 官网版本历史（V0.1.0–V0.6.4，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+
+## V0.6.4（2026-09-03）
+
+- **修复 CSP 拦截 Vue 运行时报错**：V0.6.1 的 CSP `script-src 'self' 'unsafe-inline'` 缺少 `'unsafe-eval'`，vue.global.prod.js（含编译器完整构建）运行时编译字符串模板需 `new Function`，被 CSP 拦截抛 `Uncaught EvalError` → Vue 挂载失败，导致前台语言切换按钮消失、询价表单 `{{ }}` 插值未渲染、后台 simpleui 登录表单（el-input）空白。修复：`script-src` 增加 `'unsafe-eval'`（本项目无用户输入进脚本执行路径，风险可控）
+- 顺手修 `/favicon.ico` 404：`config/urls.py` 加重定向到 `/static/favicon.ico`，static 根补 favicon.ico 文件
+
+## V0.6.3（2026-09-03）
+
+- ALLOWED_HOSTS 常驻放行 localhost/127.0.0.1（修复 V0.6.2 收窄后服务器本地健康检查 400），testserver 仅 DEBUG 放行
+
+## V0.6.2（2026-09-03）
+
+- glowisd.cn 域名上线：nginx 域名块 80/443 + Let's Encrypt 证书 + ALLOWED_HOSTS 收窄 + SECURE_PROXY_SSL_HEADER/CSRF_TRUSTED_ORIGINS；新增 deploy/nginx-glowisd-domain.conf
 
 ## V0.6.1（2026-09-03）
 

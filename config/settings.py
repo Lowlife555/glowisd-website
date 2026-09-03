@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.6.3'
+SITE_VERSION = '0.6.4'
 
 
 # Quick-start development settings - unsuitable for production
