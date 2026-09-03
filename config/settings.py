@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.6.1'
+SITE_VERSION = '0.6.2'
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,7 +30,17 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-@m%(nw_7@4k$!9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']
+# V0.6.2 域名上线: 收窄为 glowisd.cn + 子域 + 服务器 IP(8080 老入口仍可用)
+ALLOWED_HOSTS = ['glowisd.cn', '.glowisd.cn', '43.135.22.140']
+# 本地开发/测试放行(Django test client 默认 Host=testserver)
+if DEBUG:
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1', 'testserver']
+
+# nginx 443 反代已带 X-Forwarded-Proto: https → Django is_secure() 正确(HTTPS 下 CSRF/session 正常)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# HTTPS 域名 CSRF 来源白名单(域名块 Host=$host 与 Origin 一致,此处双保险)
+CSRF_TRUSTED_ORIGINS = ['https://glowisd.cn', 'https://www.glowisd.cn']
 
 
 # Application definition
