@@ -1,8 +1,9 @@
 import time
 
 from django.db.models import Count
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.urls import reverse
 
 from products.models import Category, Product
 
@@ -64,6 +65,13 @@ def home(request):
         'category_count': len(cats),
         'product_count': Product.objects.count(),
     })
+
+
+def robots(request):
+    """robots.txt：允许全部爬虫 + 声明 Sitemap 地址（SEO 收录入口）。"""
+    sitemap_url = request.build_absolute_uri(reverse('django.contrib.sitemaps.views.sitemap'))
+    content = 'User-agent: *\nAllow: /\nSitemap: %s\n' % sitemap_url
+    return HttpResponse(content, content_type='text/plain')
 
 
 def factory(request):
