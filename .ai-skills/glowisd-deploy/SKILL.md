@@ -45,3 +45,14 @@ description: "Glowisd 腾讯云部署经验与踩坑记录。Use when deploying 
 - [ ] 后台 `/admin` 302 跳登录
 - [ ] 手机流量(非本 WiFi)可访问
 - [ ] 版本号按 glowisd-versioning 规则打 tag
+
+## 6. 域名 + HTTPS 上线(2026-09-03 V0.6.2 验证)
+
+流程:域名 A 记录(境内解析用 DNSPod/腾讯云自带)→ nginx 新增域名 server 块(80=ACME 挑战+301、443=反代 gunicorn,`server_name` 精确匹配与原 80 默认站共存)→ `certbot certonly --webroot -w /var/www/certbot -d <域名> -d www.<域名>` → reload。443 上 `Host $host`、`X-Forwarded-Proto $scheme`,Django 加 `SECURE_PROXY_SSL_HEADER`;ALLOWED_HOSTS 收窄为域名+IP,DEBUG 时放行 localhost/testserver。
+
+### 6.1 踩坑(全部实际踩过)
+1. **预置占位证书目录 → certbot 报 "live directory exists for <域名>" 失败**:先签发,或签发前 `rm -rf /etc/letsencrypt/live/<域名>`(运行中 nginx 不受文件删除影响,reload 才重读)
+2. **新增 80 域名块会抢原隐式默认站(IELTS)**:原默认站必须显式 `listen 80 default_server`(本案例 ielts.conf);reload 有优雅窗口期,别立刻断言回归
+3. **certbot renew 非交互自带随机延迟(最长 ~8h)**:演练加 `--no-random-sleep-on-renew`
+4. **腾讯云轻量防火墙"添加规则"可能整体替换规则集**:改完必须核对完整列表(曾误删 22/80/8080 只剩 443,SSH+IELTS+8080 全断)
+5. 证书续期:certs 放 `/var/www/certbot` + 80 块 acme location 常驻 → certbot.timer 自动续期免维护
