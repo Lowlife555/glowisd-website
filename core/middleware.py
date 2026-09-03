@@ -46,14 +46,18 @@ CSP_VALUE = (
 
 
 def client_ip(request):
-    """从请求取客户端 IP。
+    """从请求取客户端真实 IP。
 
-    信任模型：本函数取 X-Forwarded-For 首个值，前提是前端反代必须用【覆盖模式】
-    注入 XFF（deploy/nginx-glowisd.conf 使用 `proxy_set_header X-Forwarded-For $remote_addr;`）。
-    若用追加模式（$proxy_add_x_forwarded_for），客户端伪造的 XFF 会被拼在最前，
-    攻击者每发一次请求换一个假 IP 即可绕过登录限流——部署时务必核对 nginx 配置。
-    直连（无反代）时走 REMOTE_ADDR。
+    优先级（V0.7.2 Cloudflare 接入适配）：
+    1. CF-Connecting-IP：Cloudflare 代理注入的真实客户端 IP（CF 保证不可伪造），
+       走 Cloudflare 的流量永远取它，避免所有访客都显示成 CF 节点 IP、登录限流失效；
+    2. X-Forwarded-For 首个值：无反代/直连场景（nginx 覆盖模式注入 $remote_addr，
+       客户端伪造值已被覆盖，见 deploy/nginx-glowisd.conf 注释）；
+    3. REMOTE_ADDR 兜底。
     """
+    cf_ip = request.META.get('HTTP_CF_CONNECTING_IP', '').strip()
+    if cf_ip:
+        return cf_ip
     xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
     return xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR', '')
 

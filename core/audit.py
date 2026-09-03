@@ -199,9 +199,14 @@ def extract_request_context(request):
             'region': '',
             'is_proxy': False,
         }
-    # 生产环境经 nginx 反代，真实 IP 在 X-Forwarded-For 头
-    xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
-    ip = xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR', '')
+    # 真实 IP 提取：Cloudflare 代理时优先 CF-Connecting-IP（真实客户端 IP），
+    # 否则 nginx 反代注入的 X-Forwarded-For 首个值，最后 REMOTE_ADDR 兜底
+    cf_ip = request.META.get('HTTP_CF_CONNECTING_IP', '').strip()
+    if cf_ip:
+        ip = cf_ip
+    else:
+        xff = request.META.get('HTTP_X_FORWARDED_FOR', '')
+        ip = xff.split(',')[0].strip() if xff else request.META.get('REMOTE_ADDR', '')
     raw_ua = request.META.get('HTTP_USER_AGENT', '')[:500]
 
     device_type, os_name, browser = _parse_user_agent(raw_ua)
