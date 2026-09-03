@@ -13,6 +13,10 @@ from django.utils.safestring import mark_safe
 
 from .models import HeroSlide, LoginRecord, SiteSettings
 
+# 后台浏览器标签页标题（V0.7.1）
+admin.site.site_title = 'Glowisd站点管理员'
+admin.site.site_header = 'Glowisd 站点管理'
+
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):
