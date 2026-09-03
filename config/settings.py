@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.6.2'
+SITE_VERSION = '0.6.3'
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,11 +30,12 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-@m%(nw_7@4k$!9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-# V0.6.2 域名上线: 收窄为 glowisd.cn + 子域 + 服务器 IP(8080 老入口仍可用)
-ALLOWED_HOSTS = ['glowisd.cn', '.glowisd.cn', '43.135.22.140']
-# 本地开发/测试放行(Django test client 默认 Host=testserver)
+# V0.6.3 域名上线修正: 收窄为 glowisd.cn + 子域 + 服务器 IP(8080 老入口仍可用)
+# localhost/127.0.0.1 常驻放行: 服务器本地健康检查(curl 127.0.0.1:8080)与部署脚本依赖,DEBUG=False 也需可用
+ALLOWED_HOSTS = ['glowisd.cn', '.glowisd.cn', '43.135.22.140', 'localhost', '127.0.0.1']
+# 本地测试放行(Django test client 默认 Host=testserver)
 if DEBUG:
-    ALLOWED_HOSTS += ['localhost', '127.0.0.1', 'testserver']
+    ALLOWED_HOSTS += ['testserver']
 
 # nginx 443 反代已带 X-Forwarded-Proto: https → Django is_secure() 正确(HTTPS 下 CSRF/session 正常)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
