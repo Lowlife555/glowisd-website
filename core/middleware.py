@@ -33,12 +33,15 @@ BLOCK_DURATION = 900     # 封禁 15 分钟
 # 'unsafe-eval'：vue.global.prod.js 是含编译器的完整构建（V0.6.4 实测缺它会抛
 # EvalError → Vue 挂载失败 → 语言切换按钮/询价表单插值/simpleui 登录表单全部不渲染），
 # 运行时字符串模板编译（new Function）必需；本项目无用户输入进脚本执行路径，风险可控。
+# frame-ancestors 'self'：V0.6.5 从 'none' 放宽——simpleui 后台左侧菜单 + 右侧 iframe
+# 加载同源功能页，'none' 会拦掉同源 iframe 导致后台功能全部失效；'self' 仍拒绝跨源
+# 嵌入（防点击劫持目标不变）。
 CSP_VALUE = (
     "default-src 'self'; "
     "script-src 'self' 'unsafe-inline' 'unsafe-eval'; "
     "style-src 'self' 'unsafe-inline'; "
     "img-src 'self' data:; "
-    "frame-ancestors 'none'"
+    "frame-ancestors 'self'"
 )
 
 
@@ -105,7 +108,9 @@ class SecurityHeadersMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        response.headers.setdefault('X-Frame-Options', 'DENY')
+        # SAMEORIGIN：拒绝跨源 iframe 嵌入（防点击劫持），放行同源嵌入——
+        # simpleui 后台首页以同源 iframe 加载各功能页，DENY 会把后台功能全拦掉（V0.6.5）
+        response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
         response.headers.setdefault('Content-Security-Policy', CSP_VALUE)
         return response
 

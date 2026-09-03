@@ -236,16 +236,16 @@ class LoginRateLimitTests(TestCase):
         self.assertEqual(resp.status_code, 200, '成功登录后失败计数应已清零，不应 403')
 
     def test_security_headers_on_home_and_admin_login(self):
-        """前台首页与 /admin/login/ 响应都应含安全响应头。"""
+        """前台首页与 /admin/login/ 响应都应含安全响应头（同源嵌入放行以兼容 simpleui iframe）。"""
         for url in ('/', '/admin/login/'):
             with self.subTest(url=url):
                 resp = self.client.get(url)
-                self.assertEqual(resp.headers.get('X-Frame-Options'), 'DENY')
+                self.assertEqual(resp.headers.get('X-Frame-Options'), 'SAMEORIGIN')
                 self.assertEqual(resp.headers.get('X-Content-Type-Options'), 'nosniff')
                 self.assertEqual(resp.headers.get('Referrer-Policy'), 'same-origin')
                 csp = resp.headers.get('Content-Security-Policy', '')
                 self.assertIn("default-src 'self'", csp)
-                self.assertIn("frame-ancestors 'none'", csp)
+                self.assertIn("frame-ancestors 'self'", csp)
 
     def test_must_change_password_redirects_and_clears(self):
         """首登强制改密：must_change_password=True 时后台重定向改密页，改密后清除标记。"""

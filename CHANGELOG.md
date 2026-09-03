@@ -1,6 +1,10 @@
 # CHANGELOG
 
-Glowisd 官网版本历史（V0.1.0–V0.6.4，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+Glowisd 官网版本历史（V0.1.0–V0.6.5，按日期倒序）。版本规则：`Va.b.c` 十进制递增（a=重构、b=新功能、c=修复），每次需求变更或修复必升版本。
+
+## V0.6.5（2026-09-03）
+
+- **修复后台功能全部失效**：V0.6.1 的 CSP `frame-ancestors 'none'` + `X-Frame-Options: DENY` 拒绝一切 iframe 嵌入，而 simpleui 后台架构 = 左侧菜单 + 右侧同源 iframe 加载功能页 → 后台所有功能页被拦（console：Framing 'https://glowisd.cn/' violates CSP frame-ancestors 'none'）。修复：`frame-ancestors 'self'` + `X-Frame-Options: SAMEORIGIN`（同源嵌入放行，跨源嵌入依旧拒绝，防点击劫持目标不变）
 
 ## V0.6.4（2026-09-03）
 
