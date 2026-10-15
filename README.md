@@ -1,4 +1,264 @@
-﻿# Glowisd 官网（V0.7.2）
+# Glowisd Website (V0.7.2)
+
+**Changzhou Glowisd Science And Technology Co.,Ltd** official website —— a manufacturer of electronic control systems, sensors, cables and accessories for construction machinery (pavers).
+
+Clients served: Chinese mainland + Middle East / Central Asia / Europe. Bilingual (Chinese/English), responsive (mobile / tablet / desktop).
+
+- Live site: http://43.135.22.140:8080
+- Admin panel: http://43.135.22.140:8080/admin
+- Code repository: GitHub private repository `Lowlife555/glowisd-website`
+
+---
+
+## 1. Tech Stack
+
+| Layer | Technology | Notes |
+|-------|-----------|-------|
+| Backend framework | Django 6.1 | Python Web framework |
+| Admin UI | django-simpleui | Chinese visual admin (menus/themes deeply customizable) |
+| Frontend | Vue 3 (CDN global build) | Language switching / mobile navigation / inquiry form (no build step) |
+| Database | SQLite | Single file, no separate database service required |
+| Image processing | Pillow | Product image compression/cropping |
+| UA parsing | user-agents | Login audit: parse device / operating system / browser |
+| IP geolocation | py-ip2region (offline) | Login audit: IP → region (data file `core/data/ip2region_v4.xdb`, no external API dependency) |
+| Production deployment | gunicorn + nginx + pm2 | Tencent Cloud, port 8080 |
+
+---
+
+## 2. Project Architecture
+
+```
+glowisd-website/
+├── config/              # Django configuration (settings.py / urls.py / wsgi)
+├── core/                # Website core: home/factory/custom/contact views + hero slides + login records
+│   ├── models.py        #   HeroSlide (carousel) / LoginRecord (login records) / SiteSettings (site settings singleton)
+│   ├── signals.py       #   Login success/failure signals → automatically write a login record + rate-limit counting
+│   ├── audit.py         #   Audit context: UA parsing + dual-engine IP region resolution (offline ip2region / online ip-api.com / proxy flagging)
+│   ├── middleware.py    #   Login rate limiting + forced password change on first login + security response headers (CSP/X-Frame-Options)
+│   ├── tests.py         #   Smoke test suite (5 public pages / bilingual / inquiry / permission isolation / super-admin protection / login rate limiting / security headers)
+│   ├── admin.py         #   Admin registration for carousel / login records / operation logs
+│   └── templatetags/    #   Admin statistics / anomaly-highlighting template tags
+├── products/            # Product module
+│   ├── models.py        #   Category (product line) / Product (product) / ContactMessage (inquiry)
+│   ├── admin.py         #   Product/category/inquiry admin (image thumbnails, "featured on home" checkbox)
+│   ├── management/      #   Data commands: seed_data / import_pdf / import_annotations / import_product_names
+│   ├── fixtures/        #   PDF-extracted data + product-name OCR data (JSON)
+│   └── utils/watermark.py # Product image auto-watermark helper (called from the save hook)
+├── accounts/            # Admin role system (added in V0.3.4)
+│   ├── models.py        #   AdminProfile (OneToOne User: role / phone / must_change_password)
+│   ├── admin.py         #   CustomUserAdmin (role management / super-admin protection / edit page redesign / reset-password action)
+│   ├── utils.py         #   is_super_admin(user) check
+│   ├── management/      #   ensure_super_admin (initialise the super admin + backfill roles)
+│   └── templates/       #   Admin edit page templates (with recent login records embedded)
+├── templates/           # Public HTML (base.html + 4 core pages + products list/detail + admin/ overrides)
+├── static/              # Static assets (css/style.css + js/app.js + Vue global build + logo/favicon)
+├── media/               # Runtime uploads (products/ 183 product images + hero/ carousel images)
+├── deploy/              # Deployment scripts (deploy_glowisd.ps1 / deploy_init.sh / nginx / pm2 ecosystem)
+├── scripts/             # Utility scripts (one-off historical scripts archived in scripts/archive/)
+└── manage.py
+```
+
+**Responsibility boundaries of the four apps** (read this first when an AI takes over):
+- `core` = public website pages + carousel + **login records (audit)**
+- `products` = products/categories/inquiries (public pages + admin management)
+- `accounts` = **admin role system** (AdminProfile + user-management admin)
+- `config` = Django global configuration (including the SIMPLEUI_CONFIG menu)
+
+---
+
+## 3. Data Models (core)
+
+| Model | Key fields | Notes |
+|-------|-----------|-------|
+| `products.Category` | name/name_en/slug/sort_order | Product line (sensors/cables/handles/displays/junction boxes/screed arms/circuit boards/membrane switches/kits/uncategorized) |
+| `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked | Product (182 items: 178 with images + 4 without, complete Chinese and English names); `featured=True` shows it in the home page recommendations; `is_watermarked` marks the image as already watermarked (applied automatically by the save hook + re-applied when the image is replaced) |
+| `products.ContactMessage` | name/company/email/phone/country/category/message/is_read/status(new/contacted/quoted/won/lost)/quote_amount/lost_reason/inquired_product(FK)/source_page | Public inquiry messages (follow-up status management + automatic product association + source page recording) |
+| `core.HeroSlide` | image/title_zh/title_en/sort_order/is_active | Home page carousel (uploaded from the admin) |
+| `core.LoginRecord` | user/username_attempted/login_time/ip_address(stored only, never displayed)/region/is_proxy(suspected proxy egress)/device_type/os_name/browser/user_agent(stored only)/success/fail_reason | Login audit (both successes and failures are recorded; zero IP display on pages) |
+| `accounts.AdminProfile` | user(OneToOne)/role/phone/must_change_password/created_at | Admin roles: super_admin / admin regular / viewer read-only |
+| `core.SiteSettings` | company_name/address/phone/email/whatsapp/factory_area/moq/about/seo(Chinese & English)/watermark_enabled/watermark_width_pct/watermark_opacity/watermark_margin | Site settings singleton (change it once in the admin and it applies site-wide; watermark parameters are configurable) |
+
+---
+
+## 4. Permission System
+
+| Role | Permissions |
+|------|-------------|
+| **Super admin** (super_admin, e.g. glowisd) | Everything: products/categories/inquiries/carousel + admin list + login records + operation logs; can reset other people's passwords |
+| **Regular admin** (admin) | Products/categories/inquiries/carousel management; **cannot see** user management and the audit module (hidden from the sidebar + 403 on direct access) |
+| **Read-only admin** (viewer) | Removed (no longer created from V0.6.0 onwards, historical viewers were converted to admin in bulk) |
+
+**Super-admin protection rules**: deleting yourself is forbidden; demoting/deleting the last super admin is forbidden; when editing someone else the role dropdown only offers "regular" (you cannot promote others to super admin); newly added admins default to the regular role.
+
+---
+
+## 5. Features
+
+**Public site (bilingual Chinese/English, 5 pages)**:
+- Home: hero carousel + company name (large, gold) + big headline + product line categories + featured products block (Featured) + shop by product line + advantages + factory/customization CTA + company profile
+- Product list: category filtering + SKU/P/N search + product cards (images displayed in full)
+- Product detail: parameter table (SKU/P/N/brand/weight/warranty/category) + description + related products + inquiry entry
+- Factory / Customization / Contact (inquiry form: honeypot + session rate limiting)
+
+**Admin (simpleui in Chinese, grouped menu)**:
+- Home dashboard: 6 statistic cards (total products / unread inquiries in red and clickable / added this week / profiles to complete / inquiries this month / active product lines) + recent inquiry activity + automatic to-do detection
+- Product management: products (thumbnails / part numbers / "featured on home" checkbox / watermarked flag / re-watermark action + automatic watermarking on upload + completeness progress bar on the edit page), product categories, home carousel, **data quality check** (7 clickable statistics with pre-filtering)
+- Customer messages: inquiries (five-state colored status labels / filtering / change status directly from the list / quote amount / lost reason / country statistics panel)
+- Site settings: company info in Chinese and English / contact details / SEO / watermark parameters (singleton, synced to the public site)
+- Admin center (super admin only): admin list (colored role labels / status / region of last login / reset password / last 10 login records embedded in the edit page), login records (4 statistic cards + yellow highlighting for anomalous logins + CSV export + failure reasons), operation logs
+
+---
+
+## 6. Current Version Summary
+
+- **V0.7.2** (2026-09-03): Fixed CSP blocking the Vue runtime (`script-src` now includes `'unsafe-eval'`, restoring the language switching button / inquiry form / admin login form) + fixed the `/favicon.ico` 404.
+- **V0.6.3** (2026-09-03): ALLOWED_HOSTS permanently allows localhost/127.0.0.1 (fixes server-local health checks).
+- **V0.6.2** (2026-09-03): glowisd.cn domain + HTTPS launched (Let's Encrypt certificate, nginx domain block, ALLOWED_HOSTS narrowed).
+- **V0.6.1** (2026-09-03): Security hardening (P1 admin login rate limiting + forced password change on first login, P2 security response headers CSP/X-Frame-Options/HSTS switch, P3 dependency security audit).
+- **V0.6.0** (2026-09-01): Role system simplified (no new viewers from the admin, historical viewers can be converted to admin in bulk) + README rewritten around four menu groups + CHANGELOG split out + .env.example + unified product-image count convention.
+
+> Full version history (V0.1.0–V0.7.2) is in [CHANGELOG.md](CHANGELOG.md).
+>
+> Version rules: `Va.b.c` increments in decimal, a=refactor, b=new feature, c=fix; every requirement change or fix must bump the version, commits start with `V X.Y.Z:` and are tagged.
+
+---
+
+## 7. Quick Start (local development)
+
+```bash
+pip install -r requirements.txt      # all dependencies (Django/simpleui/Pillow/user-agents/py-ip2region/gunicorn, versions pinned)
+python manage.py migrate
+python manage.py ensure_super_admin    # initialise the glowisd super admin + backfill AdminProfile
+python manage.py runserver
+# visit http://localhost:8000 (public) / http://localhost:8000/admin (admin)
+```
+
+Smoke tests (5 bilingual public pages / inquiry honeypot rate limiting / admin permission isolation / super-admin protection / login rate limiting / security response headers / forced password change on first login, 22 items in total):
+```bash
+python manage.py test core
+```
+> The tests use a separate test database and will not touch `db.sqlite3` or any product data.
+
+Environment variables (required in production):
+```bash
+DJANGO_SECRET_KEY=<random key>   # in production read from /var/www/glowisd/.env on the server
+DJANGO_DEBUG=False
+```
+
+---
+
+## 8. Data Initialization (required reading for a fresh deployment)
+
+> The production database `db.sqlite3` is gitignored; for a fresh deployment rebuild it in order:
+
+| Step | Command | Purpose |
+|------|---------|---------|
+| 1 | `python manage.py migrate` | Create tables |
+| 2 | `python manage.py seed_data` | Create the 10 product lines |
+| 3 | `python manage.py import_pdf` | Import 183 product records from products/fixtures/extracted_products.json (including product image paths; 5 blank records were deleted in V0.1.8, so the current database holds 182 products) |
+| 4 | `python manage.py import_annotations` | Import part numbers (R→GW rewrite) + product names |
+| 5 | `python manage.py import_product_names` | Import 160 OCR Chinese/English product names |
+| 6 | `python manage.py ensure_super_admin` | Create the glowisd super admin + AdminProfile |
+
+**ip2region data file**: `core/data/ip2region_v4.xdb` (about 11MB, gitignored, not in the repository). The download URL is in the comments of `core/signals.py`; when it is missing the login region column is simply empty (the code degrades gracefully and does not affect login).
+
+---
+
+## 9. Deployment (Tencent Cloud)
+
+- Server: 43.135.22.140 (Ubuntu, code in `/var/www/glowisd`, venv)
+- Processes: gunicorn (managed by pm2, 127.0.0.1:8000) + nginx (0.0.0.0:8080)
+- First deployment: `deploy/deploy_init.sh` (run on the server: clone the private repository + ssh key + venv + migrate + seed + nginx/pm2)
+- Routine updates: locally run `deploy/deploy_glowisd.ps1` (push → pull → pip → migrate → collectstatic → pm2 restart → health)
+- Secret: `SECRET_KEY` is read from `/var/www/glowisd/.env` on the server (never committed to git)
+
+---
+
+## 10. Admin User Guide
+
+Log in at `/admin` (super admin glowisd) and you land on the **home dashboard**; the sidebar has **four menu groups and 9 items**:
+
+**Home dashboard**: 6 statistic cards (total products / unread inquiries / added this week / profiles to complete / inquiries this month / active product lines) + recent inquiry activity + automatic to-do detection.
+
+| Entry | What it does |
+|-------|--------------|
+| Product management → Products | Create/edit/delete products: name (Chinese/English), P/N part number, SKU, brand, weight, warranty, description, image, category; the list shows image thumbnails, a **featured on home** checkbox, a watermarked flag and a completeness progress bar; a **re-watermark** action; automatic watermarking on upload |
+| Product management → Product categories | Create/edit/delete and order product lines |
+| Product management → Home carousel | Upload / order / enable carousel images (with thumbnails) |
+| Product management → Data quality check | 7 statistics (missing English product name / missing English description / missing weight / missing warranty / missing brand / uncategorized / duplicate SKU), each clickable to pre-filter the problematic products |
+| Customer messages → Inquiries | Five-state management (new / contacted / quoted / won / lost) + country statistics + quote amount + lost reason + product association |
+| Site settings → Site settings | Company info in Chinese and English / contact details / SEO / watermark parameters (singleton, one change applies site-wide) |
+| Admin center → Admin list | Three-role colored labels + account status + region of last login + **reset password** action + the most recent login records embedded in the edit page |
+| Admin center → Login records | Audit statistic cards + yellow highlighting for anomalous logins + CSV export (no IP) + ⚠️ proxy flagging |
+| Admin center → Operation logs | View admin operation records |
+
+**Featured on home**: tick "Featured on home" in the product list → the home page Featured block displays it automatically (8 at most).
+
+---
+
+## 11. Chinese/English Bilingual Mechanism
+
+- Language detection: the `lang` cookie (manually switched by the user) takes priority, then the browser's `Accept-Language`
+- Template pattern: `{% if lang == 'en' %}English{% else %}中文{% endif %}`
+- Product names / category names automatically use `part_name_en` / `name_en` according to the current language
+- The English site has zero hard-coded Chinese anywhere (only the language switcher "中 | EN")
+
+---
+
+## 12. Security Features
+
+- **Admin login rate limiting** (V0.6.1): for `/admin/login/`, once the same IP reaches 5 failures within a 5-minute window → that IP is banned for 15 minutes (403 from the 6th attempt onwards); a successful login clears the counter automatically; counted in the Django cache by both IP and username (`core/middleware.py`)
+- **Forced password change on first login** (V0.6.1): when `AdminProfile.must_change_password=True`, logging into the admin forces a redirect to the "change password" page and access is granted after a successful change (enabled automatically for new accounts created by `ensure_super_admin`, closing the "initial password = username" weak-credential hole)
+- **Security response headers** (V0.6.1): `X-Frame-Options: DENY` + `Content-Security-Policy` (`default-src 'self'` + `frame-ancestors 'none'`, with `'unsafe-inline'` kept for simpleui compatibility) + nosniff + `Referrer-Policy: same-origin`; in production HSTS is enabled through the `DJANGO_HSTS_SECONDS` environment variable once HTTPS is in place
+- **Dependency security audit** (V0.6.1): `pip-audit` scanned every pinned dependency in `requirements.txt`; the report is in `deploy/dependency-audit-2026-09.md` (no known CVEs at present)
+- Inquiry form: honeypot field (`website`) + session rate limiting (3 times per 5 minutes)
+- Production: `DEBUG=False`, `SECRET_KEY` from an environment variable (server .env), nginx reverse proxy (`$http_host` preserves the port to prevent CSRF), recommended `server_tokens off` / `proxy_hide_header Server` (see the comments in `deploy/nginx-glowisd.conf`)
+- Admin: simpleui login authentication; login audit (success/failure records, anomalous regions highlighted); zero IP display on pages
+- Super-admin protection: cannot delete yourself, cannot demote the last super admin, role dropdown prevents privilege escalation
+
+---
+
+## 13. AI Collaboration Architecture (multi-agent division of labour)
+
+This project is developed by 4 AI agents working together; understand the division of labour when taking over:
+
+| Agent | Responsibility |
+|-------|----------------|
+| **dsh** (commander) | Break down tasks → delegate → coordinate → review → documentation. Does not write core code directly |
+| **Claude Code** | Multi-file core coding (Django admin/templates/feature modules) |
+| **opencode** | Batch scripts / data processing / **image recognition** (vision model deepseek-v4-flash-vision-exp) |
+| **hermes** | Independent acceptance testing / progress monitoring / WeChat push |
+
+**Collaboration rules** (required reading for a new agent taking over):
+- Single source of truth: `进度看板.md` (workspace docs, not in this repository) —— task status / delegation records / change records
+- Mutually exclusive file editing: register in the "file lock registry" section of the board before editing and remove the entry when done
+- Version numbering rules: the `glowisd-versioning` skill (this repository's `.ai-skills/`)
+- Deployment experience: the `glowisd-deploy` skill
+- Image recognition conventions: the `glowisd-vision-ocr` skill
+- Visual acceptance: every frontend/UI change must be visually accepted with screenshots from a vision model
+
+**Known pitfalls (for AI reference)**:
+- `Set-Content -Encoding UTF8` adds a BOM and causes a Python SyntaxError → write without a BOM
+- simpleui's `@admin.action` decorator attaches an ActionLocation enum and makes json.dumps fail → use a manual `short_description` instead
+- In Django 6.1 `FilteredSelectMultiple.media` no longer emits widgets.css → it must be added manually in the change_form template (already added in this repository)
+- The local clash TUN intercepts outbound SSH → turn TUN off or add a DIRECT rule for the server IP; when a GitHub push fails, HTTPS may still work
+
+---
+
+## 14. Maintenance Checklist (every version update)
+
+1. Bump the version number (`Va.b.c`, decimal increment) + commit starting with `V X.Y.Z:` + tag it
+2. Update the version history in CHANGELOG.md (keep in sync when the README features/user guide change)
+3. Update the "version iteration flowchart" mermaid on the board
+4. Deploy to Tencent Cloud + WeChat briefing (hermes)
+
+---
+
+*Last updated: V0.7.2 (2026-09-03)*
+
+---
+
+# Glowisd 官网（V0.7.2）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
