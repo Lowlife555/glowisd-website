@@ -1,4 +1,4 @@
-# Glowisd Website (V0.7.2)
+﻿# Glowisd Website (V0.7.2)
 
 **Changzhou Glowisd Science And Technology Co.,Ltd** official website —— a manufacturer of electronic control systems, sensors, cables and accessories for construction machinery (pavers).
 
@@ -16,7 +16,7 @@ Clients served: Chinese mainland + Middle East / Central Asia / Europe. Bilingua
 |-------|-----------|-------|
 | Backend framework | Django 6.1 | Python Web framework |
 | Admin UI | django-simpleui | Chinese visual admin (menus/themes deeply customizable) |
-| Frontend | Vue 3 (CDN global build) | Language switching / mobile navigation / inquiry form (no build step) |
+| Frontend | Vue 3 (bundled global build served from `static/vendor/vue.global.prod.js`) | Language switching / mobile navigation / inquiry form (no build step) |
 | Database | SQLite | Single file, no separate database service required |
 | Image processing | Pillow | Product image compression/cropping |
 | UA parsing | user-agents | Login audit: parse device / operating system / browser |
@@ -276,7 +276,7 @@ This project is developed by 4 AI agents working together; understand the divisi
 |----|------|------|
 | 后端框架 | Django 6.1 | Python Web 框架 |
 | 后台 UI | django-simpleui | 中文可视化后台（菜单/主题可深度定制） |
-| 前端 | Vue 3（CDN 全局构建） | 语言切换 / 移动导航 / 询价表单（无构建步骤） |
+| 前端 | Vue 3（本地 vendor 全局构建，`static/vendor/vue.global.prod.js`） | 语言切换 / 移动导航 / 询价表单（无构建步骤） |
 | 数据库 | SQLite | 单文件，无需独立数据库服务 |
 | 图片处理 | Pillow | 产品图压缩/裁剪 |
 | UA 解析 | user-agents | 登录审计：解析设备/操作系统/浏览器 |
