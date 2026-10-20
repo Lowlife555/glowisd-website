@@ -255,7 +255,11 @@
       </div>
       <div class="photo-frame">
         <div class="ph">
+          {% if site_images.home_factory %}
+          <img src="{{ site_images.home_factory.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.home_factory.caption_en|default:'Glowisd factory workshop' }}{% else %}{{ site_images.home_factory.caption_zh|default:'Glowisd 工厂车间' }}{% endif %}" loading="lazy">
+          {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Glowisd factory — placeholder photo{% else %}Glowisd 工厂（占位图）{% endif %}">
+          {% endif %}
         </div>
         <div class="caption">
           <span>{% if lang == 'en' %}Factory{% else %}工厂车间{% endif %}</span>

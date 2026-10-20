@@ -21,3 +21,13 @@ def site_settings(request):
         'site_settings': SiteSettings.load(),
         'site_version': getattr(settings, 'SITE_VERSION', '0.0.0'),
     }
+
+
+def site_images(request):
+    """向前台模板提供 site_images：{key: SiteImage}，仅含后台已上传图片的槽位。
+
+    模板用法：{% if site_images.factory_hero %} 用 {{ site_images.factory_hero.image.url }}，
+    否则回退占位图。后台「站点图片」上传即替换，无需改代码（V0.7.3）。
+    """
+    from core.models import SiteImage
+    return {'site_images': SiteImage.get_map()}

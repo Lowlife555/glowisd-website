@@ -48,7 +48,11 @@
       </div>
       <div class="photo-frame">
         <div class="ph">
+          {% if site_images.factory_hero %}
+          <img src="{{ site_images.factory_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.factory_hero.caption_en|default:'Glowisd factory building' }}{% else %}{{ site_images.factory_hero.caption_zh|default:'Glowisd 工厂厂房' }}{% endif %}" loading="lazy">
+          {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Factory building — placeholder photo{% else %}工厂厂房（占位图）{% endif %}">
+          {% endif %}
         </div>
         <div class="caption">
           <span>{% if lang == 'en' %}Factory{% else %}工厂外景{% endif %}</span>
@@ -187,19 +191,19 @@
     </div>
     <div class="photo-grid">
       <div class="photo-frame">
-        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 1{% else %}车间照片占位 1{% endif %}"></div>
+        <div class="ph">{% if site_images.workshop_1 %}<img src="{{ site_images.workshop_1.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_1.caption_en|default:'Assembly line' }}{% else %}{{ site_images.workshop_1.caption_zh|default:'组装产线' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 1{% else %}车间照片占位 1{% endif %}">{% endif %}</div>
         <div class="caption"><span>{% if lang == 'en' %}Assembly Line{% else %}组装产线{% endif %}</span><span>01</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 2{% else %}车间照片占位 2{% endif %}"></div>
+        <div class="ph">{% if site_images.workshop_2 %}<img src="{{ site_images.workshop_2.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_2.caption_en|default:'CNC area' }}{% else %}{{ site_images.workshop_2.caption_zh|default:'CNC 加工区' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 2{% else %}车间照片占位 2{% endif %}">{% endif %}</div>
         <div class="caption"><span>{% if lang == 'en' %}CNC Area{% else %}CNC 加工区{% endif %}</span><span>02</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 3{% else %}车间照片占位 3{% endif %}"></div>
+        <div class="ph">{% if site_images.workshop_3 %}<img src="{{ site_images.workshop_3.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_3.caption_en|default:'Testing bench' }}{% else %}{{ site_images.workshop_3.caption_zh|default:'检测台' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 3{% else %}车间照片占位 3{% endif %}">{% endif %}</div>
         <div class="caption"><span>{% if lang == 'en' %}Testing Bench{% else %}检测台{% endif %}</span><span>03</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph"><img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 4{% else %}车间照片占位 4{% endif %}"></div>
+        <div class="ph">{% if site_images.workshop_4 %}<img src="{{ site_images.workshop_4.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_4.caption_en|default:'Warehouse' }}{% else %}{{ site_images.workshop_4.caption_zh|default:'成品仓储' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 4{% else %}车间照片占位 4{% endif %}">{% endif %}</div>
         <div class="caption"><span>{% if lang == 'en' %}Warehouse{% else %}成品仓储{% endif %}</span><span>04</span></div>
       </div>
     </div>

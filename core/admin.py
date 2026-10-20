@@ -11,11 +11,62 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import HeroSlide, LoginRecord, SiteSettings
+from .models import HeroSlide, LoginRecord, SiteImage, SiteSettings
 
 # 后台浏览器标签页标题（V0.7.1）
 admin.site.site_title = 'Glowisd站点管理员'
 admin.site.site_header = 'Glowisd 站点管理'
+
+
+@admin.register(SiteImage)
+class SiteImageAdmin(admin.ModelAdmin):
+    """站点展示图片：工厂页/车间照片/定制页等固定槽位的图片替换入口。
+
+    列表固定展示全部槽位（无图显示「未上传」），点进任意一行上传图片即替换前台展示。
+    """
+
+    list_display = ['key_display', 'image_preview', 'caption_zh', 'updated_at']
+    list_display_links = ['key_display']
+    list_per_page = 30
+    fieldsets = (
+        ('图片位置', {
+            'fields': ('key',),
+            'description': '图片位置由系统预设，不可修改；每个位置对应网站上一个固定的展示区域。',
+        }),
+        ('图片', {'fields': ('image',), 'description': '上传新图片即可替换；建议横图 1600×1000 以上，JPG/PNG/WebP，单张 < 3MB。'}),
+        ('图片说明（可选）', {
+            'fields': ('caption_zh', 'caption_en'),
+            'description': '中文/英文图片说明，用于图片替代文字（SEO/无障碍）；留空则用默认文案。',
+        }),
+    )
+
+    @admin.display(description='图片位置', ordering='key')
+    def key_display(self, obj):
+        return obj.get_key_display()
+
+    @admin.display(description='当前图片')
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" alt="{}" '
+                'style="height:56px;width:100px;object-fit:cover;'
+                'border:1px solid #E4E9F5;border-radius:2px;display:block;" />',
+                obj.image.url,
+                obj.get_key_display(),
+            )
+        return mark_safe(
+            '<span style="display:block;height:56px;width:100px;line-height:56px;'
+            'text-align:center;color:#A6B0CC;border:1px dashed #C9D1E8;'
+            'border-radius:2px;font-size:12px;">未上传</span>'
+        )
+
+    # 槽位由系统预设（7 个固定位置），不允许新增重复槽位或删除槽位：
+    # 只允许在已有槽位上上传/替换图片（V0.7.3）
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(HeroSlide)

@@ -141,7 +141,11 @@
       </div>
       <div class="photo-frame">
         <div class="ph">
+          {% if site_images.custom_hero %}
+          <img src="{{ site_images.custom_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.custom_hero.caption_en|default:'Custom manufacturing' }}{% else %}{{ site_images.custom_hero.caption_zh|default:'定制制造' }}{% endif %}" loading="lazy">
+          {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Customization — placeholder photo{% else %}定制服务（占位图）{% endif %}">
+          {% endif %}
         </div>
         <div class="caption">
           <span>{% if lang == 'en' %}Custom Manufacturing{% else %}定制制造{% endif %}</span>

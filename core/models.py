@@ -20,6 +20,47 @@ class HeroSlide(models.Model):
         return f'Slide {self.sort_order} - {self.title_zh or self.title_en or "未命名"}'
 
 
+class SiteImage(models.Model):
+    """站点展示图片（固定槽位，后台可上传/替换）。
+
+    每个 key 对应网站上一个固定的展示位置（工厂页/车间照片/定制页等）。
+    后台「站点图片」列表固定列出全部槽位，上传图片即替换，无需改代码。
+    未上传图片的槽位，前台回退到占位图。
+    """
+
+    KEY_CHOICES = [
+        ('home_factory', '首页 - 工厂区块大图'),
+        ('factory_hero', '工厂页 - 厂房全景大图'),
+        ('workshop_1', '工厂页 - 车间照片 1'),
+        ('workshop_2', '工厂页 - 车间照片 2'),
+        ('workshop_3', '工厂页 - 车间照片 3'),
+        ('workshop_4', '工厂页 - 车间照片 4'),
+        ('custom_hero', '定制页 - 服务大图'),
+    ]
+
+    key = models.CharField('图片位置', max_length=40, choices=KEY_CHOICES, unique=True)
+    image = models.ImageField(
+        '图片', upload_to='site_images/', blank=True, null=True,
+        help_text='建议尺寸：横图 1600×1000 以上、竖图不小于 1200×1600，JPG/PNG/WebP，单张 < 3MB',
+    )
+    caption_zh = models.CharField('图片说明(中文)', max_length=200, blank=True, default='')
+    caption_en = models.CharField('图片说明(英文)', max_length=200, blank=True, default='')
+    updated_at = models.DateTimeField('更新时间', auto_now=True)
+
+    class Meta:
+        verbose_name = '站点图片'
+        verbose_name_plural = '站点图片'
+        ordering = ['key']
+
+    def __str__(self):
+        return self.get_key_display()
+
+    @classmethod
+    def get_map(cls):
+        """{key: SiteImage}，只包含已上传图片的槽位（前台据此回退占位图）。"""
+        return {si.key: si for si in cls.objects.exclude(image='').exclude(image__isnull=True)}
+
+
 class LoginRecord(models.Model):
     """管理员后台登录记录（成功/失败都记录：登录时间 / IP / 设备）"""
     # 失败登录无用户对象，故 user 可空；成功登录才关联 User

@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.7.2'
+SITE_VERSION = '0.8.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -113,6 +113,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.lang_context',
                 'core.context_processors.site_settings',
+                'core.context_processors.site_images',
             ],
         },
     },
@@ -214,6 +215,7 @@ SIMPLEUI_CONFIG = {
             'name': '站点设置',
             'icon': 'fas fa-cog',
             'models': [
+                {'name': '站点图片', 'icon': 'fas fa-image', 'url': '/admin/core/siteimage/'},
                 {'name': '站点设置', 'icon': 'fas fa-sliders-h', 'url': '/admin/core/sitesettings/'},
             ],
         },

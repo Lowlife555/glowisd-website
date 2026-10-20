@@ -1,4 +1,4 @@
-﻿# Glowisd Website (V0.7.2)
+# Glowisd Website (V0.8.0)
 
 **Changzhou Glowisd Science And Technology Co.,Ltd** official website —— a manufacturer of electronic control systems, sensors, cables and accessories for construction machinery (pavers).
 
@@ -111,13 +111,13 @@ glowisd-website/
 
 ## 6. Current Version Summary
 
-- **V0.7.2** (2026-09-03): Fixed CSP blocking the Vue runtime (`script-src` now includes `'unsafe-eval'`, restoring the language switching button / inquiry form / admin login form) + fixed the `/favicon.ico` 404.
+- **V0.8.0** (2026-09-03): Fixed CSP blocking the Vue runtime (`script-src` now includes `'unsafe-eval'`, restoring the language switching button / inquiry form / admin login form) + fixed the `/favicon.ico` 404.
 - **V0.6.3** (2026-09-03): ALLOWED_HOSTS permanently allows localhost/127.0.0.1 (fixes server-local health checks).
 - **V0.6.2** (2026-09-03): glowisd.cn domain + HTTPS launched (Let's Encrypt certificate, nginx domain block, ALLOWED_HOSTS narrowed).
 - **V0.6.1** (2026-09-03): Security hardening (P1 admin login rate limiting + forced password change on first login, P2 security response headers CSP/X-Frame-Options/HSTS switch, P3 dependency security audit).
 - **V0.6.0** (2026-09-01): Role system simplified (no new viewers from the admin, historical viewers can be converted to admin in bulk) + README rewritten around four menu groups + CHANGELOG split out + .env.example + unified product-image count convention.
 
-> Full version history (V0.1.0–V0.7.2) is in [CHANGELOG.md](CHANGELOG.md).
+> Full version history (V0.1.0–V0.8.0) is in [CHANGELOG.md](CHANGELOG.md).
 >
 > Version rules: `Va.b.c` increments in decimal, a=refactor, b=new feature, c=fix; every requirement change or fix must bump the version, commits start with `V X.Y.Z:` and are tagged.
 
@@ -254,11 +254,11 @@ This project is developed by 4 AI agents working together; understand the divisi
 
 ---
 
-*Last updated: V0.7.2 (2026-09-03)*
+*Last updated: V0.8.0 (2026-09-03)*
 
 ---
 
-# Glowisd 官网（V0.7.2）
+# Glowisd 官网（V0.8.0）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -371,13 +371,13 @@ glowisd-website/
 
 ## 六、当前版本摘要
 
-- **V0.7.2**（2026-09-03）：修复 CSP 拦截 Vue 运行时（`script-src` 补 `'unsafe-eval'`，语言切换按钮/询价表单/后台登录表单恢复）+ `/favicon.ico` 404 修复。
+- **V0.8.0**（2026-09-03）：修复 CSP 拦截 Vue 运行时（`script-src` 补 `'unsafe-eval'`，语言切换按钮/询价表单/后台登录表单恢复）+ `/favicon.ico` 404 修复。
 - **V0.6.3**（2026-09-03）：ALLOWED_HOSTS 常驻放行 localhost/127.0.0.1（服务器本地健康检查修复）。
 - **V0.6.2**（2026-09-03）：glowisd.cn 域名 + HTTPS 上线（Let's Encrypt 证书、nginx 域名块、ALLOWED_HOSTS 收窄）。
 - **V0.6.1**（2026-09-03）：安全性开发（P1 后台登录限流 + 首登强制改密、P2 安全响应头 CSP/X-Frame-Options/HSTS 开关、P3 依赖安全审计）。
 - **V0.6.0**（2026-09-01）：角色体系精简（后台不再新增 viewer，历史 viewer 可批量转 admin）+ README 四组菜单重写 + CHANGELOG 拆分 + .env.example + 产品图数量口径统一。
 
-> 完整版本历史（V0.1.0–V0.7.2）见 [CHANGELOG.md](CHANGELOG.md)。
+> 完整版本历史（V0.1.0–V0.8.0）见 [CHANGELOG.md](CHANGELOG.md)。
 >
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -514,4 +514,4 @@ DJANGO_DEBUG=False
 
 ---
 
-*最后更新：V0.7.2（2026-09-03）*
+*最后更新：V0.8.0（2026-09-03）*

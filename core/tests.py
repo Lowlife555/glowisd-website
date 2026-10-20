@@ -19,7 +19,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from accounts.models import AdminProfile
-from core.models import LoginRecord
+from core.models import LoginRecord, SiteImage
 from products.models import Category, ContactMessage, Product
 
 
@@ -344,3 +344,39 @@ class TimezoneTests(TestCase):
         dates = LoginRecord.objects.filter(pk=rec.pk).dates('login_time', 'day')
         self.assertIn(datetime(2026, 9, 1).date(), list(dates),
                       'date_hierarchy 应按本地日期（北京时间）分组归 9-1')
+
+
+class SiteImageTests(TestCase):
+    """V0.7.3 站点图片：7 个固定槽位 + 后台上传即替换前台展示。"""
+
+    def test_slots_seeded(self):
+        self.assertEqual(SiteImage.objects.count(), 7)
+        self.assertEqual(
+            set(SiteImage.objects.values_list('key', flat=True)),
+            {'home_factory', 'factory_hero', 'workshop_1', 'workshop_2',
+             'workshop_3', 'workshop_4', 'custom_hero'},
+        )
+
+    def test_uploaded_image_renders_on_factory_page(self):
+        """上传 factory_hero 后，工厂页应输出该图片 URL（不再是占位图）。"""
+        import io
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+
+        buf = io.BytesIO()
+        Image.new('RGB', (1600, 1000), '#162A87').save(buf, 'PNG')
+        with tempfile.TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                si = SiteImage.objects.get(key='factory_hero')
+                si.image.save('factory-hero.png', SimpleUploadedFile(
+                    'factory-hero.png', buf.getvalue(), 'image/png'))
+                resp = self.client.get('/factory/')
+                self.assertContains(resp, 'site_images/factory-hero.png')
+                self.assertNotContains(resp, 'Factory building — placeholder photo')
+
+    def test_no_image_falls_back_to_placeholder(self):
+        """未上传图片的槽位，前台应显示占位图。"""
+        resp = self.client.get('/factory/')
+        self.assertContains(resp, 'placeholder-factory.svg')
