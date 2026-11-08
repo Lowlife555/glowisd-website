@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.contrib.admin import EmptyFieldListFilter
 from django.db.models import Count
@@ -6,7 +7,27 @@ from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
-from .models import Category, Product, ContactMessage
+from .models import PLACEHOLDER_PRICE, Category, ContactMessage, Product
+
+
+class PriceStatusFilter(admin.SimpleListFilter):
+    """按定价状态筛选：99999 防拍价 = 未定价（前台不开放下单）。"""
+
+    title = '定价状态'
+    parameter_name = 'priced'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('pending', '待定价（99999 防拍价）'),
+            ('priced', '已定价（可在线下单）'),
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'pending':
+            return queryset.filter(price=PLACEHOLDER_PRICE)
+        if self.value() == 'priced':
+            return queryset.exclude(price=PLACEHOLDER_PRICE)
+        return queryset
 
 
 @admin.register(Category)
@@ -22,9 +43,12 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['image_preview', 'sku', 'part_name', 'pn', 'brand', 'category', 'featured', 'updated_at']
+    list_display = [
+        'image_preview', 'sku', 'part_name', 'pn',
+        'price', 'currency', 'price_state', 'category', 'featured', 'updated_at',
+    ]
     list_filter = [
-        'category', 'featured',
+        PriceStatusFilter, 'category', 'featured', 'currency',
         ('part_name_en', EmptyFieldListFilter),
         ('description_en', EmptyFieldListFilter),
         ('weight', EmptyFieldListFilter),
@@ -32,8 +56,10 @@ class ProductAdmin(admin.ModelAdmin):
         ('brand', EmptyFieldListFilter),
     ]
     search_fields = ['sku', 'part_name', 'part_name_en', 'pn', 'brand']
-    list_editable = ['featured']
+    # 后台列表直接改价：输入新价格 → 点保存 → 前台立即生效
+    list_editable = ['price', 'currency', 'featured']
     list_per_page = 20
+    readonly_fields = ['pay_link_display']
 
     @admin.display(description='图片')
     def image_preview(self, obj):
@@ -53,10 +79,43 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         ('基本信息', {'fields': ('sku', 'pn', 'category', 'featured')}),
         ('名称', {'fields': ('part_name', 'part_name_en')}),
+        ('定价与支付', {
+            'fields': ('price', 'currency', 'payment_link', 'pay_link_display'),
+            'description': (
+                '未定价的产品保持 99999 防拍价，前台只展示「联系确认价格」，不会产生误拍；'
+                '改成真实价格后前台立即出现「立即购买」。'
+                '如需使用 Stripe Payment Link / PayPal 等外部收款页，把链接填到「外部支付链接」。'
+            ),
+        }),
         ('参数', {'fields': ('brand', 'weight', 'warranty')}),
         ('描述', {'fields': ('description', 'description_en')}),
         ('图片', {'fields': ('image',)}),
     )
+
+    @admin.display(description='定价状态')
+    def price_state(self, obj):
+        if obj.is_placeholder_price:
+            return mark_safe(
+                '<span style="display:inline-block;padding:2px 8px;border-radius:10px;'
+                'background:#FDF1DF;color:#9A6200;font-size:12px;">待定价</span>'
+            )
+        return mark_safe(
+            '<span style="display:inline-block;padding:2px 8px;border-radius:10px;'
+            'background:#E8F5E9;color:#1B6B32;font-size:12px;">可下单</span>'
+        )
+
+    @admin.display(description='产品支付链接')
+    def pay_link_display(self, obj):
+        if not obj.pk:
+            return '保存后自动生成'
+        path = obj.get_absolute_pay_url()
+        url = f'{settings.SITE_BASE_URL.rstrip("/")}{path}'
+        return format_html(
+            '<a href="{}" target="_blank" rel="noopener" style="word-break:break-all;">{}</a>'
+            '<div style="color:#8A93AD;font-size:12px;margin-top:4px;">'
+            '这个链接可直接发给客户：定价后即完成在线下单，未定价时会跳回产品页。</div>',
+            url, url,
+        )
 
     # —— 数据质量检查自定义页面 ——
 

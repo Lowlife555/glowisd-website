@@ -106,6 +106,10 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         ('生产信息', {'fields': ('factory_area', 'moq')}),
         ('公司简介', {'fields': ('about_zh', 'about_en')}),
         ('SEO 设置', {'fields': ('seo_title_zh', 'seo_title_en', 'seo_desc_zh', 'seo_desc_en')}),
+        ('收银台说明', {
+            'fields': ('payment_note_zh', 'payment_note_en'),
+            'description': '展示在产品支付页下单按钮下方，例如「价格含税，运费另计，3-7 个工作日发货」。',
+        }),
         ('水印设置', {'fields': ('watermark_enabled', 'watermark_image', 'watermark_position', 'watermark_opacity', 'watermark_width_pct', 'watermark_margin')}),
     )
 

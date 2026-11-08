@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load static products_extras %}
+
+{% block title %}
+{% if lang == 'en' %}Secure Payment — {{ product|pname:lang }}{% else %}安全支付 — {{ product|pname:lang }}{% endif %} — Glowisd
+{% endblock %}
+
+{% block head_extra %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+
+{% block content %}
+
+<section class="section">
+  <div class="container">
+
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <span class="sep">/</span>
+      <a href="{% url 'product_detail' product.pk %}">{{ product.sku }}</a>
+      <span class="sep">/</span>
+      <span>{% if lang == 'en' %}Checkout{% else %}收银台{% endif %}</span>
+    </nav>
+
+    <div class="pay-grid">
+
+      <!-- ---------- 左：订单摘要 ---------- -->
+      <aside class="pay-summary">
+        <div class="pay-summary__media">
+          {% if product.image %}
+          <img src="{{ product.image.url }}?v={{ site_version }}" alt="{{ product.sku }}">
+          {% else %}
+          <img src="{% static 'img/placeholder-product.svg' %}" alt="">
+          {% endif %}
+        </div>
+
+        <span class="pay-summary__sku">{{ product.sku }}</span>
+        <h2 class="pay-summary__name">{{ product|pname:lang }}</h2>
+        <p class="pay-summary__cat">{{ product.category|cname:lang }}</p>
+
+        <div class="summary-rows">
+          <div class="summary-line">
+            <span>{% if lang == 'en' %}Unit price{% else %}单价{% endif %}</span>
+            <b>{{ product.price_display }}</b>
+          </div>
+          <div class="summary-line">
+            <span>{% if lang == 'en' %}Quantity{% else %}数量{% endif %}</span>
+            <b id="summary-qty">1</b>
+          </div>
+          <div class="summary-line summary-line--total">
+            <span>{% if lang == 'en' %}Total{% else %}应付总额{% endif %}</span>
+            <b id="summary-total" data-unit="{{ product.price }}" data-symbol="{{ product.currency_symbol }}">{{ product.price_display }}</b>
+          </div>
+        </div>
+
+        <ul class="trust-list">
+          <li>{% if lang == 'en' %}Encrypted checkout — card details are never stored on our server.{% else %}全程加密收银，银行卡信息不经过我们的服务器。{% endif %}</li>
+          <li>{% if lang == 'en' %}Order confirmation and receipt sent to your email.{% else %}订单与支付回执发送到您的邮箱。{% endif %}</li>
+          <li>{% if lang == 'en' %}Questions? We reply within 24 hours.{% else %}有疑问？我们 24 小时内回复。{% endif %}</li>
+        </ul>
+
+        <a class="link-arrow pay-summary__back" href="{% url 'product_detail' product.pk %}">
+          {% if lang == 'en' %}Back to product{% else %}返回产品页{% endif %}
+          <span class="arrow">←</span>
+        </a>
+      </aside>
+
+      <!-- ---------- 右：支付表单 ---------- -->
+      <form class="pay-box" method="post" action="{% url 'payment_start' product.pk %}" novalidate>
+        {% csrf_token %}
+        <input class="hp-field" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div class="pay-box__head">
+          <span class="eyebrow">{% if lang == 'en' %}Checkout{% else %}收银台{% endif %}</span>
+          <h1>{% if lang == 'en' %}Complete your order{% else %}完成下单{% endif %}</h1>
+          <p class="pay-box__sub">
+            {% if lang == 'en' %}
+            Choose a payment method, then confirm your details.
+            {% else %}
+            选择支付方式，填写联系方式即可下单。
+            {% endif %}
+          </p>
+        </div>
+
+        {% if form_error %}
+        <div class="notice notice--err" role="alert">{{ form_error }}</div>
+        {% endif %}
+
+        {% if channel == 'manual' %}
+        <div class="notice notice--warn">
+          {% if lang == 'en' %}
+          Online payment is being activated. Submit the order and our team will contact you
+          within 1 business day to complete the payment (bank transfer / payment link).
+          {% else %}
+          在线支付通道正在开通中。提交订单后，客服会在 1 个工作日内联系您完成付款（支持银行转账或发送付款链接）。
+          {% endif %}
+        </div>
+        {% elif channel == 'external' %}
+        <div class="notice notice--ok">
+          {% if lang == 'en' %}
+          You will be redirected to our secure payment page after submitting.
+          {% else %}
+          提交后将跳转到我们的安全收款页面完成支付。
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <fieldset class="method-fieldset">
+          <legend class="field-legend">{% if lang == 'en' %}Payment method{% else %}支付方式{% endif %}</legend>
+          <div class="method-grid">
+            {% for m in methods %}
+            <label class="method-tile{% if forloop.first %} is-selected{% endif %}">
+              <input type="radio" name="method" value="{{ m.value }}"
+                     {% if form.method == m.value or not form.method and forloop.first %}checked{% endif %}>
+              <span class="method-tile__body">
+                <span class="method-tile__name">{{ m.label }}</span>
+                <span class="method-tile__sub">{{ m.sub }}</span>
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+          <p class="method-hint">
+            {% if lang == 'en' %}
+            Visa, MasterCard and UnionPay are accepted through the same secure card form.
+            {% else %}
+            Visa / MasterCard / 银联 通过同一安全银行卡表单收款；支付宝与微信支付为扫码支付。
+            {% endif %}
+          </p>
+        </fieldset>
+
+        <div class="form-grid pay-fields">
+          <div class="field">
+            <label for="f-name">{% if lang == 'en' %}Your name{% else %}联系人{% endif %} <span class="req">*</span></label>
+            <input id="f-name" name="name" type="text" required autocomplete="name"
+                   value="{{ form.name|default:'' }}" placeholder="{% if lang == 'en' %}Full name{% else %}您的姓名{% endif %}">
+          </div>
+          <div class="field">
+            <label for="f-email">{% if lang == 'en' %}Email{% else %}邮箱{% endif %} <span class="req">*</span></label>
+            <input id="f-email" name="email" type="email" required autocomplete="email"
+                   value="{{ form.email|default:'' }}" placeholder="name@company.com">
+          </div>
+          <div class="field">
+            <label for="f-qty">{% if lang == 'en' %}Quantity{% else %}数量{% endif %}</label>
+            <input id="f-qty" name="quantity" type="number" min="1" max="{{ max_quantity }}" step="1"
+                   value="{{ form.quantity|default:1 }}" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="f-phone">{% if lang == 'en' %}Phone / WhatsApp{% else %}电话 / WhatsApp{% endif %}</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel"
+                   value="{{ form.phone|default:'' }}" placeholder="+86 …">
+          </div>
+          <div class="field">
+            <label for="f-country">{% if lang == 'en' %}Country / region{% else %}国家 / 地区{% endif %}</label>
+            <input id="f-country" name="country" type="text" autocomplete="country-name"
+                   value="{{ form.country|default:'' }}" placeholder="{% if lang == 'en' %}e.g. Germany{% else %}如：德国{% endif %}">
+          </div>
+          <div class="field">
+            <label for="f-note">{% if lang == 'en' %}Note (optional){% else %}备注（选填）{% endif %}</label>
+            <input id="f-note" name="note" type="text" value="{{ form.note|default:'' }}"
+                   placeholder="{% if lang == 'en' %}Shipping notes, model year…{% else %}收货要求、机型年份…{% endif %}">
+          </div>
+        </div>
+
+        {% if payment_note %}
+        <p class="pay-terms">{{ payment_note }}</p>
+        {% endif %}
+
+        <button class="btn btn--primary btn--block pay-submit" type="submit">
+          {% if channel == 'stripe' %}
+          {% if lang == 'en' %}Pay now{% else %}立即支付{% endif %}
+          {% else %}
+          {% if lang == 'en' %}Place order{% else %}提交订单{% endif %}
+          {% endif %}
+        </button>
+
+        <p class="pay-secure">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          {% if lang == 'en' %}Secure checkout · we never store card numbers{% else %}安全收银 · 我们不存储任何银行卡号{% endif %}
+        </p>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var qty = document.getElementById('f-qty');
+  var total = document.getElementById('summary-total');
+  var qtyLabel = document.getElementById('summary-qty');
+  if (!qty || !total) return;
+  var unit = parseFloat(total.dataset.unit) || 0;
+  var symbol = total.dataset.symbol || '';
+  function money(v) {
+    return symbol + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function sync() {
+    var n = parseInt(qty.value, 10);
+    if (!n || n < 1) n = 1;
+    qtyLabel.textContent = n;
+    total.textContent = money(unit * n);
+  }
+  qty.addEventListener('input', sync);
+  sync();
+
+  var tiles = document.querySelectorAll('.method-tile');
+  tiles.forEach(function (tile) {
+    var input = tile.querySelector('input');
+    tile.addEventListener('click', function () {
+      tiles.forEach(function (t) { t.classList.remove('is-selected'); });
+      tile.classList.add('is-selected');
+    });
+    input.addEventListener('change', function () {
+      tiles.forEach(function (t) { t.classList.remove('is-selected'); });
+      tile.classList.add('is-selected');
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -46,6 +46,10 @@ def home(request):
     # 首页推荐产品：featured=True，按最近更新排序，取前 8 个
     featured_products = Product.objects.filter(featured=True).order_by('-updated_at')[:8]
 
+    # 分类卡片只展示「有产品」且已归类的分类：0 款分类点进去是空列表，
+    # 「未分类」不是产品线、放在首页只会暴露数据整理进度，两者都从卡片墙隐藏。
+    cat_cards = [c for c in cats if c['count'] > 0 and c['slug'] != 'uncategorized']
+
     # 产品线分区陈列：有产品的分类（排除"未分类"），每线取前 4 个产品
     lineups = []
     for c in categories.exclude(slug='uncategorized'):
@@ -59,10 +63,11 @@ def home(request):
     return render(request, 'core/home.html', {
         'active': 'home',
         'cats': cats,
+        'cat_cards': cat_cards,
         'hero_slides': hero_slides,
         'featured_products': featured_products,
         'lineups': lineups,
-        'category_count': len(cats),
+        'category_count': len(cat_cards),
         'product_count': Product.objects.count(),
     })
 

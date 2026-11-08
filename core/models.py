@@ -133,6 +133,15 @@ class SiteSettings(models.Model):
     watermark_opacity = models.IntegerField('水印透明度(%)', default=45)
     watermark_width_pct = models.PositiveIntegerField('水印宽度(%)', default=18)
     watermark_margin = models.PositiveIntegerField('水印边距(px)', default=20)
+    # —— 收银台说明（展示在支付页底部，如运费/发票/交期）——
+    payment_note_zh = models.TextField(
+        '收银台说明(中文)', blank=True, default='',
+        help_text='显示在收银台下单按钮下方，例如：价格含税、运费另计、3-7 个工作日发货',
+    )
+    payment_note_en = models.TextField(
+        '收银台说明(英文)', blank=True, default='',
+        help_text='English version shown on the checkout page',
+    )
 
     class Meta:
         verbose_name = '站点设置'

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{% if lang == 'en' %}Payment cancelled{% else %}支付已取消{% endif %} — Glowisd{% endblock %}
+{% block head_extra %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+
+{% block content %}
+
+<section class="section">
+  <div class="container container--narrow">
+    <div class="order-card">
+      <h1>{% if lang == 'en' %}Payment cancelled{% else %}支付已取消{% endif %}</h1>
+      <p class="order-card__sub">
+        {% if lang == 'en' %}
+        Order {{ order.order_no }} was not paid. You can return to the product page and try again.
+        {% else %}
+        订单 {{ order.order_no }} 未完成支付，您可以返回产品页重新下单。
+        {% endif %}
+      </p>
+      <dl class="order-meta">
+        <div><dt>{% if lang == 'en' %}Order no.{% else %}订单号{% endif %}</dt><dd>{{ order.order_no }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Amount{% else %}金额{% endif %}</dt><dd>{{ order.amount_display }}</dd></div>
+      </dl>
+      <div class="order-actions">
+        {% if order.product_id %}
+        <a class="btn btn--primary" href="{% url 'payment_start' order.product_id %}">
+          {% if lang == 'en' %}Try again{% else %}重新支付{% endif %}
+        </a>
+        {% endif %}
+        <a class="btn btn--outline" href="{% url 'contact' %}">
+          {% if lang == 'en' %}Contact us{% else %}联系我们{% endif %}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

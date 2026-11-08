@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static pay_extras %}
+
+{% block title %}
+{% if order.is_paid %}{% if lang == 'en' %}Payment received{% else %}支付成功{% endif %}{% else %}{% if lang == 'en' %}Order received{% else %}订单已提交{% endif %}{% endif %} — Glowisd
+{% endblock %}
+
+{% block head_extra %}<meta name="robots" content="noindex,nofollow">{% endblock %}
+
+{% block content %}
+
+<section class="section">
+  <div class="container container--narrow">
+
+    <div class="order-card{% if order.is_paid %} order-card--paid{% endif %}">
+      <div class="order-card__icon" aria-hidden="true">
+        {% if order.is_paid %}
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>
+        {% else %}
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        {% endif %}
+      </div>
+
+      {% if order.is_paid %}
+      <h1>{% if lang == 'en' %}Payment received{% else %}支付成功{% endif %}</h1>
+      <p class="order-card__sub">
+        {% if lang == 'en' %}
+        Thank you, {{ order.customer_name }}. Your order {{ order.order_no }} is confirmed.
+        {% else %}
+        感谢 {{ order.customer_name }}，订单 {{ order.order_no }} 已完成支付。
+        {% endif %}
+      </p>
+      {% else %}
+      <h1>{% if lang == 'en' %}Order received{% else %}订单已提交{% endif %}</h1>
+      <p class="order-card__sub">
+        {% if lang == 'en' %}
+        Thank you, {{ order.customer_name }}. Our team will contact you within 1 business day
+        to complete the payment for order {{ order.order_no }}.
+        {% else %}
+        感谢 {{ order.customer_name }}，订单 {{ order.order_no }} 已生成。客服将在 1 个工作日内
+        联系您完成付款。
+        {% endif %}
+      </p>
+      {% endif %}
+
+      <dl class="order-meta">
+        <div><dt>{% if lang == 'en' %}Order no.{% else %}订单号{% endif %}</dt><dd>{{ order.order_no }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Product{% else %}产品{% endif %}</dt><dd>{{ order.sku }} · {{ order.product_name }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Quantity{% else %}数量{% endif %}</dt><dd>{{ order.quantity }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Amount{% else %}金额{% endif %}</dt><dd><b>{{ order.amount_display }}</b></dd></div>
+        <div><dt>{% if lang == 'en' %}Method{% else %}支付方式{% endif %}</dt><dd>{{ order|method_label:lang }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Status{% else %}状态{% endif %}</dt><dd>{{ order|status_label:lang }}</dd></div>
+        <div><dt>{% if lang == 'en' %}Email{% else %}邮箱{% endif %}</dt><dd>{{ order.customer_email }}</dd></div>
+      </dl>
+
+      <div class="order-actions">
+        <a class="btn btn--primary" href="{% url 'product_list' %}">
+          {% if lang == 'en' %}Continue shopping{% else %}继续浏览产品{% endif %}
+        </a>
+        <a class="btn btn--outline" href="{% url 'contact' %}?product={{ order.sku|urlencode }}">
+          {% if lang == 'en' %}Contact us{% else %}联系我们{% endif %}
+        </a>
+      </div>
+
+      <p class="order-tip">
+        {% if lang == 'en' %}
+        Keep this order number for any follow-up. A confirmation has been recorded for
+        {{ order.customer_email }}.
+        {% else %}
+        请保留订单号以便后续查询；确认信息已记录到 {{ order.customer_email }}。
+        {% endif %}
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

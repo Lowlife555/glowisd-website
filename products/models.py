@@ -1,6 +1,30 @@
+from decimal import Decimal
+
 from django.db import models
+from django.urls import reverse
 
 from products.utils.watermark import WATERMARK_LOGO_PATH, add_watermark
+
+# 防拍价：产品未定价时统一展示 99999（线上防误拍价），后台改成真实价格后才会开放下单。
+PLACEHOLDER_PRICE = Decimal('99999.00')
+
+CURRENCY_CHOICES = [
+    ('USD', 'USD — 美元 $'),
+    ('CNY', 'CNY — 人民币 ¥'),
+    ('EUR', 'EUR — 欧元 €'),
+    ('GBP', 'GBP — 英镑 £'),
+]
+CURRENCY_SYMBOLS = {'USD': '$', 'CNY': '¥', 'EUR': '€', 'GBP': '£'}
+CURRENCY_DECIMALS = {'USD': 2, 'CNY': 2, 'EUR': 2, 'GBP': 2}
+
+
+def format_money(amount, currency='USD'):
+    """金额格式化：符号 + 千分位，例 $1,299.00。金额为空时按 0 处理。"""
+    if amount is None:
+        amount = Decimal('0')
+    amount = Decimal(amount)
+    symbol = CURRENCY_SYMBOLS.get(currency, '')
+    return f'{symbol}{amount:,.{CURRENCY_DECIMALS.get(currency, 2)}f}'
 
 
 class Category(models.Model):
@@ -34,6 +58,16 @@ class Product(models.Model):
     image = models.ImageField('产品图片', upload_to='products/', blank=True, null=True)
     is_watermarked = models.BooleanField('已打水印', default=False)
     featured = models.BooleanField('首页推荐', default=False)
+    # —— 定价与支付（后台改价即时生效）——
+    price = models.DecimalField(
+        '售价', max_digits=12, decimal_places=2, default=PLACEHOLDER_PRICE,
+        help_text='未定价的产品保持 99999 防拍价，前台不开放直接下单；改成真实价格后支付按钮自动出现',
+    )
+    currency = models.CharField('币种', max_length=3, choices=CURRENCY_CHOICES, default='USD')
+    payment_link = models.URLField(
+        '外部支付链接', blank=True, default='',
+        help_text='可选。填写后「立即支付」直接跳转到该链接（如 Stripe Payment Link / PayPal / 收款页）；留空则使用站内收银台',
+    )
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
     updated_at = models.DateTimeField('更新时间', auto_now=True)
 
@@ -66,6 +100,24 @@ class Product(models.Model):
     def display_name(self, lang='zh'):
         name = self.part_name if lang == 'zh' else self.part_name_en
         return name or self.part_name or self.part_name_en or '产品名称待更新'
+
+    # —— 定价 / 支付辅助 ——
+    @property
+    def is_placeholder_price(self):
+        """是否仍为 99999 防拍价（未定价）：是则前台不开放直接下单。"""
+        return self.price is None or self.price == PLACEHOLDER_PRICE
+
+    @property
+    def price_display(self):
+        return format_money(self.price if self.price is not None else PLACEHOLDER_PRICE, self.currency)
+
+    @property
+    def currency_symbol(self):
+        return CURRENCY_SYMBOLS.get(self.currency, '')
+
+    def get_absolute_pay_url(self):
+        """每个产品的固定支付链接（可分享给客户直接下单）。"""
+        return reverse('payment_start', args=[self.pk])
 
     def completeness_percent(self):
         """资料完整度：10 个字段各占 10%（品名中英/描述中英/重量/质保/品牌/PN/分类/图片）。"""

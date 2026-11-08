@@ -18,6 +18,14 @@
       <div><b>SKU</b> {{ p.sku }}</div>
       {% if p.pn %}<div><b>P/N</b> {{ p.pn }}</div>{% endif %}
     </div>
+    <div class="p-card__price{% if p.is_placeholder_price %} is-placeholder{% endif %}">
+      <b>{{ p.price_display }}</b>
+      {% if p.is_placeholder_price %}
+      <span class="p-card__price-tag">{% if lang == 'en' %}Price TBD{% else %}待定价{% endif %}</span>
+      {% else %}
+      <span class="p-card__price-unit">/ {% if lang == 'en' %}unit{% else %}件{% endif %}</span>
+      {% endif %}
+    </div>
     <div class="p-card__foot">
       <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
     </div>

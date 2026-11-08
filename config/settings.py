@@ -16,9 +16,30 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _load_dotenv(path):
+    """读取项目根目录 .env（不进 git）。
+
+    本机与服务器共用同一份配置入口：Stripe 密钥等敏感值只写进 .env，
+    进程环境变量优先（pm2/系统已有变量不会被覆盖）。
+    """
+    if not path.exists():
+        return
+    for raw in path.read_text(encoding='utf-8').splitlines():
+        line = raw.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+        key, value = line.split('=', 1)
+        key = key.strip()
+        if key and key not in os.environ:
+            os.environ[key] = value.strip().strip('"').strip("'")
+
+
+_load_dotenv(BASE_DIR / '.env')
+
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.8.0'
+SITE_VERSION = '0.9.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -57,6 +78,7 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',  # SEO：/sitemap.xml 收录入口（V0.7.0）
     'core',
     'products',
+    'payments',
     'accounts',
 ]
 
@@ -177,6 +199,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # 受保护的超级管理员账号用户名（accounts app 角色体系使用）
 SUPER_ADMIN_USERNAME = 'glowisd'
 
+# —— 在线支付（Stripe 收银台）——
+# 密钥只放 .env / 服务器环境变量，不进 git：
+#   STRIPE_SECRET_KEY=sk_live_...
+#   STRIPE_PUBLISHABLE_KEY=pk_live_...
+#   STRIPE_WEBHOOK_SECRET=whsec_...（Stripe 后台配置 webhook 后获得）
+# 未配置时前台自动降级为「人工确认下单」，订单照样入库，不会报错。
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+SITE_BASE_URL = os.environ.get('SITE_BASE_URL', 'https://glowisd.cn')
+
 # simpleui 后台配置
 SIMPLEUI_DEFAULT_THEME = 'admin.lte.css'
 SIMPLEUI_HOME_TITLE = 'Glowisd 管理后台'
@@ -202,6 +235,13 @@ SIMPLEUI_CONFIG = {
                 {'name': '产品分类', 'icon': 'fas fa-tags', 'url': '/admin/products/category/'},
                 {'name': '首页轮播', 'icon': 'fas fa-images', 'url': '/admin/core/heroslide/'},
                 {'name': '数据质量检查', 'icon': 'fas fa-clipboard-check', 'url': '/admin/products/product/data-quality/'},
+            ],
+        },
+        {
+            'name': '订单与收款',
+            'icon': 'fas fa-credit-card',
+            'models': [
+                {'name': '订单', 'icon': 'fas fa-receipt', 'url': '/admin/payments/order/'},
             ],
         },
         {

@@ -4,3 +4,4 @@ Pillow==12.3.0
 user-agents==2.2.0
 py-ip2region==3.0.4
 gunicorn==26.2.0
+stripe==16.1.0

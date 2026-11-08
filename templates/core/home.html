@@ -79,8 +79,8 @@
         {% endif %}
       </p>
     </div>
-    <div class="grid grid--3">
-      {% for c in cats %}
+    <div class="grid grid--3 cat-grid">
+      {% for c in cat_cards %}
       <a class="card cat-card" href="{% url 'product_list' %}?category={{ c.slug }}">
         <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
         <h3>{% if lang == 'en' %}{{ c.name_en }}{% else %}{{ c.name }}{% endif %}</h3>

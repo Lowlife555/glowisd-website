@@ -77,13 +77,51 @@
         </div>
         {% endif %}
 
-        <div class="p-actions">
-          <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
-            {% if lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
-          </a>
-          <a class="btn btn--outline" href="{% url 'product_list' %}">
-            {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
-          </a>
+        <div class="buy-panel">
+          <div class="price-line">
+            <span class="price-amount">{{ product.price_display }}</span>
+            <span class="price-unit">{% if lang == 'en' %}per unit{% else %}每件{% endif %}</span>
+            {% if product.is_placeholder_price %}
+            <span class="badge badge--muted">{% if lang == 'en' %}Price TBD · placeholder{% else %}待定价 · 防拍价{% endif %}</span>
+            {% endif %}
+          </div>
+          {% if product.is_placeholder_price %}
+          <p class="price-note">
+            {% if lang == 'en' %}
+            This item is not priced yet — the figure above is a placeholder anti-ordering price (99,999).
+            Contact us for an exact quote; online checkout opens once the price is confirmed.
+            {% else %}
+            该产品尚未定价，上方为 99999 防拍价。联系我们获取准确报价，定价后自动开放在线下单。
+            {% endif %}
+          </p>
+          <div class="p-actions">
+            <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
+              {% if lang == 'en' %}Request a Quote{% else %}联系确认价格{% endif %}
+            </a>
+            <a class="btn btn--outline" href="{% url 'product_list' %}">
+              {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
+            </a>
+          </div>
+          {% else %}
+          <p class="price-note">
+            {% if lang == 'en' %}
+            Order online in minutes — Visa, MasterCard, UnionPay, Alipay and WeChat Pay accepted.
+            {% else %}
+            可直接在线下单，支持 Visa / MasterCard / 银联 / 支付宝 / 微信支付。
+            {% endif %}
+          </p>
+          <div class="p-actions">
+            <a class="btn btn--primary" href="{% url 'payment_start' product.pk %}">
+              {% if lang == 'en' %}Buy Now{% else %}立即购买{% endif %}
+            </a>
+            <a class="btn btn--outline" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
+              {% if lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
+            </a>
+          </div>
+          <div class="pay-brands" aria-label="{% if lang == 'en' %}Accepted payment methods{% else %}支持的支付方式{% endif %}">
+            <span>Visa</span><span>MasterCard</span><span>UnionPay</span><span>Alipay</span><span>WeChat Pay</span>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>

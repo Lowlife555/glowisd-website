@@ -51,7 +51,7 @@
 
     <div class="result-meta">
       <span class="count">
-        {% if lang == 'en' %}<b>{{ products|length }}</b> products found{% else %}共 <b>{{ products|length }}</b> 款产品{% endif %}
+        {% if lang == 'en' %}<b>{{ total_count }}</b> products found{% else %}共 <b>{{ total_count }}</b> 款产品{% endif %}
         {% if active_category %} · {{ active_category }}{% endif %}
         {% if search %} · "{{ search }}"{% endif %}
       </span>
@@ -69,6 +69,38 @@
       {% include "products/_product_card.html" with p=p %}
       {% endfor %}
     </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav class="pagination" aria-label="{% if lang == 'en' %}Pagination{% else %}分页{% endif %}">
+      {% if page_obj.has_previous %}
+      <a class="pagination__step" href="?{{ query_prefix }}page={{ page_obj.previous_page_number }}">
+        <span aria-hidden="true">←</span> {% if lang == 'en' %}Prev{% else %}上一页{% endif %}
+      </a>
+      {% else %}
+      <span class="pagination__step is-disabled"><span aria-hidden="true">←</span> {% if lang == 'en' %}Prev{% else %}上一页{% endif %}</span>
+      {% endif %}
+
+      <span class="pagination__pages">
+        {% for num in page_range %}
+          {% if num == page_obj.number %}
+          <span class="pagination__page is-current" aria-current="page">{{ num }}</span>
+          {% elif num == ellipsis %}
+          <span class="pagination__gap">…</span>
+          {% else %}
+          <a class="pagination__page" href="?{{ query_prefix }}page={{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a class="pagination__step" href="?{{ query_prefix }}page={{ page_obj.next_page_number }}">
+        {% if lang == 'en' %}Next{% else %}下一页{% endif %} <span aria-hidden="true">→</span>
+      </a>
+      {% else %}
+      <span class="pagination__step is-disabled">{% if lang == 'en' %}Next{% else %}下一页{% endif %} <span aria-hidden="true">→</span></span>
+      {% endif %}
+    </nav>
+    {% endif %}
     {% else %}
     <div class="empty-state">
       <div class="big">{% if lang == 'en' %}No products found{% else %}没有找到匹配的产品{% endif %}</div>
