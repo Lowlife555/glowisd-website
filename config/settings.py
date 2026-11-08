@@ -39,7 +39,7 @@ _load_dotenv(BASE_DIR / '.env')
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.9.0'
+SITE_VERSION = '0.10.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -241,6 +241,10 @@ SIMPLEUI_CONFIG = {
             'name': '订单与收款',
             'icon': 'fas fa-credit-card',
             'models': [
+                {'name': '收款设置', 'icon': 'fas fa-sliders-h',
+                 'url': '/admin/payments/paymentsettings/'},
+                {'name': '收款账户', 'icon': 'fas fa-university',
+                 'url': '/admin/payments/bankaccount/'},
                 {'name': '订单', 'icon': 'fas fa-receipt', 'url': '/admin/payments/order/'},
             ],
         },

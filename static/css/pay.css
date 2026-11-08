@@ -302,6 +302,51 @@
   .cat-grid .cat-card .meta { margin-top: 12px; font-size: 11px; }
 }
 
+/* ---------- 线下汇款：收款账户卡片 ---------- */
+.bank-box {
+  margin: 18px 0 4px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-deep);
+}
+.bank-box--success { margin: 26px 0 0; text-align: left; }
+.bank-box__title {
+  margin: 0 0 6px;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bank-box__intro { margin: 0 0 4px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+.bank-box__hint { margin: 14px 0 0; font-size: 12px; line-height: 1.6; color: var(--ink-3); }
+.bank-row { padding: 14px 0 4px; border-top: 1px dashed var(--line-strong); margin-top: 12px; }
+.bank-row__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.bank-row__head b { font-size: 14px; color: var(--ink); }
+.bank-row__cur {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+.bank-row__meta {
+  margin: 10px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 22px;
+}
+.bank-row__meta dt {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.bank-row__meta dd { margin: 2px 0 0; font-size: 14px; color: var(--ink-2); word-break: break-word; }
+.bank-no { font-family: var(--mono); font-size: 15px; color: var(--ink); letter-spacing: .02em; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 960px) {
   .pay-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -317,6 +362,7 @@
   .order-card { padding: 34px 22px 26px; }
   .order-meta > div { flex-direction: column; gap: 4px; }
   .order-meta dd { text-align: left; }
+  .bank-row__meta { grid-template-columns: 1fr; }
   .pagination__pages { order: 3; width: 100%; justify-content: center; }
   .pagination { justify-content: center; }
 }

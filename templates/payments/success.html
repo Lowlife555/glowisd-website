@@ -33,12 +33,22 @@
       {% else %}
       <h1>{% if lang == 'en' %}Order received{% else %}订单已提交{% endif %}</h1>
       <p class="order-card__sub">
+        {% if bank_accounts %}
+        {% if lang == 'en' %}
+        Thank you, {{ order.customer_name }}. Please transfer {{ order.amount_display }} to the
+        account below and keep order {{ order.order_no }} as the payment reference.
+        {% else %}
+        感谢 {{ order.customer_name }}，请将 {{ order.amount_display }} 汇入下方银行账户，
+        并在汇款附言中填写订单号 {{ order.order_no }}。
+        {% endif %}
+        {% else %}
         {% if lang == 'en' %}
         Thank you, {{ order.customer_name }}. Our team will contact you within 1 business day
         to complete the payment for order {{ order.order_no }}.
         {% else %}
         感谢 {{ order.customer_name }}，订单 {{ order.order_no }} 已生成。客服将在 1 个工作日内
         联系您完成付款。
+        {% endif %}
         {% endif %}
       </p>
       {% endif %}
@@ -52,6 +62,34 @@
         <div><dt>{% if lang == 'en' %}Status{% else %}状态{% endif %}</dt><dd>{{ order|status_label:lang }}</dd></div>
         <div><dt>{% if lang == 'en' %}Email{% else %}邮箱{% endif %}</dt><dd>{{ order.customer_email }}</dd></div>
       </dl>
+
+      {% if bank_accounts and not order.is_paid %}
+      <div class="bank-box bank-box--success">
+        <h3 class="bank-box__title">{{ offline_title }}</h3>
+        {% if offline_intro %}<p class="bank-box__intro">{{ offline_intro }}</p>{% endif %}
+        {% for acc in bank_accounts %}
+        <div class="bank-row">
+          <div class="bank-row__head">
+            <b>{{ acc.label|default:"Bank account" }}</b>
+            <span class="bank-row__cur">{{ acc.currency }}</span>
+          </div>
+          <dl class="bank-row__meta">
+            <div><dt>{% if lang == 'en' %}Bank{% else %}开户银行{% endif %}</dt><dd>{{ acc.bank_name }}</dd></div>
+            <div><dt>{% if lang == 'en' %}Account name{% else %}收款人{% endif %}</dt><dd>{{ acc.account_name }}</dd></div>
+            <div><dt>{% if lang == 'en' %}Account no.{% else %}银行账号{% endif %}</dt><dd class="bank-no">{{ acc.account_number }}</dd></div>
+            {% if acc.swift_code %}<div><dt>SWIFT / BIC</dt><dd>{{ acc.swift_code }}</dd></div>{% endif %}
+            {% if acc.iban %}<div><dt>IBAN</dt><dd>{{ acc.iban }}</dd></div>{% endif %}
+            {% if acc.bank_address %}<div><dt>{% if lang == 'en' %}Bank address{% else %}开户行地址{% endif %}</dt><dd>{{ acc.bank_address }}</dd></div>{% endif %}
+            {% if acc.note %}<div><dt>{% if lang == 'en' %}Note{% else %}备注{% endif %}</dt><dd>{{ acc.note }}</dd></div>{% endif %}
+          </dl>
+        </div>
+        {% endfor %}
+        <p class="bank-box__hint">
+          {% if lang == 'en' %}Please include the order number in the transfer reference so we can match your payment.
+          {% else %}请在汇款附言中填写订单号，便于我们核对到账并安排发货。{% endif %}
+        </p>
+      </div>
+      {% endif %}
 
       <div class="order-actions">
         <a class="btn btn--primary" href="{% url 'product_list' %}">

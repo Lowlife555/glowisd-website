@@ -6,10 +6,19 @@ from django.urls import reverse
 
 from products.models import PLACEHOLDER_PRICE, Category, Product
 
-from .models import Order
+from .models import BankAccount, Order, PaymentSettings
+
+
+def enable_online():
+    cfg = PaymentSettings.load()
+    cfg.online_enabled = True
+    cfg.save()
+    return cfg
 
 
 class PaymentFlowTests(TestCase):
+    """线下汇款（默认模式）：开关关闭在线收款时，客户只能按银行账户转账。"""
+
     def setUp(self):
         self.category = Category.objects.create(
             name='传感器', name_en='Sensors', slug='sensors-test',
@@ -21,13 +30,19 @@ class PaymentFlowTests(TestCase):
         self.placeholder = Product.objects.create(
             sku='TEST-2', part_name='未定价件', category=self.category,
         )
+        self.account = BankAccount.objects.create(
+            label_zh='中国银行对公账户', label_en='Bank of China (corporate)',
+            bank_name='中国银行常州分行', account_name='常州 Glowisd 科技有限公司',
+            account_number='5123 4567 8901 2345', swift_code='BKCHCNBJ95B',
+            currency='USD', is_active=True, sort_order=1,
+        )
 
     def _post(self, **overrides):
         payload = {
             'name': 'Hans Müller',
             'email': 'hans@example.com',
             'quantity': '2',
-            'method': 'visa',
+            'method': 'bank_transfer',
             'country': 'Germany',
             'phone': '+49 170 0000',
             'note': '',
@@ -51,28 +66,31 @@ class PaymentFlowTests(TestCase):
         self.assertContains(resp, '99,999')
         self.assertNotContains(resp, reverse('payment_start', args=[self.placeholder.pk]))
 
-    def test_detail_shows_buy_now_for_priced_product(self):
+    def test_detail_shows_order_button_for_priced_product(self):
         resp = self.client.get(reverse('product_detail', args=[self.product.pk]))
         self.assertContains(resp, reverse('payment_start', args=[self.product.pk]))
         self.assertContains(resp, '$268.00')
+        self.assertContains(resp, 'bank transfer')
 
-    def test_checkout_page_lists_five_methods(self):
+    def test_checkout_page_shows_bank_transfer_only(self):
         resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
         self.assertEqual(resp.status_code, 200)
-        for label in ('Visa', 'MasterCard', 'UnionPay', '支付宝', '微信支付'):
-            self.assertContains(resp, label)
+        self.assertContains(resp, '银行转账')
+        self.assertContains(resp, self.account.account_number)
+        self.assertContains(resp, self.account.swift_code)
+        # 没有在线收款时不展示 Visa / 支付宝等在线方式
+        self.assertNotContains(resp, '支付宝 Alipay')
 
-    def test_manual_order_is_created_and_redirects_to_success(self):
+    def test_offline_order_is_created_and_redirects_to_success(self):
         resp = self._post()
         order = Order.objects.get()
         self.assertEqual(resp.status_code, 302)
         self.assertIn(order.order_no, resp['Location'])
         self.assertEqual(order.amount, Decimal('536.00'))
         self.assertEqual(order.currency, 'USD')
-        self.assertEqual(order.method, 'visa')
+        self.assertEqual(order.method, 'bank_transfer')
         self.assertEqual(order.provider, 'manual')
         self.assertEqual(order.status, 'pending')
-        # 快照字段
         self.assertEqual(order.sku, 'TEST-1')
         self.assertEqual(order.customer_email, 'hans@example.com')
 
@@ -81,8 +99,8 @@ class PaymentFlowTests(TestCase):
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(Order.objects.count(), 0)
 
-    def test_missing_method_rejected(self):
-        resp = self._post(method='bitcoin')
+    def test_online_method_rejected_when_offline_mode(self):
+        resp = self._post(method='visa')
         self.assertEqual(resp.status_code, 400)
         self.assertEqual(Order.objects.count(), 0)
 
@@ -92,13 +110,15 @@ class PaymentFlowTests(TestCase):
         resp = self._post(quantity='1000')
         self.assertEqual(resp.status_code, 400)
 
-    def test_success_page_renders_order(self):
+    def test_success_page_shows_bank_details(self):
         self._post()
         order = Order.objects.get()
         resp = self.client.get(reverse('payment_success', args=[order.order_no]))
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, order.order_no)
         self.assertContains(resp, '$536.00')
+        self.assertContains(resp, self.account.account_number)
+        self.assertContains(resp, self.account.account_name)
 
     def test_mark_paid_is_idempotent(self):
         self._post()
@@ -117,12 +137,78 @@ class PaymentFlowTests(TestCase):
         self.assertEqual(order.status, 'cancelled')
 
 
+class PaymentModeTests(TestCase):
+    """后台「收款设置」开关直接决定前台收款方式。"""
+
+    def setUp(self):
+        self.category = Category.objects.create(name='线缆', name_en='Cables', slug='cables-test')
+        self.product = Product.objects.create(
+            sku='TEST-5', part_name='线缆', category=self.category, price=Decimal('99.99'),
+        )
+        self.account = BankAccount.objects.create(
+            bank_name='ICBC', account_name='Glowisd', account_number='6222 0000 1111 2222',
+            currency='CNY',
+        )
+
+    def test_default_settings_are_offline(self):
+        cfg = PaymentSettings.load()
+        self.assertFalse(cfg.online_enabled)
+        self.assertTrue(cfg.offline_enabled)
+
+    def test_both_switches_off_shows_unavailable(self):
+        cfg = PaymentSettings.load()
+        cfg.online_enabled = False
+        cfg.offline_enabled = False
+        cfg.save()
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        self.assertContains(resp, 'Online ordering is not open')
+        # 不再显示提交按钮，改为联系入口
+        self.assertNotContains(resp, 'Place order')
+
+    @override_settings(STRIPE_SECRET_KEY='sk_test_dummy')
+    def test_online_enabled_lists_five_methods(self):
+        enable_online()
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        for label in ('Visa', 'MasterCard', 'UnionPay', '支付宝', '微信支付'):
+            self.assertContains(resp, label)
+
+    @override_settings(STRIPE_SECRET_KEY='')
+    def test_online_enabled_without_key_falls_back_to_offline(self):
+        enable_online()
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        self.assertContains(resp, '银行转账')
+        self.assertNotContains(resp, '支付宝 Alipay')
+
+    def test_inactive_account_hidden(self):
+        self.account.is_active = False
+        self.account.save()
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        self.assertNotContains(resp, self.account.account_number)
+
+    def test_accounts_ordered_by_sort_then_id(self):
+        second = BankAccount.objects.create(
+            bank_name='Bank B', account_name='B', account_number='B-2', sort_order=-1,
+        )
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        accounts = list(resp.context['bank_accounts'])
+        self.assertEqual(accounts[0], second)
+        self.assertIn(self.account, accounts)
+
+    def test_settings_is_singleton(self):
+        cfg = PaymentSettings.load()
+        cfg.online_enabled = True
+        cfg.save()
+        self.assertEqual(PaymentSettings.objects.count(), 1)
+        self.assertEqual(PaymentSettings.load().pk, 1)
+
+
 class StripeIntegrationTests(TestCase):
     def setUp(self):
         self.category = Category.objects.create(name='线缆', name_en='Cables', slug='cables-test')
         self.product = Product.objects.create(
             sku='TEST-3', part_name='线缆', category=self.category, price=Decimal('99.99'),
         )
+        enable_online()
 
     def _post(self, method):
         return self.client.post(reverse('payment_start', args=[self.product.pk]), {
@@ -161,6 +247,15 @@ class StripeIntegrationTests(TestCase):
         kwargs = stripe_api.checkout.Session.create.call_args.kwargs
         self.assertEqual(kwargs['payment_method_options'], {'wechat_pay': {'client': 'web'}})
 
+    @override_settings(STRIPE_SECRET_KEY='sk_test_dummy', STRIPE_WEBHOOK_SECRET='whsec_dummy')
+    @patch('payments.gateway._stripe')
+    def test_stripe_failure_marks_order_failed(self, fake_stripe):
+        fake_stripe.return_value.checkout.Session.create.side_effect = RuntimeError('boom')
+        resp = self._post('visa')
+        self.assertEqual(resp.status_code, 502)
+        order = Order.objects.get()
+        self.assertEqual(order.status, 'failed')
+
     @override_settings(STRIPE_SECRET_KEY='sk_test_dummy', STRIPE_WEBHOOK_SECRET='')
     def test_webhook_requires_secret(self):
         resp = self.client.post(reverse('stripe_webhook'), data='{}',
@@ -189,7 +284,7 @@ class StripeIntegrationTests(TestCase):
 
 
 class AdminPricingTests(TestCase):
-    """后台实时改价 + 订单列表：管理员能在列表页直接改价格（list_editable）。"""
+    """后台实时改价 + 收款设置页 + 订单列表。"""
 
     def setUp(self):
         from django.contrib.auth.models import User
@@ -200,6 +295,7 @@ class AdminPricingTests(TestCase):
         )
         self.user = User.objects.create_superuser('admin', 'admin@example.com', 'pw-test-123')
         self.client.force_login(self.user)
+        PaymentSettings.load()
 
     def test_changelist_renders_inline_price_editor(self):
         resp = self.client.get('/admin/products/product/')
@@ -216,6 +312,45 @@ class AdminPricingTests(TestCase):
         resp = self.client.get('/admin/payments/order/')
         self.assertEqual(resp.status_code, 200)
         self.assertContains(resp, order.order_no)
+
+    def test_payment_settings_changelist_redirects_to_singleton(self):
+        resp = self.client.get('/admin/payments/paymentsettings/')
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('/admin/payments/paymentsettings/1/change/', resp['Location'])
+
+    @override_settings(STRIPE_SECRET_KEY='sk_test_dummy')
+    def test_payment_settings_page_has_switches_and_accounts(self):
+        resp = self.client.get('/admin/payments/paymentsettings/1/change/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, '启用在线收款')
+        self.assertContains(resp, '启用线下汇款')
+        self.assertContains(resp, '收款账户')
+        self.assertContains(resp, '检测 Stripe 连接')
+
+    def test_bank_account_admin_lists_and_creates(self):
+        resp = self.client.get('/admin/payments/bankaccount/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, '收款账户')
+        add = self.client.get('/admin/payments/bankaccount/add/')
+        self.assertEqual(add.status_code, 200)
+        self.assertContains(add, '银行账号')
+
+    @override_settings(STRIPE_SECRET_KEY='')
+    def test_probe_without_key_returns_error_message(self):
+        resp = self.client.get('/admin/payments/paymentsettings/probe-stripe/', follow=True)
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'STRIPE_SECRET_KEY')
+
+    @override_settings(STRIPE_SECRET_KEY='sk_test_dummy')
+    @patch('payments.gateway.probe_stripe')
+    def test_probe_success_shows_account(self, probe):
+        probe.return_value = {
+            'id': 'acct_test_1', 'country': 'HK', 'default_currency': 'USD',
+            'business_type': 'company', 'mode': 'test',
+        }
+        resp = self.client.get('/admin/payments/paymentsettings/probe-stripe/', follow=True)
+        self.assertContains(resp, 'acct_test_1')
+        self.assertContains(resp, 'HK')
 
 
 class ProductCatalogTests(TestCase):

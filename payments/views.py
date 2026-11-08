@@ -15,7 +15,9 @@ from core.models import SiteSettings
 from products.models import Product
 
 from . import gateway
-from .models import CARD_METHODS, Order, PaymentMethod
+from .models import (
+    BankAccount, CARD_METHODS, OFFLINE_METHOD, Order, PaymentMethod, PaymentSettings,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,15 +63,39 @@ def _rate_limited(request):
     return False
 
 
+def payment_mode(product):
+    """当前该产品实际生效的收款模式（由后台「收款设置」决定）。
+
+    - online：在线收款（Stripe 已配密钥 + 后台开启）
+    - external：产品单独配置了外部支付链接
+    - offline：线下汇款（银行转账，后台维护收款账户）
+    - unavailable：既没在线、也没线下 → 只能联系客服
+    """
+    if product.payment_link:
+        return 'external'
+    cfg = PaymentSettings.load()
+    if cfg.online_enabled and gateway.stripe_configured():
+        return 'online'
+    if cfg.offline_enabled:
+        return 'offline'
+    return 'unavailable'
+
+
 def _methods_context(request, product):
-    """支付方式列表：标记每种方式当前实际走的通道，前端据此展示说明文案。"""
+    """按当前模式给出可选的支付方式，以及前端据此展示说明的 channel。"""
     lang = get_lang(request)
-    if gateway.stripe_configured():
-        channel = 'stripe'
-    elif product.payment_link:
-        channel = 'external'
-    else:
-        channel = 'manual'
+    mode = payment_mode(product)
+
+    if mode == 'offline':
+        return [{
+            'value': OFFLINE_METHOD,
+            'label': '银行转账 / Bank transfer',
+            'sub': ('汇至下方账户，到账后发货' if lang == 'zh' else 'Transfer to the account below'),
+            'is_card': False,
+        }], 'offline'
+
+    if mode == 'unavailable':
+        return [], 'unavailable'
 
     methods = []
     for value in METHOD_ORDER:
@@ -80,7 +106,11 @@ def _methods_context(request, product):
             'sub': sub_en if lang == 'en' else sub_zh,
             'is_card': value in CARD_METHODS,
         })
-    return methods, channel
+    return methods, ('external' if mode == 'external' else 'stripe')
+
+
+def active_bank_accounts():
+    return list(BankAccount.objects.filter(is_active=True))
 
 
 def _native_payment_note(site_settings, lang):
@@ -88,15 +118,21 @@ def _native_payment_note(site_settings, lang):
 
 
 def _page_context(request, product, site_settings, channel, **extra):
+    lang = get_lang(request)
     methods, _channel = _methods_context(request, product)
+    cfg = PaymentSettings.load()
     ctx = {
         'active': 'products',
         'product': product,
         'methods': methods,
         'channel': channel,
         'online_pay': channel == 'stripe',
+        'offline': channel == 'offline',
+        'bank_accounts': active_bank_accounts() if channel == 'offline' else [],
+        'offline_title': cfg.title(lang),
+        'offline_intro': cfg.intro(lang),
         'max_quantity': MAX_QUANTITY,
-        'payment_note': _native_payment_note(site_settings, get_lang(request)),
+        'payment_note': _native_payment_note(site_settings, lang),
     }
     ctx.update(extra)
     return ctx
@@ -113,9 +149,11 @@ def payment_start(request, pk):
         )
 
     site_settings = SiteSettings.load()
-    methods_channel = 'stripe' if gateway.stripe_configured() else (
-        'external' if product.payment_link else 'manual'
-    )
+    mode = payment_mode(product)
+    methods_channel = {
+        'online': 'stripe', 'external': 'external',
+        'offline': 'offline', 'unavailable': 'unavailable',
+    }[mode]
     lang = get_lang(request)
 
     if request.method != 'POST':
@@ -136,7 +174,19 @@ def payment_start(request, pk):
     if not error and _rate_limited(request):
         error = '下单过于频繁，请稍后再试。' if lang == 'zh' else \
             'Too many orders. Please try again later.'
-    if not error and method not in PaymentMethod.values:
+    if not error and mode in ('online', 'external'):
+        allowed_methods = set(METHOD_ORDER)
+    elif not error and mode == 'offline':
+        allowed_methods = {OFFLINE_METHOD}
+        if method and method != OFFLINE_METHOD:
+            allowed_methods = set()
+        method = OFFLINE_METHOD
+    else:
+        allowed_methods = set()
+        error = ('该产品暂未开放在线下单，请先联系我们。'
+                 if lang == 'zh' else
+                 'This product is not open for online ordering yet. Please contact us.')
+    if not error and method not in allowed_methods:
         error = '请选择支付方式。' if lang == 'zh' else 'Please choose a payment method.'
     if not error and not name:
         error = '请填写联系人姓名。' if lang == 'zh' else 'Please enter your name.'
@@ -187,13 +237,13 @@ def payment_start(request, pk):
         )
 
     # 1) 产品配了外部支付链接 → 直接跳转
-    if product.payment_link:
+    if mode == 'external':
         order.provider = 'external_link'
         order.save(update_fields=['provider'])
         return HttpResponseRedirect(product.payment_link)
 
-    # 2) 已配置 Stripe → 在线收银台
-    if gateway.stripe_configured():
+    # 2) 已开启在线收款 + 已配 Stripe 密钥 → 在线收银台
+    if mode == 'online':
         try:
             session_id, redirect_url = gateway.create_checkout_session(order, product, request)
         except Exception as exc:  # 通道异常不能把客户晾在空白页
@@ -239,6 +289,9 @@ def payment_success(request, order_no):
     return render(request, 'payments/success.html', {
         'active': 'products',
         'order': order,
+        'bank_accounts': active_bank_accounts() if order.method == OFFLINE_METHOD else [],
+        'offline_title': PaymentSettings.load().title(get_lang(request)),
+        'offline_intro': PaymentSettings.load().intro(get_lang(request)),
     })
 
 

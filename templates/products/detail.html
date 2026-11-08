@@ -104,23 +104,43 @@
           </div>
           {% else %}
           <p class="price-note">
+            {% if pay_mode == 'offline' %}
+            {% if lang == 'en' %}
+            Order online in minutes — pay by bank transfer (T/T). Bank details are shown at checkout.
+            {% else %}
+            可直接在线下单，支持银行转账（T/T），收银台会显示收款账户。
+            {% endif %}
+            {% elif pay_mode == 'unavailable' %}
+            {% if lang == 'en' %}
+            Online ordering is temporarily closed. Send an inquiry and we will confirm price and payment method.
+            {% else %}
+            在线下单暂未开放。发送询价后我们会与您确认价格与付款方式。
+            {% endif %}
+            {% else %}
             {% if lang == 'en' %}
             Order online in minutes — Visa, MasterCard, UnionPay, Alipay and WeChat Pay accepted.
             {% else %}
             可直接在线下单，支持 Visa / MasterCard / 银联 / 支付宝 / 微信支付。
             {% endif %}
+            {% endif %}
           </p>
           <div class="p-actions">
             <a class="btn btn--primary" href="{% url 'payment_start' product.pk %}">
+              {% if pay_mode == 'offline' %}
+              {% if lang == 'en' %}Order (bank transfer){% else %}下单（银行转账）{% endif %}
+              {% else %}
               {% if lang == 'en' %}Buy Now{% else %}立即购买{% endif %}
+              {% endif %}
             </a>
             <a class="btn btn--outline" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
               {% if lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
             </a>
           </div>
+          {% if pay_mode != 'offline' %}
           <div class="pay-brands" aria-label="{% if lang == 'en' %}Accepted payment methods{% else %}支持的支付方式{% endif %}">
             <span>Visa</span><span>MasterCard</span><span>UnionPay</span><span>Alipay</span><span>WeChat Pay</span>
           </div>
+          {% endif %}
           {% endif %}
         </div>
       </div>

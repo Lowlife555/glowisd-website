@@ -52,6 +52,8 @@ def product_list(request):
 
 
 def product_detail(request, pk):
+    from payments.views import payment_mode  # 延迟导入：products 不依赖 payments 的其他部分
+
     product = get_object_or_404(Product.objects.select_related('category'), pk=pk)
     related = Product.objects.filter(category=product.category).exclude(pk=pk)[:4]
     return render(request, 'products/detail.html', {
@@ -59,4 +61,5 @@ def product_detail(request, pk):
         'related': related,
         'active': 'products',
         'price_required': request.GET.get('price') == 'required',
+        'pay_mode': payment_mode(product),
     })

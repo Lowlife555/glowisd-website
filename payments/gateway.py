@@ -17,6 +17,32 @@ def stripe_configured():
     return bool(getattr(settings, 'STRIPE_SECRET_KEY', ''))
 
 
+def stripe_key_mode():
+    """密钥模式：live=真实收款，test=测试模式，''=未配置。"""
+    key = getattr(settings, 'STRIPE_SECRET_KEY', '') or ''
+    if key.startswith('sk_live_') or key.startswith('rk_live_'):
+        return 'live'
+    if key.startswith('sk_test_') or key.startswith('rk_test_'):
+        return 'test'
+    return 'live' if key else ''
+
+
+def probe_stripe():
+    """后台「检测连接」：调一次只读接口，验证密钥能否连上 Stripe。
+
+    返回账户摘要；密钥无效/网络不通时抛出异常，由调用方展示错误。
+    """
+    stripe = _stripe()
+    account = stripe.Account.retrieve()
+    return {
+        'id': account.get('id', ''),
+        'country': account.get('country', ''),
+        'default_currency': (account.get('default_currency') or '').upper(),
+        'business_type': account.get('business_type', ''),
+        'mode': stripe_key_mode(),
+    }
+
+
 def _stripe():
     """延迟导入：未安装/未配置时不影响其他功能。"""
     import stripe

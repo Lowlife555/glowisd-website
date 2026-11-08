@@ -84,13 +84,22 @@
         <div class="notice notice--err" role="alert">{{ form_error }}</div>
         {% endif %}
 
-        {% if channel == 'manual' %}
-        <div class="notice notice--warn">
+        {% if channel == 'unavailable' %}
+        <div class="notice notice--err">
           {% if lang == 'en' %}
-          Online payment is being activated. Submit the order and our team will contact you
-          within 1 business day to complete the payment (bank transfer / payment link).
+          Online ordering is not open for this product right now. Please contact us and we
+          will send you a payment link or bank details.
           {% else %}
-          在线支付通道正在开通中。提交订单后，客服会在 1 个工作日内联系您完成付款（支持银行转账或发送付款链接）。
+          该产品暂未开放在线下单。请联系我们，我们会发送付款链接或银行账户信息。
+          {% endif %}
+        </div>
+        {% elif channel == 'offline' %}
+        <div class="notice notice--ok">
+          {% if lang == 'en' %}
+          Bank transfer: submit the order, then transfer to the account shown on the next
+          page. We ship once the payment arrives.
+          {% else %}
+          银行转账：提交订单后，按下一页显示的收款账户汇款，到账后我们安排发货。
           {% endif %}
         </div>
         {% elif channel == 'external' %}
@@ -103,6 +112,7 @@
         </div>
         {% endif %}
 
+        {% if methods %}
         <fieldset class="method-fieldset">
           <legend class="field-legend">{% if lang == 'en' %}Payment method{% else %}支付方式{% endif %}</legend>
           <div class="method-grid">
@@ -117,6 +127,7 @@
             </label>
             {% endfor %}
           </div>
+          {% if channel == 'stripe' %}
           <p class="method-hint">
             {% if lang == 'en' %}
             Visa, MasterCard and UnionPay are accepted through the same secure card form.
@@ -124,7 +135,38 @@
             Visa / MasterCard / 银联 通过同一安全银行卡表单收款；支付宝与微信支付为扫码支付。
             {% endif %}
           </p>
+          {% endif %}
         </fieldset>
+        {% endif %}
+
+        {% if channel == 'offline' %}
+        <div class="bank-box">
+          <h3 class="bank-box__title">{{ offline_title }}</h3>
+          {% if offline_intro %}<p class="bank-box__intro">{{ offline_intro }}</p>{% endif %}
+          {% for acc in bank_accounts %}
+          <div class="bank-row">
+            <div class="bank-row__head">
+              <b>{{ acc.label|default:"Bank account" }}</b>
+              <span class="bank-row__cur">{{ acc.currency }}</span>
+            </div>
+            <dl class="bank-row__meta">
+              <div><dt>{% if lang == 'en' %}Bank{% else %}开户银行{% endif %}</dt><dd>{{ acc.bank_name }}</dd></div>
+              <div><dt>{% if lang == 'en' %}Account name{% else %}收款人{% endif %}</dt><dd>{{ acc.account_name }}</dd></div>
+              <div><dt>{% if lang == 'en' %}Account no.{% else %}银行账号{% endif %}</dt><dd class="bank-no">{{ acc.account_number }}</dd></div>
+              {% if acc.swift_code %}<div><dt>SWIFT / BIC</dt><dd>{{ acc.swift_code }}</dd></div>{% endif %}
+              {% if acc.iban %}<div><dt>IBAN</dt><dd>{{ acc.iban }}</dd></div>{% endif %}
+              {% if acc.bank_address %}<div><dt>{% if lang == 'en' %}Bank address{% else %}开户行地址{% endif %}</dt><dd>{{ acc.bank_address }}</dd></div>{% endif %}
+              {% if acc.note %}<div><dt>{% if lang == 'en' %}Note{% else %}备注{% endif %}</dt><dd>{{ acc.note }}</dd></div>{% endif %}
+            </dl>
+          </div>
+          {% empty %}
+          <p class="bank-box__intro">
+            {% if lang == 'en' %}Our payment accounts are being set up — we will send the bank details with your order confirmation.
+            {% else %}收款账户正在配置中，我们会在订单确认邮件中附上银行账户信息。{% endif %}
+          </p>
+          {% endfor %}
+        </div>
+        {% endif %}
 
         <div class="form-grid pay-fields">
           <div class="field">
@@ -163,13 +205,21 @@
         <p class="pay-terms">{{ payment_note }}</p>
         {% endif %}
 
+        {% if channel == 'unavailable' %}
+        <a class="btn btn--primary btn--block pay-submit" href="{% url 'contact' %}?product={{ product.sku|urlencode }}">
+          {% if lang == 'en' %}Contact us for a quote{% else %}联系我们获取报价{% endif %}
+        </a>
+        {% else %}
         <button class="btn btn--primary btn--block pay-submit" type="submit">
           {% if channel == 'stripe' %}
           {% if lang == 'en' %}Pay now{% else %}立即支付{% endif %}
+          {% elif channel == 'external' %}
+          {% if lang == 'en' %}Continue to payment{% else %}继续支付{% endif %}
           {% else %}
           {% if lang == 'en' %}Place order{% else %}提交订单{% endif %}
           {% endif %}
         </button>
+        {% endif %}
 
         <p class="pay-secure">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>

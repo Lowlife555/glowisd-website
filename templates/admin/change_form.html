@@ -29,6 +29,27 @@
         max-width: 100%;
     }
 
+    /* 分组标题：simpleui 默认隐藏 fieldset h2，收款设置等分组页需要它做区段标识 */
+    .form-main fieldset.module > h2 {
+        display: block;
+        margin: 0 0 10px;
+        padding: 0 0 10px;
+        border-bottom: 1px solid #ebeef5;
+        font-size: 15px;
+        font-weight: 600;
+        color: #1f2d3d !important;
+    }
+    .form-main fieldset.module { margin-bottom: 22px; }
+    .form-main fieldset.module .description {
+        margin: 0 0 14px;
+        padding: 10px 12px;
+        background: #f7f8fa;
+        border-left: 3px solid #c9a227;
+        color: #5a6270;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
 </style>
 <div id="content-main" class="form-main">
     {% if '_popup' not in request.GET %}
