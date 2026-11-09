@@ -31,3 +31,9 @@ def site_images(request):
     """
     from core.models import SiteImage
     return {'site_images': SiteImage.get_map()}
+
+
+def pricing_flags(request):
+    """向前台模板提供 show_prices：后台「收款设置 → 前台显示价格」一键开关（V0.11.0）。"""
+    from payments.models import PaymentSettings
+    return {'show_prices': PaymentSettings.prices_visible()}

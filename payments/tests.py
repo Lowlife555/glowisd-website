@@ -283,6 +283,60 @@ class StripeIntegrationTests(TestCase):
         self.assertEqual(order.status, 'paid')
 
 
+class PriceVisibilityTests(TestCase):
+    """后台「前台显示价格」一键开关：关闭后全站不显示价格与购买按钮（V0.11.0）。"""
+
+    def setUp(self):
+        self.category = Category.objects.create(name='电缆', name_en='Cables', slug='cables-vis')
+        self.product = Product.objects.create(
+            sku='TEST-V1', part_name='电缆', part_name_en='Cable',
+            category=self.category, price=Decimal('88.00'), currency='USD',
+        )
+
+    def _hide(self):
+        cfg = PaymentSettings.load()
+        cfg.show_prices = False
+        cfg.save()
+
+    def test_prices_visible_by_default(self):
+        self.assertTrue(PaymentSettings.prices_visible())
+        resp = self.client.get(reverse('product_detail', args=[self.product.pk]))
+        self.assertContains(resp, '$88.00')
+        resp = self.client.get(reverse('product_list'))
+        self.assertContains(resp, '$88.00')
+
+    def test_hidden_prices_on_detail_and_list(self):
+        self._hide()
+        detail = self.client.get(reverse('product_detail', args=[self.product.pk]))
+        self.assertNotContains(detail, '$88.00')
+        self.assertNotContains(detail, reverse('payment_start', args=[self.product.pk]))
+        self.assertContains(detail, 'Request a quote')
+
+        listing = self.client.get(reverse('product_list'))
+        self.assertNotContains(listing, '$88.00')
+        self.assertContains(listing, 'Price on request')
+
+    def test_payment_link_blocked_while_hidden(self):
+        self._hide()
+        resp = self.client.get(reverse('payment_start', args=[self.product.pk]))
+        self.assertRedirects(resp, reverse('product_detail', args=[self.product.pk]))
+
+        resp = self.client.post(reverse('payment_start', args=[self.product.pk]), {
+            'name': 'A', 'email': 'a@example.com', 'quantity': '1', 'method': 'bank_transfer',
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(Order.objects.count(), 0)
+
+    def test_toggle_back_restores_prices(self):
+        self._hide()
+        cfg = PaymentSettings.load()
+        cfg.show_prices = True
+        cfg.save()
+        detail = self.client.get(reverse('product_detail', args=[self.product.pk]))
+        self.assertContains(detail, '$88.00')
+        self.assertContains(detail, reverse('payment_start', args=[self.product.pk]))
+
+
 class AdminPricingTests(TestCase):
     """后台实时改价 + 收款设置页 + 订单列表。"""
 

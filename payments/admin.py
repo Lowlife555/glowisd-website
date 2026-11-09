@@ -116,6 +116,11 @@ class PaymentSettingsAdmin(admin.ModelAdmin):
 
     readonly_fields = ['status_box', 'accounts_box', 'updated_at']
     fieldsets = (
+        ('价格展示', {
+            'fields': ('show_prices',),
+            'description': '一键开关：取消勾选后，产品卡、详情页与收银台全部隐藏价格和购买按钮，'
+                           '改为「价格面议 / 联系我们获取报价」；重新勾选即恢复。历史订单金额不受影响。',
+        }),
         ('在线收款', {
             'fields': ('online_enabled', 'status_box'),
             'description': '勾选「启用在线收款」且服务器已配置 Stripe 密钥时，前台显示 '
@@ -177,6 +182,7 @@ class PaymentSettingsAdmin(admin.ModelAdmin):
         key_text = {'live': '已配置（LIVE 真实收款）',
                     'test': '已配置（TEST 测试模式）'}.get(key_mode, '未配置')
         rows = [
+            f'<b>前台价格显示：</b>{"显示价格" if obj.show_prices else "已隐藏（价格面议）"}',
             f'<b>在线收款开关：</b>{state}',
             f'<b>Stripe 密钥：</b>{key_text}',
             f'<b>Webhook 密钥：</b>{"已配置" if webhook else "未配置（支付结果以回跳核对兜底）"}',

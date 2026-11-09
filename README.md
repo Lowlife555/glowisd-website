@@ -1,4 +1,4 @@
-# Glowisd Website (V0.10.0)
+# Glowisd Website (V0.11.0)
 
 **Changzhou Glowisd Science And Technology Co.,Ltd** official website —— a manufacturer of electronic control systems, sensors, cables and accessories for construction machinery (pavers).
 
@@ -80,7 +80,7 @@ glowisd-website/
 | `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked/**price/currency/payment_link** | Product (182 items: 178 with images + 4 without, complete Chinese and English names); `featured=True` shows it in the home page recommendations; `is_watermarked` marks the image as already watermarked (applied automatically by the save hook + re-applied when the image is replaced); **`price` defaults to the 99999 anti-purchase price (not orderable until a real price is set), `currency` is USD/CNY/EUR/GBP, `payment_link` optionally points to an external checkout (Stripe Payment Link / PayPal)** |
 | `products.ContactMessage` | name/company/email/phone/country/category/message/is_read/status(new/contacted/quoted/won/lost)/quote_amount/lost_reason/inquired_product(FK)/source_page | Public inquiry messages (follow-up status management + automatic product association + source page recording) |
 | `payments.Order` | order_no/product(FK, SET_NULL)/sku & product_name snapshots/quantity/unit_price/amount/currency/method(visa/mastercard/unionpay/alipay/wechat/bank_transfer)/status(pending/paid/cancelled/refunded/failed)/provider(stripe/external_link/manual)/provider_ref/customer info/paid_at | Every checkout creates one order; product name and price are snapshotted so historical orders stay correct after re-pricing or deletion |
-| `payments.PaymentSettings` | online_enabled/offline_enabled/offline_title_zh·en/offline_intro_zh·en | Singleton (pk=1) behind the admin page 「订单与收款 → 收款设置」; one switch decides whether the storefront collects online (Stripe) or shows bank-transfer details only |
+| `payments.PaymentSettings` | show_prices/online_enabled/offline_enabled/offline_title_zh·en/offline_intro_zh·en | Singleton (pk=1) behind the admin page 「订单与收款 → 收款设置」; `show_prices` hides every price and buy button site-wide, the other switches decide whether the storefront collects online (Stripe) or shows bank-transfer details only |
 | `payments.BankAccount` | label_zh·en/bank_name/account_name/account_number/swift_code/iban/bank_address/currency/note_zh·en/is_active/sort_order | Receiving accounts shown on the checkout page and the order page whenever online payment is off; add/edit/disable any time in the admin, saved immediately |
 | `core.HeroSlide` | image/title_zh/title_en/sort_order/is_active | Home page carousel (uploaded from the admin) |
 | `core.LoginRecord` | user/username_attempted/login_time/ip_address(stored only, never displayed)/region/is_proxy(suspected proxy egress)/device_type/os_name/browser/user_agent(stored only)/success/fail_reason | Login audit (both successes and failures are recorded; zero IP display on pages) |
@@ -109,12 +109,13 @@ glowisd-website/
 - Product detail: parameter table (SKU/P/N/brand/weight/warranty/category) + price block + description + related products + inquiry entry
 - **Pricing & online payment (V0.9.0)**: every product shows its price on cards and the detail page; priced products get a "Buy Now" button that opens the built-in checkout at `/pay/<id>/` — a permanent payment link per product that can be sent to customers directly. Five methods: Visa / MasterCard / UnionPay / Alipay / WeChat Pay. With `STRIPE_SECRET_KEY` configured the checkout redirects to Stripe Checkout (cards + Alipay + WeChat Pay, webhook + server-side verification); without it the order is still captured and the customer is told support will contact them within one business day. Unpriced products keep the 99999 anti-purchase price and the buy button is hidden
 - **Payment settings page (V0.10.0)**: a dedicated admin screen 「订单与收款 → 收款设置」 decides how the storefront collects money. Online payment off ⇒ the checkout only shows bank-transfer details (the accounts you maintain) and every order waits for manual confirmation; online payment on + Stripe keys ⇒ the five online methods appear. Bank accounts can be added, edited or disabled at any time in the same page, and a "检测 Stripe 连接" button verifies the key against Stripe (account id / country / default currency / live vs test)
+- **Price display switch (V0.11.0)**: one checkbox in 「收款设置 → 前台显示价格」. Uncheck it and every product card, the detail page and the checkout stop showing prices and buy buttons — they show "Price on request" and a "Request a quote" button instead; even the 99999 anti-purchase price disappears from the public site. Payment links return to the product page while prices are hidden, and no order can be created. Check it again and prices come back instantly
 - Factory / Customization / Contact (inquiry form: honeypot + session rate limiting)
 
 **Admin (simpleui in Chinese, grouped menu)**:
 - Home dashboard: 6 statistic cards (total products / unread inquiries in red and clickable / added this week / profiles to complete / inquiries this month / active product lines) + recent inquiry activity + automatic to-do detection
 - Product management: products (thumbnails / part numbers / **inline price & currency editing in the list — saves take effect on the public site immediately** / price-status filter "unpriced vs orderable" / generated product payment link on the edit page / "featured on home" checkbox / watermarked flag / re-watermark action + automatic watermarking on upload + completeness progress bar on the edit page), product categories, home carousel, **data quality check** (7 clickable statistics with pre-filtering)
-- Orders & payments: **收款设置** (online on/off switch, offline-transfer wording, links to the accounts page, "检测 Stripe 连接" probe) and **收款账户** (its own list page: add/edit/disable bank accounts, active/sort editable straight in the list), orders list (inline status editing, amount/method/provider, customer email, filters by status/method/channel, changing status to "paid" stamps the payment time automatically)
+- Orders & payments: **收款设置** (price-display switch, online on/off switch, offline-transfer wording, links to the accounts page, "检测 Stripe 连接" probe) and **收款账户** (its own list page: add/edit/disable bank accounts, active/sort editable straight in the list), orders list (inline status editing, amount/method/provider, customer email, filters by status/method/channel, changing status to "paid" stamps the payment time automatically)
 - Site settings also carry the bilingual checkout notice (shipping/terms shown under the pay button)
 - Customer messages: inquiries (five-state colored status labels / filtering / change status directly from the list / quote amount / lost reason / country statistics panel)
 - Site settings: company info in Chinese and English / contact details / SEO / watermark parameters (singleton, synced to the public site)
@@ -124,6 +125,7 @@ glowisd-website/
 
 ## 6. Current Version Summary
 
+- **V0.11.0** (2026-11-09): One-click price-display switch. `PaymentSettings.show_prices` (on by default) hides every price, buy button and even the 99999 placeholder across product cards, the detail page and the checkout; payment links fall back to the product page and no order can be created while hidden. Status is echoed in the settings page.
 - **V0.10.0** (2026-11-08): Dedicated payment-settings admin page. `PaymentSettings` singleton with an online-payment switch and offline-transfer wording; `payments.BankAccount` on its own admin page for the receiving accounts (add/edit/disable, shown on the checkout and order pages); the checkout auto-switches between five online methods and bank-transfer-only mode; a "检测 Stripe 连接" probe reports the connected Stripe account, country, default currency and live/test mode.
 - **V0.9.0** (2026-11-08): Pricing + online payment. Product price/currency fields (unpriced items default to the 99999 anti-purchase price and stay non-orderable), inline price editing in the admin list, per-product payment link `/pay/<id>/`, checkout with Visa / MasterCard / UnionPay / Alipay / WeChat Pay (Stripe Checkout adapter + graceful manual fallback), `payments.Order` model + admin, bilingual checkout/result pages, product list pagination (24/page), mobile two-column product & category grids, seamless logo blending in the header.
 - **V0.8.0** (2026-09-03): Site images replaceable from the admin (7 fixed slots); CSP fixes from V0.6.x remain in force.
@@ -132,7 +134,7 @@ glowisd-website/
 - **V0.6.1** (2026-09-03): Security hardening (P1 admin login rate limiting + forced password change on first login, P2 security response headers CSP/X-Frame-Options/HSTS switch, P3 dependency security audit).
 - **V0.6.0** (2026-09-01): Role system simplified (no new viewers from the admin, historical viewers can be converted to admin in bulk) + README rewritten around four menu groups + CHANGELOG split out + .env.example + unified product-image count convention.
 
-> Full version history (V0.1.0–V0.10.0) is in [CHANGELOG.md](CHANGELOG.md).
+> Full version history (V0.1.0–V0.11.0) is in [CHANGELOG.md](CHANGELOG.md).
 >
 > Version rules: `Va.b.c` increments in decimal, a=refactor, b=new feature, c=fix; every requirement change or fix must bump the version, commits start with `V X.Y.Z:` and are tagged.
 
@@ -148,7 +150,7 @@ python manage.py runserver
 # visit http://localhost:8000 (public) / http://localhost:8000/admin (admin)
 ```
 
-Smoke tests (5 bilingual public pages / inquiry honeypot rate limiting / admin permission isolation / super-admin protection / login rate limiting / security response headers / forced password change on first login / pricing + checkout + Stripe mapping + webhook + payment-mode switch + bank accounts + probe + pagination, 58 items in total):
+Smoke tests (5 bilingual public pages / inquiry honeypot rate limiting / admin permission isolation / super-admin protection / login rate limiting / security response headers / forced password change on first login / pricing + checkout + Stripe mapping + webhook + payment-mode switch + bank accounts + probe + price-display switch + pagination, 63 items in total):
 ```bash
 python manage.py test
 ```
@@ -278,11 +280,11 @@ This project is developed by 4 AI agents working together; understand the divisi
 
 ---
 
-*Last updated: V0.10.0 (2026-11-08)*
+*Last updated: V0.11.0 (2026-11-09)*
 
 ---
 
-# Glowisd 官网（V0.10.0）
+# Glowisd 官网（V0.11.0）
 
 **常州市格勒威科学技术有限公司（CZ Glowisd Science And Technology Co.,Ltd）** 官方网站 —— 工程机械（摊铺机）电控系统、传感器、线缆及配件制造商。
 
@@ -364,7 +366,7 @@ glowisd-website/
 | `products.Product` | sku/part_name(_en)/pn/brand/weight/warranty/description(_en)/category/image/featured/is_watermarked/**price/currency/payment_link** | 产品（182 个：178 有图 + 4 无图，中英文品名齐全）；`featured=True` 首页推荐展示；`is_watermarked` 标记图片已打水印（save 钩子自动打 + 换图重打）；**`price` 默认 99999 防拍价（未改真实价格前前台不开放下单），`currency` 支持 USD/CNY/EUR/GBP，`payment_link` 可选填外部收款页（Stripe Payment Link / PayPal）** |
 | `products.ContactMessage` | name/company/email/phone/country/category/message/is_read/status(新/已联系/已报价/已成交/已流失)/quote_amount/lost_reason/inquired_product(FK)/source_page | 前台询价留言（跟进状态管理 + 产品自动关联 + 来源页面记录） |
 | `payments.Order` | order_no/product(FK, SET_NULL)/sku 与产品名快照/quantity/unit_price/amount/currency/method(visa/mastercard/unionpay/alipay/wechat/bank_transfer)/status(待支付/已支付/已取消/已退款/支付失败)/provider(stripe/external_link/manual)/provider_ref/客户信息/paid_at | 每次下单生成一条订单；产品名与价格按下单当时快照保存，改价或删除产品后历史订单仍准确 |
-| `payments.PaymentSettings` | online_enabled/offline_enabled/offline_title_zh·en/offline_intro_zh·en | 收款设置单例（pk=1），后台「订单与收款 → 收款设置」；一个开关决定前台是在线收款（Stripe）还是只显示线下汇款账户 |
+| `payments.PaymentSettings` | show_prices/online_enabled/offline_enabled/offline_title_zh·en/offline_intro_zh·en | 收款设置单例（pk=1），后台「订单与收款 → 收款设置」；`show_prices` 一键隐藏全站价格与购买按钮，其余开关决定前台是在线收款（Stripe）还是只显示线下汇款账户 |
 | `payments.BankAccount` | label_zh·en/bank_name/account_name/account_number/swift_code/iban/bank_address/currency/note_zh·en/is_active/sort_order | 收款银行账户，关闭在线收款时展示在收银台与订单页；后台随时增删改、停用，保存即生效 |
 | `core.HeroSlide` | image/title_zh/title_en/sort_order/is_active | 首页轮播图（后台上传） |
 | `core.LoginRecord` | user/username_attempted/login_time/ip_address(仅存不展示)/region/is_proxy(疑似代理出口)/device_type/os_name/browser/user_agent(仅存)/success/fail_reason | 登录审计（成功+失败都记录；页面零 IP 显示） |
@@ -393,6 +395,7 @@ glowisd-website/
 - 产品详情：参数表（SKU/P/N/品牌/重量/质保/分类）+ 定价与购买区 + 描述 + 相关产品 + 询价入口
 - **定价与在线支付（V0.9.0）**：产品卡片与详情页展示售价；已定价产品出现「立即购买」，进入站内收银台 `/pay/<id>/`——每个产品一个固定支付链接，可直接发给客户下单。五种方式：Visa / MasterCard / 银联 / 支付宝 / 微信支付。配置 `STRIPE_SECRET_KEY` 后跳转 Stripe Checkout 真实收款（银行卡 + 支付宝 + 微信支付，含 webhook 与回跳核对）；未配置时订单照样入库，页面告知客服 1 个工作日内联系完成付款。未定价产品保持 99999 防拍价且不出现购买按钮
 - **收款设置页（V0.10.0）**：后台「订单与收款 → 收款设置」一个界面决定前台怎么收钱。关闭在线收款 → 收银台只显示银行转账信息（下方维护的账户），订单进入人工确认；开启在线收款 + 配好 Stripe 密钥 → 显示五种在线方式。银行账户可在同一页随时增加/修改/停用，另有「检测 Stripe 连接」按钮验证密钥（返回账户 ID / 国家 / 默认币种 / LIVE 或 TEST）
+- **价格显示开关（V0.11.0）**：收款设置里一个「前台显示价格」勾选框。取消勾选并保存后，产品卡、详情页、收银台全部隐藏价格与购买按钮，改显示「价格面议 / Price on request」+「联系我们获取报价」，连 99999 防拍价也不再对外露出；期间 `/pay/<id>/` 直接回产品页，下单接口不产生订单；重新勾选立即恢复
 - 工厂 / 定制 / 联系（询价表单：蜜罐 + 会话限流）
 
 **后台（simpleui 中文，菜单分组）**：
@@ -408,6 +411,7 @@ glowisd-website/
 
 ## 六、当前版本摘要
 
+- **V0.11.0**（2026-11-09）：价格显示一键开关。`PaymentSettings.show_prices`（默认开）关闭后，产品卡/详情页/收银台统一隐藏价格、购买按钮与 99999 防拍价，改为「价格面议」；隐藏期间支付链接回产品页且不产生订单；收款设置页显示当前对外状态。
 - **V0.10.0**（2026-11-08）：收款设置独立后台页。新增 `PaymentSettings` 单例（在线收款开关 + 线下汇款说明）与 `payments.BankAccount` 收款账户（独立列表页增删改、停用，收银台/订单页展示）；收银台按开关自动在「五种在线方式」与「仅银行转账」之间切换；新增「检测 Stripe 连接」按钮（返回账户 ID / 国家 / 默认币种 / LIVE 或 TEST）。
 - **V0.9.0**（2026-11-08）：定价与在线支付。产品新增售价/币种（未定价默认 99999 防拍价且不可下单）、后台列表直接改价、每个产品固定支付链接 `/pay/<id>/`、Visa / MasterCard / 银联 / 支付宝 / 微信支付收银台（Stripe Checkout 适配 + 未配置时人工确认兜底）、`payments.Order` 订单模型与后台、双语收银台/结果页、产品列表分页（24/页）、手机端产品卡与分类卡双列、页头 logo 与浅色背景融合。
 - **V0.8.0**（2026-09-03）：站点图片后台可替换（7 个固定槽位）；V0.6.x 的 CSP 修复继续有效。
@@ -416,7 +420,7 @@ glowisd-website/
 - **V0.6.1**（2026-09-03）：安全性开发（P1 后台登录限流 + 首登强制改密、P2 安全响应头 CSP/X-Frame-Options/HSTS 开关、P3 依赖安全审计）。
 - **V0.6.0**（2026-09-01）：角色体系精简（后台不再新增 viewer，历史 viewer 可批量转 admin）+ README 四组菜单重写 + CHANGELOG 拆分 + .env.example + 产品图数量口径统一。
 
-> 完整版本历史（V0.1.0–V0.10.0）见 [CHANGELOG.md](CHANGELOG.md)。
+> 完整版本历史（V0.1.0–V0.11.0）见 [CHANGELOG.md](CHANGELOG.md)。
 >
 > 版本规则：`Va.b.c` 十进制递增，a=重构、b=新功能、c=修复；每次需求变更或修复必须升版本，commit 以 `V X.Y.Z:` 开头并打 tag。
 
@@ -432,7 +436,7 @@ python manage.py runserver
 # 访问 http://localhost:8000（前台）/ http://localhost:8000/admin（后台）
 ```
 
-冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护 / 登录限流 / 安全响应头 / 首登改密 / 定价与下单 / Stripe 方式映射 / webhook / 收款开关 / 银行账户 / 连接检测 / 分页，共 58 项）：
+冒烟测试（前台 5 页双语 / 询价蜜罐限流 / 后台权限隔离 / 超管保护 / 登录限流 / 安全响应头 / 首登改密 / 定价与下单 / Stripe 方式映射 / webhook / 收款开关 / 银行账户 / 连接检测 / 价格显示开关 / 分页，共 63 项）：
 ```bash
 python manage.py test
 ```
@@ -563,4 +567,4 @@ SITE_BASE_URL=https://glowisd.cn       # 支付回跳链接使用的域名
 
 ---
 
-*最后更新：V0.10.0（2026-11-08）*
+*最后更新：V0.11.0（2026-11-09）*

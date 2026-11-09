@@ -176,6 +176,12 @@ class PaymentSettings(models.Model):
         help_text='勾选后前台显示 Visa / MasterCard / 银联 / 支付宝 / 微信支付；'
                   '取消勾选则只显示线下汇款信息，订单进入人工确认。',
     )
+    show_prices = models.BooleanField(
+        '前台显示价格',
+        default=True,
+        help_text='一键开关：取消勾选后全站隐藏所有价格与购买按钮，只保留「联系获取报价」；'
+                  '历史订单里的金额记录不受影响。',
+    )
     offline_enabled = models.BooleanField(
         '启用线下汇款（银行转账）',
         default=True,
@@ -211,6 +217,11 @@ class PaymentSettings(models.Model):
     def load(cls):
         obj, _created = cls.objects.get_or_create(pk=1)
         return obj
+
+    @classmethod
+    def prices_visible(cls):
+        """前台是否显示价格（后台「收款设置 → 前台显示价格」一键开关）。"""
+        return cls.load().show_prices
 
     def title(self, lang='zh'):
         en = self.offline_title_en

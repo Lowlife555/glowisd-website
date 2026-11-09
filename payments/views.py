@@ -142,6 +142,10 @@ def payment_start(request, pk):
     """产品的固定支付链接：/pay/<pk>/ —— 可直接发给客户下单。"""
     product = get_object_or_404(Product, pk=pk)
 
+    if not PaymentSettings.prices_visible():
+        # 后台关闭了价格显示：不进入收银台，回详情页走询价
+        return HttpResponseRedirect(reverse('product_detail', args=[product.pk]))
+
     if product.is_placeholder_price:
         # 未定价产品：不进入收银台，引导回详情页询价
         return HttpResponseRedirect(

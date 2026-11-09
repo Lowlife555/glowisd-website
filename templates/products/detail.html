@@ -78,6 +78,7 @@
         {% endif %}
 
         <div class="buy-panel">
+          {% if show_prices %}
           <div class="price-line">
             <span class="price-amount">{{ product.price_display }}</span>
             <span class="price-unit">{% if lang == 'en' %}per unit{% else %}每件{% endif %}</span>
@@ -141,6 +142,24 @@
             <span>Visa</span><span>MasterCard</span><span>UnionPay</span><span>Alipay</span><span>WeChat Pay</span>
           </div>
           {% endif %}
+          {% endif %}
+          {% else %}
+          <p class="price-note">
+            {% if lang == 'en' %}
+            Prices are currently quoted on request. Tell us the part number and quantity —
+            we reply within 24 hours with price and lead time.
+            {% else %}
+            当前价格为「面议」模式。告诉我们件号与数量，24 小时内回复报价与交期。
+            {% endif %}
+          </p>
+          <div class="p-actions">
+            <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
+              {% if lang == 'en' %}Request a quote{% else %}联系我们获取报价{% endif %}
+            </a>
+            <a class="btn btn--outline" href="{% url 'product_list' %}">
+              {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
+            </a>
+          </div>
           {% endif %}
         </div>
       </div>

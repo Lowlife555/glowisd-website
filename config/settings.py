@@ -39,7 +39,7 @@ _load_dotenv(BASE_DIR / '.env')
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.10.0'
+SITE_VERSION = '0.11.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -136,6 +136,7 @@ TEMPLATES = [
                 'core.context_processors.lang_context',
                 'core.context_processors.site_settings',
                 'core.context_processors.site_images',
+                'core.context_processors.pricing_flags',
             ],
         },
     },

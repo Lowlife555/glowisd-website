@@ -38,6 +38,14 @@
   padding: 2px 8px;
 }
 .p-card__price-unit { font-size: 12px; color: var(--ink-3); }
+.p-card__price.is-muted b { display: none; }
+.p-card__price-note {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-3);
+  letter-spacing: .02em;
+}
 
 /* ---------- 产品详情：定价与购买 ---------- */
 .buy-panel {
