@@ -446,3 +446,37 @@ class ArabicAndLangModalTests(TestCase):
         product = Product.objects.get(sku='AR-1')
         self.assertTrue(product.part_name_ar)
         self.assertTrue(cat.name_ar or Category.objects.get(pk=cat.pk).name_ar)
+
+
+class LogEntryNaturalMessageTests(TestCase):
+    """V0.12.0 后台操作日志：JSON change_message 必须渲染成自然语言。"""
+
+    def _entry(self, payload):
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from products.models import Product
+
+        return LogEntry(
+            content_type=ContentType.objects.get_for_model(Product),
+            object_id='1', object_repr='x', action_flag=CHANGE, change_message=payload,
+        )
+
+    def test_standard_json_list_renders_natural_language(self):
+        from core.admin import LogEntryAdmin
+        admin_obj = LogEntryAdmin(type(self._entry('')), None)
+        text = admin_obj.change_message_natural(self._entry('[{"changed": {"fields": ["产品分类", "价格"]}}]'))
+        self.assertIn('已修改', text)
+        self.assertIn('产品分类', text)
+        self.assertNotIn('{', text)
+
+    def test_legacy_dict_json_is_salvaged(self):
+        from core.admin import LogEntryAdmin
+        admin_obj = LogEntryAdmin(type(self._entry('')), None)
+        text = admin_obj.change_message_natural(self._entry('{"changed": {"fields": ["\\u4ea7\\u54c1\\u5206\\u7c7b"]}}'))
+        self.assertIn('产品分类', text)
+        self.assertNotIn('\\u', text)
+
+    def test_empty_message(self):
+        from core.admin import LogEntryAdmin
+        admin_obj = LogEntryAdmin(type(self._entry('')), None)
+        self.assertEqual(admin_obj.change_message_natural(self._entry('')), '—')

@@ -1,4 +1,6 @@
 import csv
+import json
+import re
 from collections import Counter
 from datetime import timedelta
 
@@ -353,10 +355,32 @@ class LogEntryAdmin(admin.ModelAdmin):
 
         用 Django 内置 LogEntry.get_change_message()：它会把字段名映射回模型的
         verbose_name（本项目为中文），历史记录同样适用；不再直接显示原始 JSON。
+        兜底：极早期日志若存成非列表 JSON（或 get_change_message 解析失败），
+        用正则从 ``"fields": [...]`` 里抽字段名，避免又出现一串 JSON。
         """
-        text = obj.get_change_message()
+        try:
+            text = obj.get_change_message()
+        except Exception:  # noqa: BLE001 —— 日志脏数据不能把后台打挂
+            text = obj.change_message or ''
         if not text:
             return '—'
+        if isinstance(text, str) and text.lstrip().startswith('{'):
+            try:
+                data = json.loads(text)
+                fields = data.get('changed', {}).get('fields') if isinstance(data, dict) else None
+                if fields:
+                    return '已修改 ' + '、'.join(str(f) for f in fields) + '。'
+            except (ValueError, AttributeError):
+                pass
+            m = re.search(r'"fields"\s*:\s*\[(.*?)\]', text)
+            if m:
+                names = re.findall(r'"((?:[^"\\]|\\.)+)"', m.group(1))
+                if names:
+                    try:
+                        names = [n.encode().decode('unicode_escape') for n in names]
+                    except (UnicodeDecodeError, UnicodeEncodeError):
+                        pass
+                    return '已修改 ' + '、'.join(names) + '。'
         return text
 
     # —— 超管门槛：普通 staff 看不到「日志记录」模块 ——
