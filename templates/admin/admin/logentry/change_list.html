@@ -1,0 +1,19 @@
+{% extends "admin/change_list.html" %}
+
+{# V0.14.0 导出入口。
+   simpleui 的 #content-main 是 flex 布局：在 content block 里追加 div 会被挤成竖排，
+   object-tools 又会被它的 JS 收进 Vue 操作栏且在没有"新增"按钮的模型上布局异常，
+   所以放在 #changelist 内部的 date_hierarchy 之后 —— 那里是正常块级流。 #}
+{% block date_hierarchy %}
+{{ block.super }}
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 12px;margin:0 0 12px;background:#F6F8FE;border:1px solid #E4E9F5;border-radius:6px;">
+  <a href="{% url 'admin:admin_log_export_csv' %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}"
+     style="display:inline-block;padding:7px 15px;background:#162A87;color:#fff;font-size:12px;border-radius:4px;text-decoration:none;white-space:nowrap;">
+    导出当前筛选结果为 CSV
+  </a>
+  <span style="font-size:12px;color:#5A6B9E;line-height:1.7;">
+    点「修改内容」列进入详情可看字段级明细（旧值 → 新值、图片前后对比、删除前快照）。
+    日志保留：普通操作 180 天，<strong>删除记录永久保留</strong>；登录记录 365 天。
+  </span>
+</div>
+{% endblock %}

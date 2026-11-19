@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.utils.html import format_html
 
+from core.admin_log import ChangeDetailMixin
+
 from .models import AdminProfile
 from .utils import is_super_admin
 
@@ -94,7 +96,7 @@ class AdminProfileInline(admin.StackedInline):
         return []
 
 
-class CustomUserAdmin(UserAdmin):
+class CustomUserAdmin(ChangeDetailMixin, UserAdmin):
     """accounts 接管后的用户管理：角色体系 + 超管保护 + 业务化编辑页。"""
 
     inlines = [AdminProfileInline]
@@ -170,12 +172,40 @@ class CustomUserAdmin(UserAdmin):
     #      而 simpleui 的 custom_button 会 json.dumps 该属性导致 "ActionLocation is not JSON serializable"。
 
     def reset_selected_admin_password(self, request, queryset):
+        import json
+
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+
         lines = []
+        ct = ContentType.objects.get_for_model(self.model)
+        batch = ChangeDetailMixin._batch_id(request)
         for user in queryset:
             password = self._random_strong_password()
             user.set_password(password)
             user.save(update_fields=['password'])
             lines.append(f'已将用户 {user.username} 的密码重置为：{password}')
+            # 审计：这是高危操作，必须留痕（只记"密码已修改"，绝不记录密码本身）
+            try:
+                LogEntry.objects.create(
+                    user_id=getattr(request.user, 'pk', None),
+                    content_type=ct,
+                    object_id=str(user.pk),
+                    object_repr=str(user)[:200],
+                    action_flag=CHANGE,
+                    change_message=json.dumps([{
+                        'changed': {
+                            'fields': ['密码'],
+                            'details': [{
+                                'name': 'password', 'label': '密码', 'kind': 'secret',
+                                'old': '', 'new': '已重置为随机强密码（不显示内容）',
+                            }],
+                            'batch': batch,
+                        },
+                    }], ensure_ascii=False),
+                )
+            except Exception:  # noqa: BLE001 —— 审计写失败不能影响密码重置
+                pass
         self.message_user(request, '；'.join(lines) + '，请妥善保管并通知用户')
 
     reset_selected_admin_password.short_description = '重置选中管理员密码为随机强密码'
@@ -265,6 +295,17 @@ class CustomUserAdmin(UserAdmin):
             if profile.role != 'super_admin':
                 profile.role = 'super_admin'
                 profile.save(update_fields=['role'])
+
+    def _can_actually_delete(self, obj):
+        """只有真正会被删除的对象才写删除日志（避免"记了删除但没删"）。
+
+        与 delete_model / delete_queryset 的过滤规则保持一致。
+        """
+        if getattr(obj, 'username', None) == settings.SUPER_ADMIN_USERNAME:
+            return False
+        if is_super_admin(obj) and AdminProfile.objects.filter(role='super_admin').count() <= 1:
+            return False
+        return True
 
     def delete_model(self, request, obj):
         if obj.username == settings.SUPER_ADMIN_USERNAME:

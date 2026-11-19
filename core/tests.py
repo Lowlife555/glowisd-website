@@ -9,6 +9,7 @@
 
 运行：python manage.py test core
 """
+import json
 from datetime import datetime, timezone as dt_timezone
 from io import StringIO
 
@@ -479,7 +480,9 @@ class LogEntryNaturalMessageTests(TestCase):
     def test_empty_message(self):
         from core.admin import LogEntryAdmin
         admin_obj = LogEntryAdmin(type(self._entry('')), None)
-        self.assertEqual(admin_obj.change_message_natural(self._entry('')), '—')
+        text = admin_obj.change_message_natural(self._entry(''))
+        self.assertIn('已修改', text)  # V0.14.0：即使没有 message 也要给人话摘要
+        self.assertNotIn('{', text)
 
 
 class NavMenuTests(TestCase):
@@ -508,3 +511,203 @@ class NavMenuTests(TestCase):
         self.assertIn('nav-item--sub', html)
         self.assertIn('data-mobile-sub', html)
         self.assertIn('category=nav-markup', html)
+
+
+class AdminChangeDetailTests(TestCase):
+    """V0.14.0 操作日志字段级明细：旧值→新值、脱敏、删除快照、摘要、详情页、CSV。"""
+
+    @classmethod
+    def setUpTestData(cls):
+        from django.contrib.auth.models import User
+
+        cls.admin = User.objects.create_superuser('logadmin', 'log@example.com', 'Sup3rPass!')
+        from products.models import Category
+
+        cls.cat = Category.objects.create(name='线缆', name_en='Cables', slug='log-cables', sort_order=1)
+        cls.other = Category.objects.create(name='传感器', name_en='Sensors', slug='log-sensors', sort_order=2)
+
+    def setUp(self):
+        self.client.force_login(self.admin)
+
+    def _latest_log(self):
+        from django.contrib.admin.models import LogEntry
+
+        return LogEntry.objects.order_by('-id').first()
+
+    def test_category_edit_records_old_and_new(self):
+        from products.models import Category
+
+        url = reverse('admin:products_category_change', args=[self.cat.pk])
+        resp = self.client.post(url, {
+            'name': '线缆',
+            'name_en': 'Cables',
+            'name_ar': 'كابلات جديدة',
+            'slug': 'log-cables',
+            'sort_order': '9',
+        })
+        self.assertEqual(resp.status_code, 302, resp.content[:400])
+        entry = self._latest_log()
+        self.assertEqual(entry.object_id, str(self.cat.pk))
+        from core.admin_log import parse_change_message
+
+        parsed = parse_change_message(entry)
+        self.assertTrue(parsed['has_detail'], '应写入字段级明细')
+        by_name = {d['name']: d for d in parsed['details']}
+        self.assertIn('sort_order', by_name)
+        self.assertEqual(by_name['sort_order']['old'], '1')
+        self.assertEqual(by_name['sort_order']['new'], '9')
+        self.assertIn('name_ar', by_name)
+        self.assertEqual(by_name['name_ar']['old'], '')
+        self.assertEqual(by_name['name_ar']['new'], 'كابلات جديدة')
+        self.assertTrue(parsed['batch'])
+
+    def test_secret_field_never_stored(self):
+        from core.models import SiteSettings
+
+        settings_obj = SiteSettings.load()
+        url = reverse('admin:core_sitesettings_change', args=[settings_obj.pk])
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        data = {}
+        # 用页面里现有值回填，只改 api key；文件字段跳过（无关联文件会抛错）
+        form = resp.context['adminform'].form
+        for name, field in form.fields.items():
+            if name == 'deepseek_api_key':
+                continue
+            from django import forms as dj_forms
+            if isinstance(field, dj_forms.FileField):
+                continue
+            value = form.initial.get(name)
+            if value is None:
+                value = ''
+            if isinstance(value, bool):
+                value = 'on' if value else ''
+            data[name] = value
+        data['deepseek_api_key'] = 'sk-should-never-be-logged-123456'
+        data.pop('cover_image', None)
+        resp = self.client.post(url, data, follow=False)
+        self.assertIn(resp.status_code, (200, 302))
+        entry = self._latest_log()
+        if entry is None or entry.object_id != str(settings_obj.pk):
+            self.skipTest('本次保存未产生日志（表单未通过校验），跳过')
+        raw = entry.change_message or ''
+        self.assertNotIn('sk-should-never-be-logged-123456', raw, '密钥明文绝不能进日志')
+        from core.admin_log import parse_change_message, SECRET_DISPLAY
+
+        parsed = parse_change_message(entry)
+        secret = [d for d in parsed['details'] if d['name'] == 'deepseek_api_key']
+        if secret:
+            self.assertEqual(secret[0]['new'], SECRET_DISPLAY)
+
+    def test_delete_records_snapshot(self):
+        from products.models import Category
+
+        cat = Category.objects.create(name='待删分类', name_en='To Delete', slug='log-todelete')
+        url = reverse('admin:products_category_delete', args=[cat.pk])
+        resp = self.client.post(url, {'post': 'yes'})
+        self.assertEqual(resp.status_code, 302)
+        entry = self._latest_log()
+        self.assertEqual(entry.object_id, str(cat.pk))
+        self.assertEqual(entry.action_flag, 3)
+        from core.admin_log import parse_change_message
+
+        parsed = parse_change_message(entry)
+        self.assertTrue(parsed['snapshot'], '删除应记录快照')
+        self.assertIn('To Delete', ' '.join(
+            str(v.get('value')) for v in parsed['snapshot'].values() if isinstance(v, dict)
+        ))
+
+    def test_summary_truncates_and_marks(self):
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from core.admin_log import summary_html
+        from products.models import Category
+
+        ct = ContentType.objects.get_for_model(Category)
+        entry = LogEntry.objects.create(
+            user=self.admin, content_type=ct, object_id='1', object_repr='线缆' * 30,
+            action_flag=CHANGE,
+            change_message=json.dumps([{'changed': {
+                'fields': ['名称(中文)'], 'batch': 'abcd1234',
+                'details': [
+                    {'name': 'name', 'label': '名称(中文)', 'kind': 'text', 'old': '旧' * 40, 'new': '新' * 40},
+                ],
+            }}], ensure_ascii=False),
+        )
+        html = str(summary_html(entry))
+        self.assertIn('…', html)
+        self.assertIn('title=', html)
+        self.assertIn('明细', html)
+        self.assertIn('批次', html)
+        self.assertIn(f'../logentry/{entry.pk}/change/', html)
+
+    def test_detail_page_renders_table(self):
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from products.models import Category
+
+        ct = ContentType.objects.get_for_model(Category)
+        entry = LogEntry.objects.create(
+            user=self.admin, content_type=ct, object_id=str(self.cat.pk), object_repr=str(self.cat),
+            action_flag=CHANGE,
+            change_message=json.dumps([{'changed': {
+                'fields': ['排序'],
+                'details': [{'name': 'sort_order', 'label': '排序', 'kind': 'number', 'old': '1', 'new': '9'}],
+                'batch': 'deadbeef',
+            }}], ensure_ascii=False),
+        )
+        resp = self.client.get(reverse('admin:admin_logentry_change', args=[entry.pk]))
+        self.assertEqual(resp.status_code, 200)
+        html = resp.content.decode('utf-8')
+        self.assertIn('旧值', html)
+        self.assertIn('新值', html)
+        self.assertIn('打开该', html)
+        self.assertIn('9', html)
+
+    def test_old_log_without_detail_is_labelled(self):
+        from django.contrib.admin.models import CHANGE, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from products.models import Category
+
+        ct = ContentType.objects.get_for_model(Category)
+        entry = LogEntry.objects.create(
+            user=self.admin, content_type=ct, object_id='1', object_repr='旧记录',
+            action_flag=CHANGE,
+            change_message='[{"changed": {"fields": ["排序"]}}]',
+        )
+        from core.admin_log import summary_html, detail_html
+
+        self.assertIn('无明细', str(summary_html(entry)))
+        self.assertIn('早于 V0.14.0', str(detail_html(entry)))
+
+    def test_csv_export(self):
+        url = reverse('admin:admin_log_export_csv')
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('text/csv', resp['Content-Type'])
+        self.assertIn('attachment', resp['Content-Disposition'])
+        body = resp.content.decode('utf-8-sig')
+        self.assertIn('时间,操作人,对象类型,对象名,动作,明细摘要,明细全文', body)
+
+    def test_purge_command_keeps_deletions(self):
+        from datetime import timedelta
+
+        from django.contrib.admin.models import CHANGE, DELETION, LogEntry
+        from django.contrib.contenttypes.models import ContentType
+        from django.core.management import call_command
+        from django.utils import timezone
+        from products.models import Category
+
+        ct = ContentType.objects.get_for_model(Category)
+        old_time = timezone.now() - timedelta(days=400)
+        old_change = LogEntry.objects.create(
+            user=self.admin, content_type=ct, object_id='1', object_repr='old change',
+            action_flag=CHANGE, change_message='', action_time=old_time,
+        )
+        old_delete = LogEntry.objects.create(
+            user=self.admin, content_type=ct, object_id='2', object_repr='old delete',
+            action_flag=DELETION, change_message='', action_time=old_time,
+        )
+        call_command('purge_admin_log', '--days', '180', stdout=StringIO())
+        self.assertFalse(LogEntry.objects.filter(pk=old_change.pk).exists())
+        self.assertTrue(LogEntry.objects.filter(pk=old_delete.pk).exists(), '删除记录应永久保留')

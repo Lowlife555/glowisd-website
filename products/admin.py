@@ -7,6 +7,8 @@ from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
+from core.admin_log import ChangeDetailMixin
+
 from .models import PLACEHOLDER_PRICE, Category, ContactMessage, Product
 
 
@@ -31,7 +33,7 @@ class PriceStatusFilter(admin.SimpleListFilter):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ChangeDetailMixin, admin.ModelAdmin):
     list_display = ['cover_preview', 'name', 'name_en', 'name_ar', 'slug', 'sort_order', 'product_count']
     search_fields = ['name', 'name_en', 'name_ar', 'slug']
     ordering = ['sort_order']
@@ -76,7 +78,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
+class ProductAdmin(ChangeDetailMixin, admin.ModelAdmin):
     list_display = [
         'image_preview', 'sku', 'part_name', 'pn',
         'price', 'currency', 'price_state', 'category', 'featured', 'updated_at',
@@ -288,7 +290,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactMessage)
-class ContactMessageAdmin(admin.ModelAdmin):
+class ContactMessageAdmin(ChangeDetailMixin, admin.ModelAdmin):
     list_display = [
         'name', 'company', 'email', 'status_badge', 'status',
         'inquired_product', 'quote_amount', 'is_read', 'created_at',

@@ -4,7 +4,7 @@ import re
 from collections import Counter
 from datetime import timedelta
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
+from .admin_log import ChangeDetailMixin, detail_html, summary_html
 from .models import HeroSlide, LoginRecord, SiteImage, SiteSettings
 
 # 后台浏览器标签页标题（V0.7.1）
@@ -21,7 +22,7 @@ admin.site.site_header = 'Glowisd 站点管理'
 
 
 @admin.register(SiteImage)
-class SiteImageAdmin(admin.ModelAdmin):
+class SiteImageAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """站点展示图片：工厂页/车间照片/定制页等固定槽位的图片替换入口。
 
     列表固定展示全部槽位（无图显示「未上传」），点进任意一行上传图片即替换前台展示。
@@ -72,7 +73,7 @@ class SiteImageAdmin(admin.ModelAdmin):
 
 
 @admin.register(HeroSlide)
-class HeroSlideAdmin(admin.ModelAdmin):
+class HeroSlideAdmin(ChangeDetailMixin, admin.ModelAdmin):
     list_display = ['image_preview', 'title_zh', 'title_en', 'title_ar', 'sort_order', 'is_active', 'created_at']
     list_editable = ['sort_order', 'is_active']
     list_per_page = 20
@@ -100,7 +101,7 @@ class HeroSlideAdmin(admin.ModelAdmin):
 
 
 @admin.register(SiteSettings)
-class SiteSettingsAdmin(admin.ModelAdmin):
+class SiteSettingsAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """站点设置单例：始终只有一条（pk=1），不可新增多条、不可删除。"""
     fieldsets = (
         ('公司信息', {'fields': ('company_name_zh', 'company_name_en', 'company_name_ar', 'address_zh', 'address_en', 'address_ar')}),
@@ -170,7 +171,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
 
 @admin.register(LoginRecord)
-class LoginRecordAdmin(admin.ModelAdmin):
+class LoginRecordAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """管理员登录历史：谁、何时、什么设备/系统/浏览器、从哪里登录过后台。
 
     注意：ip_address / user_agent 原始字符串只在数据库保存，不在后台列表或详情页展示，
@@ -324,15 +325,75 @@ class LoginRecordAdmin(admin.ModelAdmin):
 
 
 @admin.register(LogEntry)
-class LogEntryAdmin(admin.ModelAdmin):
+class LogEntryAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """操作日志：每个管理员在后台做过哪些增删改操作（仅超管可见）。"""
 
     list_display = ['action_time', 'user', 'content_type', 'object_repr', 'action_badge', 'change_message_natural']
+    list_display_links = ['action_time']
     list_filter = ['user', 'action_flag', 'content_type']
     search_fields = ['object_repr', 'change_message', 'user__username']
     list_per_page = 30
-    readonly_fields = ['action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message_natural']
+    readonly_fields = ['action_time', 'user', 'content_type', 'object_id', 'object_repr',
+                       'action_flag', 'detail_block', 'change_message']
     date_hierarchy = 'action_time'
+    change_list_template = 'admin/admin/logentry/change_list.html'
+
+    def get_urls(self):
+        from django.urls import path
+
+        urls = super().get_urls()
+        custom = [
+            path(
+                'export-csv/',
+                self.admin_site.admin_view(self.export_csv_view),
+                name='admin_log_export_csv',
+            ),
+        ]
+        return custom + urls
+
+    def export_csv_view(self, request):
+        """导出「当前筛选结果」为 CSV（沿用列表页的筛选/搜索/日期条件）。"""
+        try:
+            changelist = self.get_changelist_instance(request)
+            queryset = changelist.queryset.order_by('action_time')
+        except Exception:  # noqa: BLE001 —— 筛选参数异常时退回全量
+            queryset = LogEntry.objects.order_by('action_time')
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="glowisd-admin-log.csv"'
+        response.write('\ufeff')  # BOM：Excel 直接打开不乱码
+        writer = csv.writer(response)
+        writer.writerow(['时间', '操作人', '对象类型', '对象名', '动作', '明细摘要', '明细全文'])
+        flags = {ADDITION: '添加', CHANGE: '修改', DELETION: '删除'}
+        from .admin_log import parse_change_message, summary_text
+
+        for entry in queryset.iterator():
+            parsed = parse_change_message(entry)
+            parts = []
+            for item in parsed['details']:
+                label = item.get('label') or item.get('name') or ''
+                old, new = item.get('old') or '', item.get('new') or ''
+                parts.append(f'{label}: {old} -> {new}' if old else f'{label}: {new}')
+            for key, info in parsed['snapshot'].items():
+                value = info.get('value') if isinstance(info, dict) else info
+                parts.append(f'{key}: {value}')
+            writer.writerow([
+                timezone.localtime(entry.action_time).strftime('%Y-%m-%d %H:%M:%S'),
+                getattr(entry.user, 'username', ''),
+                str(entry.content_type),
+                entry.object_repr,
+                flags.get(entry.action_flag, str(entry.action_flag)),
+                summary_text(entry),
+                '; '.join(parts),
+            ])
+        return response
+
+    @admin.display(description='明细')
+    def detail_block(self, obj):
+        """详情页：字段 / 旧值 / 新值 表格 + 对象链接 + 原始记录折叠。"""
+        try:
+            return detail_html(obj)
+        except Exception:  # noqa: BLE001 —— 日志再脏也不能把详情页打挂
+            return '（明细渲染失败，可查看原始记录）'
 
     @admin.display(description='动作', ordering='action_flag')
     def action_badge(self, obj):
@@ -351,37 +412,18 @@ class LogEntryAdmin(admin.ModelAdmin):
 
     @admin.display(description='修改内容')
     def change_message_natural(self, obj):
-        """把 Django 存储的 JSON change_message 翻成自然语言（如「修改了 产品分类 字段」）。
+        """一级列表摘要：对象类型 + 名称 + 到底改了什么（旧值→新值）。
 
-        用 Django 内置 LogEntry.get_change_message()：它会把字段名映射回模型的
-        verbose_name（本项目为中文），历史记录同样适用；不再直接显示原始 JSON。
-        兜底：极早期日志若存成非列表 JSON（或 get_change_message 解析失败），
-        用正则从 ``"fields": [...]`` 里抽字段名，避免又出现一串 JSON。
+        超过 60 字截断为 …（悬停看全文），单元格本身是进入详情页的链接，后面带
+        「明细 / 无明细 / 批次」小标记。旧日志（没有旧值）仍显示字段名摘要。
         """
         try:
-            text = obj.get_change_message()
+            return summary_html(obj)
         except Exception:  # noqa: BLE001 —— 日志脏数据不能把后台打挂
-            text = obj.change_message or ''
-        if not text:
-            return '—'
-        if isinstance(text, str) and text.lstrip().startswith('{'):
             try:
-                data = json.loads(text)
-                fields = data.get('changed', {}).get('fields') if isinstance(data, dict) else None
-                if fields:
-                    return '已修改 ' + '、'.join(str(f) for f in fields) + '。'
-            except (ValueError, AttributeError):
-                pass
-            m = re.search(r'"fields"\s*:\s*\[(.*?)\]', text)
-            if m:
-                names = re.findall(r'"((?:[^"\\]|\\.)+)"', m.group(1))
-                if names:
-                    try:
-                        names = [n.encode().decode('unicode_escape') for n in names]
-                    except (UnicodeDecodeError, UnicodeEncodeError):
-                        pass
-                    return '已修改 ' + '、'.join(names) + '。'
-        return text
+                return obj.get_change_message() or '—'
+            except Exception:  # noqa: BLE001
+                return '—'
 
     # —— 超管门槛：普通 staff 看不到「日志记录」模块 ——
     def has_module_permission(self, request):

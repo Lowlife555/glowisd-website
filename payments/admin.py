@@ -5,12 +5,14 @@ from django.urls import path, reverse
 from django.utils import timezone
 from django.utils.html import format_html, mark_safe
 
+from core.admin_log import ChangeDetailMixin
+
 from . import gateway
 from .models import BankAccount, Order, PaymentSettings
 
 
 @admin.register(Order)
-class OrderAdmin(admin.ModelAdmin):
+class OrderAdmin(ChangeDetailMixin, admin.ModelAdmin):
     list_display = [
         'order_no', 'sku', 'product_name', 'quantity', 'amount_display_col',
         'method', 'status', 'provider', 'customer_email', 'created_at',
@@ -65,7 +67,7 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 @admin.register(BankAccount)
-class BankAccountAdmin(admin.ModelAdmin):
+class BankAccountAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """收款账户：线下汇款时展示给客户的银行账户，可随时增删改、停用。
 
     入口：后台「订单与收款 → 收款账户」。
@@ -108,7 +110,7 @@ class BankAccountAdmin(admin.ModelAdmin):
 
 
 @admin.register(PaymentSettings)
-class PaymentSettingsAdmin(admin.ModelAdmin):
+class PaymentSettingsAdmin(ChangeDetailMixin, admin.ModelAdmin):
     """收款设置单例：一个开关切换「在线收款 / 线下汇款」。
 
     入口：后台「订单与收款 → 收款设置」。保存后立即对前台生效，无需重启。
