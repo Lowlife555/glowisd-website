@@ -187,9 +187,9 @@
 </section>
 
 <!-- workshop photos -->
-<!-- workshop gallery：4 张车间照片一张都没有时整段不渲染（V0.14.1）
+<!-- workshop gallery：有车间照片就展示实景；一张都没有时改展示「制造流程」能力图示（V0.14.2）
      以前没图时会渲染 4 个占位方块 + 一行"照片为占位图，正式上线前请替换"的内部提示，
-     等于把待办事项挂在客户看得见的地方。后台传了任意一张车间照片，这段自动出现。 -->
+     等于把待办事项挂在客户看得见的地方。现在缺图走设计化流程图，后台传任意一张车间照片后自动切回实景。 -->
 {% if has_workshop_photos %}
 <section class="section">
   <div class="container">
@@ -218,6 +218,50 @@
         <div class="caption"><span>{% if lang == 'ar' %}مخزن المنتجات النهائية{% elif lang == 'en' %}Warehouse{% else %}成品仓储{% endif %}</span><span>04</span></div>
       </div>
     </div>
+  </div>
+</section>
+{% else %}
+<section class="section">
+  <div class="container">
+    <div class="sec-head">
+      <span class="eyebrow">{% if lang == 'ar' %}سير العمل{% elif lang == 'en' %}Process{% else %}制造流程{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}من الاستلام إلى الشحن{% elif lang == 'en' %}From Incoming to Dispatch{% else %}从进料到出厂{% endif %}</h2>
+      <p class="lead">
+        {% if lang == 'ar' %}ست محطات عمل، كل دفعة قابلة للتتبع من المادة الخام إلى الشحن.{% elif lang == 'en' %}Six workstations — every batch traceable from raw material to dispatch.{% else %}六道工序节点，每一批从原材料到发运全程可追溯。{% endif %}
+      </p>
+    </div>
+    <ol class="flow">
+      <li class="flow__step">
+        <span class="flow__num">01</span>
+        <span class="flow__title">{% if lang == 'ar' %}فحص المواد الواردة{% elif lang == 'en' %}Incoming inspection{% else %}来料检验{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}عيّنات لكل دفعة من الصلب والإلكترونيات والكابلات{% elif lang == 'en' %}Batch sampling on steel, electronics and cable{% else %}钢件、电子件、线缆按批次抽检{% endif %}</span>
+      </li>
+      <li class="flow__step">
+        <span class="flow__num">02</span>
+        <span class="flow__title">{% if lang == 'ar' %}SMT والكابلات{% elif lang == 'en' %}SMT &amp; cable{% else %}SMT 与线束{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}لحام سطحي، كبس أطراف، تحضير الضفائر{% elif lang == 'en' %}Reflow soldering, crimping, harness prep{% else %}贴片回流焊、端子压接、线束预处理{% endif %}</span>
+      </li>
+      <li class="flow__step">
+        <span class="flow__num">03</span>
+        <span class="flow__title">{% if lang == 'ar' %}التجميع{% elif lang == 'en' %}Assembly{% else %}装配{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}مستشعرات، مقابض، وحدات تحكم{% elif lang == 'en' %}Sensors, handles, control units{% else %}传感器、控制手柄、显示控制器{% endif %}</span>
+      </li>
+      <li class="flow__step">
+        <span class="flow__num">04</span>
+        <span class="flow__title">{% if lang == 'ar' %}المعايرة{% elif lang == 'en' %}Calibration{% else %}标定{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}معايرة نقطة الصفر والمدى لكل وحدة{% elif lang == 'en' %}Zero and span calibrated per unit{% else %}传感器零点与量程逐台标定{% endif %}</span>
+      </li>
+      <li class="flow__step">
+        <span class="flow__num">05</span>
+        <span class="flow__title">{% if lang == 'ar' %}الاختبار الحراري{% elif lang == 'en' %}Burn-in &amp; test{% else %}老化与检测{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}دورات حرارة وتشغيل تحت الحمل{% elif lang == 'en' %}Thermal cycling and powered endurance{% else %}高低温循环 + 通电老化{% endif %}</span>
+      </li>
+      <li class="flow__step">
+        <span class="flow__num">06</span>
+        <span class="flow__title">{% if lang == 'ar' %}التغليف والشحن{% elif lang == 'en' %}Packing &amp; dispatch{% else %}包装发运{% endif %}</span>
+        <span class="flow__desc">{% if lang == 'ar' %}فحص نهائي وتغليف وسجل شحن{% elif lang == 'en' %}Final QC, packing and shipping records{% else %}出厂检验、包装、发运记录{% endif %}</span>
+      </li>
+    </ol>
   </div>
 </section>
 {% endif %}

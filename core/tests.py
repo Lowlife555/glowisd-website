@@ -749,6 +749,9 @@ class FactoryPhotoSectionTests(TestCase):
         self.assertNotIn('Inside the Workshop', html)
         self.assertNotIn('replace with real workshop photos', html)
         self.assertNotIn('车间一瞥', html)
+        # V0.14.2：缺图时改展示设计化「制造流程」能力图示
+        self.assertIn('From Incoming to Dispatch', html)
+        self.assertEqual(html.count('flow__step'), 6)
 
     def test_section_visible_and_todo_gone_with_photo(self):
         html = self.client.get('/factory/').content.decode('utf-8')

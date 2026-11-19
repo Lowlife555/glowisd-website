@@ -1225,3 +1225,62 @@ a:focus-visible, button:focus-visible {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ---------- 制造流程：没有车间照片时的能力图示（V0.14.2） ---------- */
+.flow {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  list-style: none;
+  margin: 36px 0 0;
+  padding: 0;
+}
+
+.flow__step {
+  position: relative;
+  padding: 22px 14px 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.flow__step::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  inset-inline-start: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--primary);
+}
+
+.flow__num {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+
+.flow__title {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-2);
+  margin-bottom: 6px;
+}
+
+.flow__desc {
+  display: block;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--ink-3);
+}
+
+@media (max-width: 980px) {
+  .flow { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 28px; }
+}
+
+@media (max-width: 620px) {
+  .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
+  .flow__step { padding-inline-end: 10px; }
+  .flow__title { font-size: 13px; }
+}
