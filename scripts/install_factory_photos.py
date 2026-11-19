@@ -67,12 +67,13 @@ def prepare(src: Path, out: Path) -> int:
 
         with Image.open(p) as im:
             im = ImageOps.exif_transpose(im)          # 按 EXIF 方向摆正
-            if im.mode in ('RGBA', 'LA', 'P'):
-                im = im.convert('RGB')
-            else:
-                im = im.convert('RGB')
-            # 居中裁成 4:3（ImageOps.fit 会在必要时裁掉多余部分，不拉伸）
-            fitted = ImageOps.fit(im, (TARGET_W, TARGET_H), method=Image.LANCZOS, centering=(0.5, 0.5))
+            im = im.convert('RGB')
+            # 居中裁成 4:3；源图比目标小时**不放大**（避免糊），按比例缩到能放下为止
+            scale = min(1.0, im.width / TARGET_W, im.height / TARGET_H)
+            tw, th = max(1, int(TARGET_W * scale)), max(1, int(TARGET_H * scale))
+            fitted = ImageOps.fit(im, (tw, th), method=Image.LANCZOS, centering=(0.5, 0.5))
+            if scale < 1.0:
+                print(f'  注意：源图 {im.width}x{im.height} 小于 {TARGET_W}x{TARGET_H}，按原尺寸输出 {tw}x{th}（不放大）')
 
         dst = out / f'{key}.jpg'
         quality = 82
