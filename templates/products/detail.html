@@ -9,9 +9,9 @@
   <div class="container">
 
     <nav class="breadcrumb" aria-label="breadcrumb">
-      <a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <a href="{% url 'home' %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a>
       <span class="sep">/</span>
-      <a href="{% url 'product_list' %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
+      <a href="{% url 'product_list' %}">{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</a>
       <span class="sep">/</span>
       <span>{{ product.sku }}</span>
     </nav>
@@ -21,15 +21,15 @@
         {% if product.image %}
         <img src="{{ product.image.url }}?v={{ site_version }}" alt="{{ product.sku }} — {{ product|pname:lang }}">
         {% else %}
-        <img src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+        <img src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'ar' %}صورة المنتج مؤقتة{% elif lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
         {% endif %}
       </div>
 
       <div class="p-info">
-        {% if product.part_name or product.part_name_en %}
+        {% if product.part_name or product.part_name_en or product.part_name_ar %}
         <h1>{{ product|pname:lang }}</h1>
         {% else %}
-        <h1 class="is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</h1>
+        <h1 class="is-empty">{% if lang == 'ar' %}اسم المنتج قيد التحديث{% elif lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</h1>
         {% endif %}
         <p class="p-tagline">{{ product.sku }} · {{ product.category|cname:lang }}</p>
 
@@ -43,19 +43,19 @@
             <dd>{{ product.pn|default:"—" }}</dd>
           </div>
           <div class="meta-row">
-            <dt>{% if lang == 'en' %}Brand{% else %}兼容品牌{% endif %}</dt>
+            <dt>{% if lang == 'ar' %}العلامة التجارية{% elif lang == 'en' %}Brand{% else %}兼容品牌{% endif %}</dt>
             <dd>{{ product.brand|default:"—" }}</dd>
           </div>
           <div class="meta-row">
-            <dt>{% if lang == 'en' %}Weight{% else %}重量{% endif %}</dt>
+            <dt>{% if lang == 'ar' %}الوزن{% elif lang == 'en' %}Weight{% else %}重量{% endif %}</dt>
             <dd>{{ product.weight|default:"—" }}</dd>
           </div>
           <div class="meta-row">
-            <dt>{% if lang == 'en' %}Warranty{% else %}质保{% endif %}</dt>
+            <dt>{% if lang == 'ar' %}الضمان{% elif lang == 'en' %}Warranty{% else %}质保{% endif %}</dt>
             <dd>{{ product.warranty|default:"—" }}</dd>
           </div>
           <div class="meta-row">
-            <dt>{% if lang == 'en' %}Category{% else %}分类{% endif %}</dt>
+            <dt>{% if lang == 'ar' %}الفئة{% elif lang == 'en' %}Category{% else %}分类{% endif %}</dt>
             <dd>
               <a href="{% url 'product_list' %}?category={{ product.category.slug }}" style="border-bottom:1px solid var(--line-strong);">
                 {{ product.category|cname:lang }}
@@ -64,11 +64,13 @@
           </div>
         </dl>
 
-        {% if product.description or product.description_en %}
+        {% if product.description or product.description_en or product.description_ar %}
         <div class="p-desc">
-          <h2>{% if lang == 'en' %}Description{% else %}产品描述{% endif %}</h2>
+          <h2>{% if lang == 'ar' %}وصف المنتج{% elif lang == 'en' %}Description{% else %}产品描述{% endif %}</h2>
           <p>
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            {{ product|pdesc:lang }}
+            {% elif lang == 'en' %}
             {{ product.description_en|default:product.description }}
             {% else %}
             {{ product.description|default:product.description_en }}
@@ -81,14 +83,17 @@
           {% if show_prices %}
           <div class="price-line">
             <span class="price-amount">{{ product.price_display }}</span>
-            <span class="price-unit">{% if lang == 'en' %}per unit{% else %}每件{% endif %}</span>
+            <span class="price-unit">{% if lang == 'ar' %}لكل وحدة{% elif lang == 'en' %}per unit{% else %}每件{% endif %}</span>
             {% if product.is_placeholder_price %}
-            <span class="badge badge--muted">{% if lang == 'en' %}Price TBD · placeholder{% else %}待定价 · 防拍价{% endif %}</span>
+            <span class="badge badge--muted">{% if lang == 'ar' %}السعر قيد التحديد · سعر مؤقت{% elif lang == 'en' %}Price TBD · placeholder{% else %}待定价 · 防拍价{% endif %}</span>
             {% endif %}
           </div>
           {% if product.is_placeholder_price %}
           <p class="price-note">
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            هذا المنتج غير مُسعَّر بعد — الرقم أعلاه سعر مؤقت لمنع الطلب (99,999).
+            تواصل معنا للحصول على عرض سعر دقيق؛ يُفتح الطلب عبر الإنترنت بعد تأكيد السعر.
+            {% elif lang == 'en' %}
             This item is not priced yet — the figure above is a placeholder anti-ordering price (99,999).
             Contact us for an exact quote; online checkout opens once the price is confirmed.
             {% else %}
@@ -97,28 +102,34 @@
           </p>
           <div class="p-actions">
             <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
-              {% if lang == 'en' %}Request a Quote{% else %}联系确认价格{% endif %}
+              {% if lang == 'ar' %}طلب عرض السعر{% elif lang == 'en' %}Request a Quote{% else %}联系确认价格{% endif %}
             </a>
             <a class="btn btn--outline" href="{% url 'product_list' %}">
-              {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
+              {% if lang == 'ar' %}العودة إلى القائمة{% elif lang == 'en' %}Back to List{% else %}返回列表{% endif %}
             </a>
           </div>
           {% else %}
           <p class="price-note">
             {% if pay_mode == 'offline' %}
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            اطلب عبر الإنترنت في دقائق — الدفع عن طريق التحويل البنكي (T/T). تظهر تفاصيل الحساب البنكي في صفحة الدفع.
+            {% elif lang == 'en' %}
             Order online in minutes — pay by bank transfer (T/T). Bank details are shown at checkout.
             {% else %}
             可直接在线下单，支持银行转账（T/T），收银台会显示收款账户。
             {% endif %}
             {% elif pay_mode == 'unavailable' %}
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            الطلب عبر الإنترنت متوقف مؤقتاً. أرسل طلب عرض سعر وسنؤكد لك السعر وطريقة الدفع.
+            {% elif lang == 'en' %}
             Online ordering is temporarily closed. Send an inquiry and we will confirm price and payment method.
             {% else %}
             在线下单暂未开放。发送询价后我们会与您确认价格与付款方式。
             {% endif %}
             {% else %}
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            اطلب عبر الإنترنت في دقائق — نقبل Visa وMasterCard وUnionPay وAlipay وWeChat Pay.
+            {% elif lang == 'en' %}
             Order online in minutes — Visa, MasterCard, UnionPay, Alipay and WeChat Pay accepted.
             {% else %}
             可直接在线下单，支持 Visa / MasterCard / 银联 / 支付宝 / 微信支付。
@@ -128,24 +139,27 @@
           <div class="p-actions">
             <a class="btn btn--primary" href="{% url 'payment_start' product.pk %}">
               {% if pay_mode == 'offline' %}
-              {% if lang == 'en' %}Order (bank transfer){% else %}下单（银行转账）{% endif %}
+              {% if lang == 'ar' %}الطلب (تحويل بنكي){% elif lang == 'en' %}Order (bank transfer){% else %}下单（银行转账）{% endif %}
               {% else %}
-              {% if lang == 'en' %}Buy Now{% else %}立即购买{% endif %}
+              {% if lang == 'ar' %}اشترِ الآن{% elif lang == 'en' %}Buy Now{% else %}立即购买{% endif %}
               {% endif %}
             </a>
             <a class="btn btn--outline" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
-              {% if lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
+              {% if lang == 'ar' %}إرسال طلب عرض السعر{% elif lang == 'en' %}Send Inquiry{% else %}发送询价{% endif %}
             </a>
           </div>
           {% if pay_mode != 'offline' %}
-          <div class="pay-brands" aria-label="{% if lang == 'en' %}Accepted payment methods{% else %}支持的支付方式{% endif %}">
+          <div class="pay-brands" aria-label="{% if lang == 'ar' %}طرق الدفع المقبولة{% elif lang == 'en' %}Accepted payment methods{% else %}支持的支付方式{% endif %}">
             <span>Visa</span><span>MasterCard</span><span>UnionPay</span><span>Alipay</span><span>WeChat Pay</span>
           </div>
           {% endif %}
           {% endif %}
           {% else %}
           <p class="price-note">
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            الأسعار حالياً تُقدَّم عند الطلب. أخبرنا برقم القطعة والكمية —
+            نرد خلال 24 ساعة بالسعر ومدة التسليم.
+            {% elif lang == 'en' %}
             Prices are currently quoted on request. Tell us the part number and quantity —
             we reply within 24 hours with price and lead time.
             {% else %}
@@ -154,10 +168,10 @@
           </p>
           <div class="p-actions">
             <a class="btn btn--primary" href="{% url 'contact' %}?product={{ product.sku|urlencode }}&category={{ product.category.slug }}">
-              {% if lang == 'en' %}Request a quote{% else %}联系我们获取报价{% endif %}
+              {% if lang == 'ar' %}تواصل معنا للحصول على السعر{% elif lang == 'en' %}Request a quote{% else %}联系我们获取报价{% endif %}
             </a>
             <a class="btn btn--outline" href="{% url 'product_list' %}">
-              {% if lang == 'en' %}Back to List{% else %}返回列表{% endif %}
+              {% if lang == 'ar' %}العودة إلى القائمة{% elif lang == 'en' %}Back to List{% else %}返回列表{% endif %}
             </a>
           </div>
           {% endif %}
@@ -168,9 +182,9 @@
     {% if related %}
     <div class="related">
       <div class="related-head">
-        <h2 class="h-section">{% if lang == 'en' %}Related Products{% else %}相关产品{% endif %}</h2>
+        <h2 class="h-section">{% if lang == 'ar' %}منتجات ذات صلة{% elif lang == 'en' %}Related Products{% else %}相关产品{% endif %}</h2>
         <a class="link-arrow" href="{% url 'product_list' %}?category={{ product.category.slug }}">
-          {% if lang == 'en' %}More in this category{% else %}该分类更多产品{% endif %}
+          {% if lang == 'ar' %}المزيد في هذه الفئة{% elif lang == 'en' %}More in this category{% else %}该分类更多产品{% endif %}
           <span class="arrow">→</span>
         </a>
       </div>

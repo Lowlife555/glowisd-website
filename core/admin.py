@@ -3,7 +3,7 @@ from collections import Counter
 from datetime import timedelta
 
 from django.contrib import admin
-from django.contrib.admin.models import LogEntry
+from django.contrib.admin.models import ADDITION, CHANGE, DELETION, LogEntry
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -35,8 +35,8 @@ class SiteImageAdmin(admin.ModelAdmin):
         }),
         ('图片', {'fields': ('image',), 'description': '上传新图片即可替换；建议横图 1600×1000 以上，JPG/PNG/WebP，单张 < 3MB。'}),
         ('图片说明（可选）', {
-            'fields': ('caption_zh', 'caption_en'),
-            'description': '中文/英文图片说明，用于图片替代文字（SEO/无障碍）；留空则用默认文案。',
+            'fields': ('caption_zh', 'caption_en', 'caption_ar'),
+            'description': '中文/英文/阿语图片说明，用于图片替代文字（SEO/无障碍）；留空则用默认文案。',
         }),
     )
 
@@ -71,12 +71,12 @@ class SiteImageAdmin(admin.ModelAdmin):
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):
-    list_display = ['image_preview', 'title_zh', 'title_en', 'sort_order', 'is_active', 'created_at']
+    list_display = ['image_preview', 'title_zh', 'title_en', 'title_ar', 'sort_order', 'is_active', 'created_at']
     list_editable = ['sort_order', 'is_active']
     list_per_page = 20
     fieldsets = (
         ('图片', {'fields': ('image',)}),
-        ('标题', {'fields': ('title_zh', 'title_en')}),
+        ('标题', {'fields': ('title_zh', 'title_en', 'title_ar')}),
         ('设置', {'fields': ('sort_order', 'is_active')}),
     )
 
@@ -101,17 +101,56 @@ class HeroSlideAdmin(admin.ModelAdmin):
 class SiteSettingsAdmin(admin.ModelAdmin):
     """站点设置单例：始终只有一条（pk=1），不可新增多条、不可删除。"""
     fieldsets = (
-        ('公司信息', {'fields': ('company_name_zh', 'company_name_en', 'address_zh', 'address_en')}),
+        ('公司信息', {'fields': ('company_name_zh', 'company_name_en', 'company_name_ar', 'address_zh', 'address_en', 'address_ar')}),
         ('联系方式', {'fields': ('phone', 'email', 'whatsapp')}),
         ('生产信息', {'fields': ('factory_area', 'moq')}),
-        ('公司简介', {'fields': ('about_zh', 'about_en')}),
-        ('SEO 设置', {'fields': ('seo_title_zh', 'seo_title_en', 'seo_desc_zh', 'seo_desc_en')}),
+        ('公司简介', {'fields': ('about_zh', 'about_en', 'about_ar')}),
+        ('SEO 设置', {'fields': ('seo_title_zh', 'seo_title_en', 'seo_title_ar', 'seo_desc_zh', 'seo_desc_en', 'seo_desc_ar')}),
         ('收银台说明', {
             'fields': ('payment_note_zh', 'payment_note_en'),
             'description': '展示在产品支付页下单按钮下方，例如「价格含税，运费另计，3-7 个工作日发货」。',
         }),
         ('水印设置', {'fields': ('watermark_enabled', 'watermark_image', 'watermark_position', 'watermark_opacity', 'watermark_width_pct', 'watermark_margin')}),
+        ('翻译服务（阿拉伯语）', {
+            'fields': ('deepseek_api_key',),
+            'description': (
+                '后台新增/修改产品、分类、站点内容时自动生成阿拉伯语翻译需要此项配置。'
+                'Key 在 platform.deepseek.com 申请（形如 sk-...），只保存在服务器数据库，不会进入代码仓库。'
+                '未配置时：内容照常保存，阿语字段留空，不会阻塞任何操作。'
+            ),
+        }),
     )
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        pairs = [
+            ('company_name_ar', obj.company_name_zh or obj.company_name_en),
+            ('address_ar', obj.address_zh or obj.address_en),
+            ('about_ar', obj.about_zh or obj.about_en),
+            ('seo_title_ar', obj.seo_title_zh or obj.seo_title_en),
+            ('seo_desc_ar', obj.seo_desc_zh or obj.seo_desc_en),
+        ]
+        missing = [field for field, src in pairs if not getattr(obj, field) and src]
+        if not missing:
+            return
+        from core.translation import translate_ar
+        sources = [getattr(obj, f.replace('_ar', '_zh')) or getattr(obj, f.replace('_ar', '_en'))
+                   for f in missing]
+        res = translate_ar(sources)
+        if res:
+            updates = []
+            for field, value in zip(missing, res):
+                if value:
+                    setattr(obj, field, value)
+                    updates.append(field)
+            if updates:
+                obj.save(update_fields=updates)
+                messages.info(request, '已自动生成阿拉伯语内容（可在对应字段校对）')
+        else:
+            messages.warning(
+                request,
+                '阿拉伯语内容未生成：当前「翻译服务」未配置 DeepSeek API Key 或网络异常。',
+            )
 
     # 单例：已存在记录时禁止再新增；永不删除
     def has_add_permission(self, request):
@@ -285,12 +324,40 @@ class LoginRecordAdmin(admin.ModelAdmin):
 @admin.register(LogEntry)
 class LogEntryAdmin(admin.ModelAdmin):
     """操作日志：每个管理员在后台做过哪些增删改操作（仅超管可见）。"""
-    list_display = ['action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'change_message']
+
+    list_display = ['action_time', 'user', 'content_type', 'object_repr', 'action_badge', 'change_message_natural']
     list_filter = ['user', 'action_flag', 'content_type']
     search_fields = ['object_repr', 'change_message', 'user__username']
     list_per_page = 30
-    readonly_fields = ['action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message']
+    readonly_fields = ['action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message_natural']
     date_hierarchy = 'action_time'
+
+    @admin.display(description='动作', ordering='action_flag')
+    def action_badge(self, obj):
+        """添加=绿 / 修改=蓝 / 删除=红。"""
+        mapping = {
+            ADDITION: ('添加', '#E8F5E9', '#1B6B32'),
+            CHANGE: ('修改', '#E8F0FE', '#1A4FB0'),
+            DELETION: ('删除', '#FDECEA', '#A61B1B'),
+        }
+        label, bg, color = mapping.get(obj.action_flag, ('其他', '#F1F3F8', '#5A6B9E'))
+        return format_html(
+            '<span style="display:inline-block;padding:2px 10px;border-radius:10px;'
+            'background:{};color:{};font-size:12px;white-space:nowrap;">{}</span>',
+            bg, color, label,
+        )
+
+    @admin.display(description='修改内容')
+    def change_message_natural(self, obj):
+        """把 Django 存储的 JSON change_message 翻成自然语言（如「修改了 产品分类 字段」）。
+
+        用 Django 内置 LogEntry.get_change_message()：它会把字段名映射回模型的
+        verbose_name（本项目为中文），历史记录同样适用；不再直接显示原始 JSON。
+        """
+        text = obj.get_change_message()
+        if not text:
+            return '—'
+        return text
 
     # —— 超管门槛：普通 staff 看不到「日志记录」模块 ——
     def has_module_permission(self, request):

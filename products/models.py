@@ -30,7 +30,12 @@ def format_money(amount, currency='USD'):
 class Category(models.Model):
     name = models.CharField('中文名', max_length=100)
     name_en = models.CharField('英文名', max_length=100)
+    name_ar = models.CharField('阿拉伯语名', max_length=100, blank=True, default='')
     slug = models.SlugField('URL标识', unique=True)
+    cover_image = models.ImageField(
+        '分类封面图', upload_to='category_covers/', blank=True, null=True,
+        help_text='首页「按产品线浏览」卡片右侧展示图；留空自动取该分类第一个有图产品的首图',
+    )
     sort_order = models.IntegerField('排序', default=0)
 
     class Meta:
@@ -41,17 +46,34 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def display_name(self, lang='zh'):
+        """分类名：按语言取值（阿语为空时回退英文）"""
+        if lang == 'ar':
+            return self.name_ar or self.name_en or self.name
+        if lang == 'en':
+            return self.name_en or self.name
+        return self.name
+
+    def cover_or_first_product_image(self):
+        """卡片封面：优先分类自定义封面，其次该分类第一个有图产品。"""
+        if self.cover_image:
+            return self.cover_image
+        product = self.products.exclude(image='').exclude(image__isnull=True).first()
+        return product.image if product else None
+
 
 class Product(models.Model):
     sku = models.CharField('SKU编号', max_length=100, unique=True)
     part_name = models.CharField('名称(中文)', max_length=200, blank=True)
     part_name_en = models.CharField('名称(英文)', max_length=200, blank=True)
+    part_name_ar = models.CharField('名称(阿拉伯语)', max_length=200, blank=True, default='')
     pn = models.CharField('P/N件号', max_length=100, blank=True)
     brand = models.CharField('兼容品牌', max_length=100, blank=True)
     weight = models.CharField('重量', max_length=100, blank=True)
     warranty = models.CharField('质保', max_length=100, blank=True)
     description = models.TextField('描述(中文)', blank=True)
     description_en = models.TextField('描述(英文)', blank=True)
+    description_ar = models.TextField('描述(阿拉伯语)', blank=True, default='')
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='products', verbose_name='分类'
     )
@@ -98,8 +120,18 @@ class Product(models.Model):
                 super().save(update_fields=['is_watermarked', 'updated_at'])
 
     def display_name(self, lang='zh'):
+        if lang == 'ar':
+            return self.part_name_ar or self.part_name_en or self.part_name or 'اسم المنتج قيد التحديث'
         name = self.part_name if lang == 'zh' else self.part_name_en
         return name or self.part_name or self.part_name_en or '产品名称待更新'
+
+    def display_description(self, lang='zh'):
+        """产品描述：按语言取值（阿语为空时回退英文，英文为空回退中文）"""
+        if lang == 'ar':
+            return self.description_ar or self.description_en or self.description
+        if lang == 'en':
+            return self.description_en or self.description
+        return self.description
 
     # —— 定价 / 支付辅助 ——
     @property

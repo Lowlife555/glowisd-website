@@ -16,15 +16,15 @@ RATE_LIMIT_MAX = 3       # 同一会话最多 3 次
 
 
 CATEGORY_TAGLINES = {
-    'sensors': ('精确测量，稳定可靠', 'Precise measurement, stable and reliable'),
-    'cables': ('耐用连接，信号稳定', 'Durable connections, stable signals'),
-    'control-handles': ('操控精准，手感可靠', 'Precise control, reliable feel'),
-    'displays': ('清晰显示，智能监控', 'Clear display, smart monitoring'),
-    'junction-boxes': ('安全防护，稳定接线', 'Protected, stable wiring'),
-    'leveling-arms': ('精准找平，适应工况', 'Accurate leveling for every job site'),
-    'pcb-boards': ('原厂级电路方案', 'OEM-grade circuit boards'),
-    'membrane-switches': ('耐用面板，灵敏反馈', 'Durable panels, responsive feedback'),
-    'complete-kits': ('一站式配套方案', 'One-stop complete kits'),
+    'sensors': ('精确测量，稳定可靠', 'Precise measurement, stable and reliable', 'قياس دقيق وموثوق'),
+    'cables': ('耐用连接，信号稳定', 'Durable connections, stable signals', 'توصيلات متينة وإشارات مستقرة'),
+    'control-handles': ('操控精准，手感可靠', 'Precise control, reliable feel', 'تحكم دقيق وإحساس موثوق'),
+    'displays': ('清晰显示，智能监控', 'Clear display, smart monitoring', 'عرض واضح ومراقبة ذكية'),
+    'junction-boxes': ('安全防护，稳定接线', 'Protected, stable wiring', 'حماية آمنة وتوصيلات مستقرة'),
+    'leveling-arms': ('精准找平，适应工况', 'Accurate leveling for every job site', 'تسوية دقيقة تناسب كل موقع عمل'),
+    'pcb-boards': ('原厂级电路方案', 'OEM-grade circuit boards', 'لوحات دوائر بمعايير المصنع الأصلي'),
+    'membrane-switches': ('耐用面板，灵敏反馈', 'Durable panels, responsive feedback', 'لوحات متينة واستجابة حساسة'),
+    'complete-kits': ('一站式配套方案', 'One-stop complete kits', 'أطقم متكاملة من مكان واحد'),
 }
 
 
@@ -32,14 +32,16 @@ def home(request):
     categories = Category.objects.annotate(product_count=Count('products')).all()
     cats = []
     for c in categories:
-        tl = CATEGORY_TAGLINES.get(c.slug, ('', ''))
+        tl = CATEGORY_TAGLINES.get(c.slug, ('', '', ''))
         cats.append({
             'slug': c.slug,
             'name': c.name,
             'name_en': c.name_en,
+            'name_ar': c.name_ar,
             'count': c.product_count,
             'tl_zh': tl[0],
             'tl_en': tl[1],
+            'tl_ar': tl[2],
         })
     hero_slides = HeroSlide.objects.filter(is_active=True).order_by('sort_order')
 
@@ -48,7 +50,14 @@ def home(request):
 
     # 分类卡片只展示「有产品」且已归类的分类：0 款分类点进去是空列表，
     # 「未分类」不是产品线、放在首页只会暴露数据整理进度，两者都从卡片墙隐藏。
-    cat_cards = [c for c in cats if c['count'] > 0 and c['slug'] != 'uncategorized']
+    # 传 Category 对象（带 tl_zh/tl_en/tl_ar/count 附加属性），模板用 |cname:lang 与 |cat_cover 取封面图
+    cat_cards = []
+    for c in categories:
+        if c.product_count > 0 and c.slug != 'uncategorized':
+            tl = CATEGORY_TAGLINES.get(c.slug, ('', '', ''))
+            c.tl_zh, c.tl_en, c.tl_ar = tl[0], tl[1], tl[2]
+            c.count = c.product_count
+            cat_cards.append(c)
 
     # 产品线分区陈列：有产品的分类（排除"未分类"），每线取前 4 个产品
     lineups = []

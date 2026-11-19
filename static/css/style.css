@@ -826,3 +826,141 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   .lineup-name { font-size: 20px; }
   .lineup-name .en { display: block; margin-left: 0; margin-top: 4px; }
 }
+
+/* =========================================================
+   V0.9.0 三语（中/EN/阿语）+ 分类卡片配图
+   ========================================================= */
+
+/* ---- 分类卡片背景图：右侧半透明+高斯模糊，左侧白色渐变过渡（PPT 式） ---- */
+.cat-card { overflow: hidden; }
+.cat-card-bg {
+  position: absolute;
+  top: 0; bottom: 0; left: 42%; right: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: .5;
+  filter: blur(7px) saturate(1.05);
+  transform: scale(1.1);
+  pointer-events: none;
+  z-index: 0;
+}
+.cat-card-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg,
+    var(--surface) 0%,
+    rgba(255, 255, 255, .94) 26%,
+    rgba(255, 255, 255, .55) 58%,
+    rgba(255, 255, 255, 0) 88%);
+}
+.cat-card > :not(.cat-card-bg) { position: relative; z-index: 1; }
+
+/* 阿语（RTL）：图片移到左侧，渐变方向镜像 */
+[dir="rtl"] .cat-card-bg { left: 0; right: 42%; }
+[dir="rtl"] .cat-card-bg::after {
+  background: linear-gradient(270deg,
+    var(--surface) 0%,
+    rgba(255, 255, 255, .94) 26%,
+    rgba(255, 255, 255, .55) 58%,
+    rgba(255, 255, 255, 0) 88%);
+}
+
+/* 窄屏：图片占比收窄，避免压住文字 */
+@media (max-width: 640px) {
+  .cat-card-bg { left: 55%; opacity: .4; }
+  [dir="rtl"] .cat-card-bg { left: 0; right: 55%; }
+}
+
+/* ---- 语言切换按钮：三态（中/EN/عربي） ---- */
+.lang-switch button { min-width: 40px; padding: 0 10px; }
+.lang-switch button[dir], .lang-switch .lang-ar { font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
+[dir="rtl"] .lang-switch button + button { border-left: 0; border-right: 1px solid var(--line-strong); }
+
+/* ---- 阿语排版（轻量 RTL）：字体与行高 ---- */
+[lang="ar"] body {
+  font-family: "Noto Naskh Arabic", "Segoe UI", Tahoma, Arial, sans-serif;
+}
+[dir="rtl"] .lead,
+[dir="rtl"] p { letter-spacing: 0; }
+[dir="rtl"] .nav-main a,
+[dir="rtl"] .footer-col a { letter-spacing: 0; }
+[dir="rtl"] .cat-card .arrow { transform: scaleX(-1); }
+[dir="rtl"] .h-section .h-sub,
+[dir="rtl"] .eyebrow { letter-spacing: .06em; }
+
+/* ---- 首次进入语言选择弹窗 ---- */
+.lang-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(22, 42, 135, .38);
+  backdrop-filter: blur(3px);
+  padding: 24px;
+  animation: langModalFade .18s ease-out;
+}
+.lang-modal.is-closing { opacity: 0; transition: opacity .15s ease; }
+@keyframes langModalFade { from { opacity: 0; } to { opacity: 1; } }
+
+.lang-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 24px 60px rgba(22, 42, 135, .28);
+  padding: 42px 40px 34px;
+  text-align: center;
+}
+.lang-modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(22, 42, 135, .06);
+  color: var(--ink-2);
+  font-size: 70px;
+  line-height: 42px;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+}
+.lang-modal-close:hover { background: var(--ink); color: #fff; }
+[dir="rtl"] .lang-modal-close { right: auto; left: 10px; }
+
+.lang-modal-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .32em;
+  color: var(--primary);
+  margin: 0 0 12px;
+}
+.lang-modal-title {
+  font-size: 19px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 26px;
+  line-height: 1.6;
+}
+.lang-modal-options { display: grid; gap: 12px; }
+.lang-modal-btn {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 12px;
+  padding: 15px 18px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+.lang-modal-btn:hover { border-color: var(--ink); background: #F6F8FE; }
+.lang-modal-btn .lm-native { font-size: 18px; font-weight: 600; color: var(--ink); }
+.lang-modal-btn .lm-label { font-size: 12px; color: var(--ink-3); letter-spacing: .06em; }
+.lang-modal-hint { margin: 22px 0 0; font-size: 12px; line-height: 1.8; color: var(--ink-3); }

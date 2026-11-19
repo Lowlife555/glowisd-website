@@ -4,15 +4,15 @@
     {% if p.image %}
     <img src="{{ p.image.url }}?v={{ site_version }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
     {% else %}
-    <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
+    <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'ar' %}صورة المنتج مؤقتة{% elif lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
     {% endif %}
     <span class="p-card__sku">{{ p.sku }}</span>
   </div>
   <div class="p-card__body">
-    {% if p.part_name or p.part_name_en %}
+    {% if p.part_name or p.part_name_en or p.part_name_ar %}
     <span class="p-card__name">{{ p|pname:lang }}</span>
     {% else %}
-    <span class="p-card__name is-empty">{% if lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
+    <span class="p-card__name is-empty">{% if lang == 'ar' %}اسم المنتج قيد التحديث{% elif lang == 'en' %}Name TBD{% else %}产品名称待更新{% endif %}</span>
     {% endif %}
     <div class="p-card__ids">
       <div><b>SKU</b> {{ p.sku }}</div>
@@ -22,18 +22,18 @@
     <div class="p-card__price{% if p.is_placeholder_price %} is-placeholder{% endif %}">
       <b>{{ p.price_display }}</b>
       {% if p.is_placeholder_price %}
-      <span class="p-card__price-tag">{% if lang == 'en' %}Price TBD{% else %}待定价{% endif %}</span>
+      <span class="p-card__price-tag">{% if lang == 'ar' %}السعر قيد التحديد{% elif lang == 'en' %}Price TBD{% else %}待定价{% endif %}</span>
       {% else %}
-      <span class="p-card__price-unit">/ {% if lang == 'en' %}unit{% else %}件{% endif %}</span>
+      <span class="p-card__price-unit">/ {% if lang == 'ar' %}وحدة{% elif lang == 'en' %}unit{% else %}件{% endif %}</span>
       {% endif %}
     </div>
     {% else %}
     <div class="p-card__price is-muted">
-      <span class="p-card__price-note">{% if lang == 'en' %}Price on request{% else %}价格面议{% endif %}</span>
+      <span class="p-card__price-note">{% if lang == 'ar' %}السعر عند الطلب{% elif lang == 'en' %}Price on request{% else %}价格面议{% endif %}</span>
     </div>
     {% endif %}
     <div class="p-card__foot">
-      <span class="link-arrow">{% if lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
+      <span class="link-arrow">{% if lang == 'ar' %}التفاصيل{% elif lang == 'en' %}Details{% else %}查看详情{% endif %} <span class="arrow">→</span></span>
     </div>
   </div>
 </a>

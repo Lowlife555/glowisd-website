@@ -1,8 +1,8 @@
 from django.conf import settings
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.admin import EmptyFieldListFilter
 from django.db.models import Count
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import path
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
@@ -32,13 +32,47 @@ class PriceStatusFilter(admin.SimpleListFilter):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'name_en', 'slug', 'sort_order', 'product_count']
-    search_fields = ['name', 'name_en', 'slug']
+    list_display = ['cover_preview', 'name', 'name_en', 'name_ar', 'slug', 'sort_order', 'product_count']
+    search_fields = ['name', 'name_en', 'name_ar', 'slug']
     ordering = ['sort_order']
+    fieldsets = (
+        ('分类信息', {'fields': ('name', 'name_en', 'name_ar', 'slug', 'sort_order')}),
+        ('首页卡片封面图', {
+            'fields': ('cover_image',),
+            'description': '首页「按产品线浏览」卡片右侧展示图。留空自动取该分类第一个有图产品的首图。',
+        }),
+    )
+
+    @admin.display(description='封面')
+    def cover_preview(self, obj):
+        image = obj.cover_or_first_product_image()
+        if image:
+            return format_html(
+                '<img src="{}" alt="{}" style="width:56px;height:42px;object-fit:cover;'
+                'border:1px solid #E4E9F5;border-radius:2px;display:block;" />',
+                image.url, obj.name,
+            )
+        return mark_safe(
+            '<span style="display:block;width:56px;height:42px;line-height:42px;'
+            'text-align:center;color:#A6B0CC;border:1px dashed #C9D1E8;'
+            'border-radius:2px;font-size:12px;">—</span>'
+        )
 
     @admin.display(description='产品数')
     def product_count(self, obj):
         return obj.products.count()
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        if not obj.name_ar and (obj.name or obj.name_en):
+            from core.translation import translate_ar
+            res = translate_ar([obj.name or obj.name_en])
+            if res and res[0]:
+                obj.name_ar = res[0]
+                obj.save(update_fields=['name_ar'])
+                messages.info(request, '已自动生成分类的阿拉伯语名称')
+            else:
+                messages.warning(request, '分类阿语名未生成：请检查「站点设置 → 翻译服务」的 API Key')
 
 
 @admin.register(Product)
@@ -78,7 +112,7 @@ class ProductAdmin(admin.ModelAdmin):
         )
     fieldsets = (
         ('基本信息', {'fields': ('sku', 'pn', 'category', 'featured')}),
-        ('名称', {'fields': ('part_name', 'part_name_en')}),
+        ('名称', {'fields': ('part_name', 'part_name_en', 'part_name_ar')}),
         ('定价与支付', {
             'fields': ('price', 'currency', 'payment_link', 'pay_link_display'),
             'description': (
@@ -88,9 +122,62 @@ class ProductAdmin(admin.ModelAdmin):
             ),
         }),
         ('参数', {'fields': ('brand', 'weight', 'warranty')}),
-        ('描述', {'fields': ('description', 'description_en')}),
+        ('描述', {'fields': ('description', 'description_en', 'description_ar')}),
         ('图片', {'fields': ('image',)}),
     )
+
+    # —— 阿语翻译：保存时自动生成（失败不阻塞保存）；批量重译走独立视图 ——
+    # 注意：不使用 admin actions——simpleui 的 custom_button 标签无法序列化
+    # Django 6.1 admin action 的 ActionLocation 元数据，会让产品列表页 500。
+
+    def translate_all_arabic_view(self, request):
+        """批量重新生成全部产品的阿语翻译（缺省时补全）。入口：数据质量检查页。"""
+        from core.translation import translate_ar
+        missing = Product.objects.filter(part_name_ar='')
+        ok = fail = 0
+        for obj in missing:
+            res = translate_ar([obj.part_name or obj.part_name_en,
+                                obj.description or obj.description_en])
+            if res:
+                obj.part_name_ar = res[0] or obj.part_name_ar
+                obj.description_ar = res[1] or obj.description_ar
+                obj.save(update_fields=['part_name_ar', 'description_ar'])
+                ok += 1
+            else:
+                fail += 1
+        if fail:
+            self.message_user(
+                request,
+                f'已翻译 {ok} 个产品，失败 {fail} 个。失败通常是未配置 API Key 或网络异常，'
+                '请检查「站点设置 → 翻译服务」。',
+                messages.WARNING,
+            )
+        else:
+            self.message_user(request, f'已生成 {ok} 个产品的阿拉伯语翻译', messages.SUCCESS)
+        return redirect('admin:products_product_changelist')
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        need_name = not obj.part_name_ar and (obj.part_name or obj.part_name_en)
+        need_desc = not obj.description_ar and (obj.description or obj.description_en)
+        if not (need_name or need_desc):
+            return
+        from core.translation import translate_ar
+        res = translate_ar([obj.part_name or obj.part_name_en,
+                            obj.description or obj.description_en])
+        if res:
+            if need_name and res[0]:
+                obj.part_name_ar = res[0]
+            if need_desc and res[1]:
+                obj.description_ar = res[1]
+            obj.save(update_fields=['part_name_ar', 'description_ar'])
+            messages.info(request, '已自动生成阿拉伯语翻译（可在「名称/描述」中的阿拉伯语字段校对）')
+        else:
+            messages.warning(
+                request,
+                '阿拉伯语翻译未生成：请先在「站点设置 → 翻译服务」填写 DeepSeek API Key，'
+                '或稍后在产品列表勾选本产品点「重新生成阿拉伯语翻译」。',
+            )
 
     @admin.display(description='定价状态')
     def price_state(self, obj):
@@ -126,6 +213,11 @@ class ProductAdmin(admin.ModelAdmin):
                 'data-quality/',
                 self.admin_site.admin_view(self.data_quality_view),
                 name='products_product_data_quality',
+            ),
+            path(
+                'translate-arabic/',
+                self.admin_site.admin_view(self.translate_all_arabic_view),
+                name='products_product_translate_arabic',
             ),
         ]
         return custom + urls

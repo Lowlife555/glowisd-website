@@ -429,7 +429,7 @@ class ProductCatalogTests(TestCase):
                                                slug='uncategorized')
         Product.objects.create(sku='P-U1', part_name='未归类', category=unclassified)
         resp = self.client.get(reverse('home'))
-        slugs = [c['slug'] for c in resp.context['cat_cards']]
+        slugs = [c.slug for c in resp.context['cat_cards']]
         self.assertIn('cables-test', slugs)
         self.assertNotIn('empty-test', slugs)
         self.assertNotIn('uncategorized', slugs)

@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% load static products_extras %}
 
-{% block title %}{% if lang == 'en' %}Customization &amp; OEM/ODM — Glowisd{% else %}定制服务 — Glowisd{% endif %}{% endblock %}
+{% block title %}{% if lang == 'ar' %}خدمات التخصيص و OEM / ODM — Glowisd{% elif lang == 'en' %}Customization &amp; OEM/ODM — Glowisd{% else %}定制服务 — Glowisd{% endif %}{% endblock %}
 
 {% block content %}
 
 <section class="page-hero">
   <div class="container">
-    <span class="eyebrow">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
-    <h1>{% if lang == 'en' %}OEM / ODM &amp; Custom Parts{% else %}OEM / ODM 与定制配件{% endif %}</h1>
+    <span class="eyebrow">{% if lang == 'ar' %}خدمات التخصيص{% elif lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
+    <h1>{% if lang == 'ar' %}OEM / ODM والقطع المخصصة{% elif lang == 'en' %}OEM / ODM &amp; Custom Parts{% else %}OEM / ODM 与定制配件{% endif %}</h1>
     <p class="lead">
-      {% if lang == 'en' %}
+      {% if lang == 'ar' %}
+      ابنوا علامتكم التجارية بقدراتنا التصنيعية — علامة خاصة، أو تطوير مخصص،
+      أو تصنيع حسب الرسومات أو العينات.
+      {% elif lang == 'en' %}
       Build your own brand with our manufacturing capability — private label,
       custom development, or made-to-print / made-to-sample production.
       {% else %}
@@ -24,32 +27,32 @@
 <section class="section">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Service Modes{% else %}合作模式{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}Three Ways to Work With Us{% else %}三种合作方式{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}أشكال التعاون{% elif lang == 'en' %}Service Modes{% else %}合作模式{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}ثلاث طرق للعمل معنا{% elif lang == 'en' %}Three Ways to Work With Us{% else %}三种合作方式{% endif %}</h2>
     </div>
     <div class="grid grid--3">
       <div class="card equip-card">
         <span class="no">A</span>
         <div>
-          <h3>{% if lang == 'en' %}OEM / Private Label{% else %}OEM 贴牌{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}OEM / العلامة الخاصة{% elif lang == 'en' %}OEM / Private Label{% else %}OEM 贴牌{% endif %}</h3>
           <span class="en">Private Label</span>
-          <p>{% if lang == 'en' %}Produce existing Glowisd parts under your brand — logo, label and packaging per your spec.{% else %}在现有 Glowisd 产品上使用您的品牌——按您的要求定制 logo、标签与包装。{% endif %}</p>
+          <p>{% if lang == 'ar' %}تصنيع قطع Glowisd الحالية بعلامتكم التجارية — الشعار والملصق والتغليف وفق مواصفاتكم.{% elif lang == 'en' %}Produce existing Glowisd parts under your brand — logo, label and packaging per your spec.{% else %}在现有 Glowisd 产品上使用您的品牌——按您的要求定制 logo、标签与包装。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">B</span>
         <div>
-          <h3>{% if lang == 'en' %}ODM / Joint Development{% else %}ODM 联合开发{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}ODM / التطوير المشترك{% elif lang == 'en' %}ODM / Joint Development{% else %}ODM 联合开发{% endif %}</h3>
           <span class="en">Co-Development</span>
-          <p>{% if lang == 'en' %}Together we develop new sensors, handles or displays from concept to mass production.{% else %}从概念到量产，与您共同开发新的传感器、手柄或显示器。{% endif %}</p>
+          <p>{% if lang == 'ar' %}نطوّر معكم مستشعرات أو مقابض أو شاشات جديدة من الفكرة حتى الإنتاج الكمي.{% elif lang == 'en' %}Together we develop new sensors, handles or displays from concept to mass production.{% else %}从概念到量产，与您共同开发新的传感器、手柄或显示器。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">C</span>
         <div>
-          <h3>{% if lang == 'en' %}Made-to-Print / Sample{% else %}来图 / 来样定制{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}التصنيع حسب الرسم / العينة{% elif lang == 'en' %}Made-to-Print / Sample{% else %}来图 / 来样定制{% endif %}</h3>
           <span class="en">Print / Sample</span>
-          <p>{% if lang == 'en' %}Send drawings or samples — we quote, prototype and produce to your specification.{% else %}提供图纸或样品，我们按您的规格报价、打样并生产。{% endif %}</p>
+          <p>{% if lang == 'ar' %}أرسلوا الرسومات أو العينات، فنقدم عرض السعر ونصنع النموذج الأولي والإنتاج وفق مواصفاتكم.{% elif lang == 'en' %}Send drawings or samples — we quote, prototype and produce to your specification.{% else %}提供图纸或样品，我们按您的规格报价、打样并生产。{% endif %}</p>
         </div>
       </div>
     </div>
@@ -60,48 +63,48 @@
 <section class="section section--white">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Process{% else %}定制流程{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}How Customization Works{% else %}定制流程{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}عملية التخصيص{% elif lang == 'en' %}Process{% else %}定制流程{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}كيف تسير عملية التخصيص{% elif lang == 'en' %}How Customization Works{% else %}定制流程{% endif %}</h2>
     </div>
     <div class="steps">
       <div class="step">
         <div class="no">01</div>
         <div>
-          <h3>{% if lang == 'en' %}Requirements &amp; Consultation{% else %}需求沟通{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}تحديد المتطلبات والاستشارة{% elif lang == 'en' %}Requirements &amp; Consultation{% else %}需求沟通{% endif %}</h3>
           <span class="en">Consultation</span>
-          <p>{% if lang == 'en' %}Tell us the part, quantity, target market and any drawings or samples.{% else %}告知配件型号、数量、目标市场以及图纸或样品。{% endif %}</p>
+          <p>{% if lang == 'ar' %}أخبرونا بالقطعة والكمية والسوق المستهدف وأي رسومات أو عينات.{% elif lang == 'en' %}Tell us the part, quantity, target market and any drawings or samples.{% else %}告知配件型号、数量、目标市场以及图纸或样品。{% endif %}</p>
         </div>
       </div>
       <div class="step">
         <div class="no">02</div>
         <div>
-          <h3>{% if lang == 'en' %}Proposal &amp; Quotation{% else %}方案与报价{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}الحل وعرض السعر{% elif lang == 'en' %}Proposal &amp; Quotation{% else %}方案与报价{% endif %}</h3>
           <span class="en">Quotation</span>
-          <p>{% if lang == 'en' %}We confirm feasibility, provide a solution and quote within 24 hours.{% else %}24 小时内确认可行性，提供方案与报价。{% endif %}</p>
+          <p>{% if lang == 'ar' %}نؤكد الجدوى ونقدم الحل وعرض السعر خلال 24 ساعة.{% elif lang == 'en' %}We confirm feasibility, provide a solution and quote within 24 hours.{% else %}24 小时内确认可行性，提供方案与报价。{% endif %}</p>
         </div>
       </div>
       <div class="step">
         <div class="no">03</div>
         <div>
-          <h3>{% if lang == 'en' %}Sample Confirmation{% else %}样品确认{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}تأكيد العينة{% elif lang == 'en' %}Sample Confirmation{% else %}样品确认{% endif %}</h3>
           <span class="en">Sampling</span>
-          <p>{% if lang == 'en' %}Prototypes are produced and verified together until the sample is approved.{% else %}打样并联合验证，直至样品确认合格。{% endif %}</p>
+          <p>{% if lang == 'ar' %}ننتج النماذج الأولية ونتحقق منها معكم حتى اعتماد العينة.{% elif lang == 'en' %}Prototypes are produced and verified together until the sample is approved.{% else %}打样并联合验证，直至样品确认合格。{% endif %}</p>
         </div>
       </div>
       <div class="step">
         <div class="no">04</div>
         <div>
-          <h3>{% if lang == 'en' %}Mass Production{% else %}批量生产{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}الإنتاج الكمي{% elif lang == 'en' %}Mass Production{% else %}批量生产{% endif %}</h3>
           <span class="en">Production</span>
-          <p>{% if lang == 'en' %}Approved sample becomes the standard — full QC applies to every batch.{% else %}以确认样品为基准组织生产，每批执行完整质检。{% endif %}</p>
+          <p>{% if lang == 'ar' %}تصبح العينة المعتمدة هي المرجع، ويُطبَّق فحص الجودة الكامل على كل دفعة.{% elif lang == 'en' %}Approved sample becomes the standard — full QC applies to every batch.{% else %}以确认样品为基准组织生产，每批执行完整质检。{% endif %}</p>
         </div>
       </div>
       <div class="step">
         <div class="no">05</div>
         <div>
-          <h3>{% if lang == 'en' %}Delivery &amp; After-Sales{% else %}交付与售后{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}التسليم وخدمة ما بعد البيع{% elif lang == 'en' %}Delivery &amp; After-Sales{% else %}交付与售后{% endif %}</h3>
           <span class="en">Delivery</span>
-          <p>{% if lang == 'en' %}On-time shipment with documentation, plus responsive after-sales support.{% else %}按期交付并附全套文档，售后支持响应及时。{% endif %}</p>
+          <p>{% if lang == 'ar' %}شحن في الموعد مع الوثائق الكاملة، ودعم سريع لما بعد البيع.{% elif lang == 'en' %}On-time shipment with documentation, plus responsive after-sales support.{% else %}按期交付并附全套文档，售后支持响应及时。{% endif %}</p>
         </div>
       </div>
     </div>
@@ -113,42 +116,42 @@
   <div class="container">
     <div class="split">
       <div>
-        <span class="eyebrow">{% if lang == 'en' %}How to Order{% else %}下单方式{% endif %}</span>
-        <h2 class="h-section">{% if lang == 'en' %}Start Your Custom Project{% else %}开启您的定制项目{% endif %}</h2>
+        <span class="eyebrow">{% if lang == 'ar' %}طريقة الطلب{% elif lang == 'en' %}How to Order{% else %}下单方式{% endif %}</span>
+        <h2 class="h-section">{% if lang == 'ar' %}ابدأوا مشروعكم المخصص{% elif lang == 'en' %}Start Your Custom Project{% else %}开启您的定制项目{% endif %}</h2>
         <ul class="body-list">
           <li>
-            <b>{% if lang == 'en' %}Online inquiry form{% else %}在线询价表单{% endif %}</b>
-            <br><span class="u-small u-muted">{% if lang == 'en' %}Fastest — receive a reply within 24 hours{% else %}最快——24 小时内回复{% endif %}</span>
+            <b>{% if lang == 'ar' %}نموذج طلب عرض سعر عبر الإنترنت{% elif lang == 'en' %}Online inquiry form{% else %}在线询价表单{% endif %}</b>
+            <br><span class="u-small u-muted">{% if lang == 'ar' %}الأسرع — رد خلال 24 ساعة{% elif lang == 'en' %}Fastest — receive a reply within 24 hours{% else %}最快——24 小时内回复{% endif %}</span>
           </li>
           <li>
             <b>Email</b>
             <br><span class="u-small u-muted">{{ site_settings.email|default:"424760214@qq.com" }}</span>
           </li>
           <li>
-            <b>{% if lang == 'en' %}Phone / WeChat{% else %}电话 / 微信{% endif %}</b>
+            <b>{% if lang == 'ar' %}الهاتف / WeChat{% elif lang == 'en' %}Phone / WeChat{% else %}电话 / 微信{% endif %}</b>
             <br><span class="u-small u-muted">{{ site_settings.phone|default:"+86-139-6147-3930" }}</span>
           </li>
           <li>
             <b>MOQ</b>
-            <br><span class="u-small u-muted">{% if lang == 'en' %}MOQ {{ site_settings.moq|default:"10" }} pcs{% else %}起订量 {{ site_settings.moq|default:"10" }} 件{% endif %}</span>
+            <br><span class="u-small u-muted">{% if lang == 'ar' %}الحد الأدنى للطلب {{ site_settings.moq|default:"10" }} قطعة{% elif lang == 'en' %}MOQ {{ site_settings.moq|default:"10" }} pcs{% else %}起订量 {{ site_settings.moq|default:"10" }} 件{% endif %}</span>
           </li>
         </ul>
         <div style="margin-top:36px;">
           <a class="btn btn--primary" href="{% url 'contact' %}">
-            {% if lang == 'en' %}Send an Inquiry{% else %}提交询价{% endif %}
+            {% if lang == 'ar' %}إرسال طلب عرض السعر{% elif lang == 'en' %}Send an Inquiry{% else %}提交询价{% endif %}
           </a>
         </div>
       </div>
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.custom_hero %}
-          <img src="{{ site_images.custom_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.custom_hero.caption_en|default:'Custom manufacturing' }}{% else %}{{ site_images.custom_hero.caption_zh|default:'定制制造' }}{% endif %}" loading="lazy">
+          <img src="{{ site_images.custom_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.custom_hero.caption_ar|default:'التصنيع حسب الطلب' }}{% elif lang == 'en' %}{{ site_images.custom_hero.caption_en|default:'Custom manufacturing' }}{% else %}{{ site_images.custom_hero.caption_zh|default:'定制制造' }}{% endif %}" loading="lazy">
           {% else %}
-          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Customization — placeholder photo{% else %}定制服务（占位图）{% endif %}">
+          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}خدمات التخصيص — صورة مؤقتة{% elif lang == 'en' %}Customization — placeholder photo{% else %}定制服务（占位图）{% endif %}">
           {% endif %}
         </div>
         <div class="caption">
-          <span>{% if lang == 'en' %}Custom Manufacturing{% else %}定制制造{% endif %}</span>
+          <span>{% if lang == 'ar' %}التصنيع حسب الطلب{% elif lang == 'en' %}Custom Manufacturing{% else %}定制制造{% endif %}</span>
           <span>GLOWISD</span>
         </div>
       </div>

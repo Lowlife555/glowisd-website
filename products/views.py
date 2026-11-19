@@ -30,6 +30,7 @@ def product_list(request):
             | Q(pn__icontains=search)
             | Q(part_name__icontains=search)
             | Q(part_name_en__icontains=search)
+            | Q(part_name_ar__icontains=search)
         )
 
     paginator = Paginator(queryset, PRODUCTS_PER_PAGE)

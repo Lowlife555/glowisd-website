@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static products_extras %}
 
-{% block title %}{% if lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Paving Machine Sensors &amp; Accessories{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endif %}{% endblock %}
+{% block title %}{% if lang == 'ar' %}{% if site_settings.seo_title_ar %}{{ site_settings.seo_title_ar }}{% else %}Glowisd — مستشعرات وملحقات آلات رصف الطرق{% endif %}{% elif lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Paving Machine Sensors &amp; Accessories{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 摊铺机传感器与配件制造{% endif %}{% endif %}{% endblock %}
 
 {% block content %}
 
@@ -18,14 +18,20 @@
   <div class="container">
     <span class="eyebrow hero-brand">{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}</span>
     <h1>
-      {% if lang == 'en' %}
+      {% if lang == 'ar' %}
+      أنظمة التحكم الإلكتروني لآلات الإنشاءات<br>التصنيع ومستودعات قطع الغيار
+      {% elif lang == 'en' %}
       Construction Machinery Control Systems<br>Manufacturing &amp; Parts Warehousing
       {% else %}
       工程机械电控系统制造<br>与零配件仓储
       {% endif %}
     </h1>
     <p class="lead">
-      {% if lang == 'en' %}
+      {% if lang == 'ar' %}
+      قطع غيار بديلة عالية الجودة لعلامات Vogele وBomag وWirtgen وABG وغيرها من
+      العلامات الرائدة في مجال آلات الرصف — موثوقة لدى متخصصي إنشاء وصيانة
+      الطرق حول العالم.
+      {% elif lang == 'en' %}
       High-quality replacement parts for Vogele, Bomag, Wirtgen, ABG and other
       leading paver brands — trusted by road construction and maintenance
       professionals worldwide.
@@ -36,28 +42,28 @@
     </p>
     <div class="hero-actions">
       <a class="btn btn--primary" href="{% url 'product_list' %}">
-        {% if lang == 'en' %}View Products{% else %}查看产品{% endif %}
+        {% if lang == 'ar' %}عرض المنتجات{% elif lang == 'en' %}View Products{% else %}查看产品{% endif %}
       </a>
       <a class="btn btn--outline-light" href="{% url 'contact' %}">
-        {% if lang == 'en' %}Contact Us{% else %}联系我们{% endif %}
+        {% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact Us{% else %}联系我们{% endif %}
       </a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="num">180<span class="plus">+</span></div>
-        <div class="lab">{% if lang == 'en' %}Catalog Models{% else %}全系列型号{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}طرازات الكتالوج{% elif lang == 'en' %}Catalog Models{% else %}全系列型号{% endif %}</div>
       </div>
       <div class="hero-stat">
         <div class="num">{{ category_count }}</div>
-        <div class="lab">{% if lang == 'en' %}Product Lines{% else %}产品线{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}خطوط الإنتاج{% elif lang == 'en' %}Product Lines{% else %}产品线{% endif %}</div>
       </div>
       <div class="hero-stat">
         <div class="num">3</div>
-        <div class="lab">{% if lang == 'en' %}Markets Served{% else %}服务市场{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}الأسواق المخدومة{% elif lang == 'en' %}Markets Served{% else %}服务市场{% endif %}</div>
       </div>
       <div class="hero-stat">
         <div class="num">100<span class="plus">%</span></div>
-        <div class="lab">{% if lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}فحص الجودة{% elif lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
       </div>
     </div>
   </div>
@@ -67,12 +73,14 @@
 <section class="section section--white">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品分类{% endif %}</span>
+      <span class="eyebrow">{% if lang == 'ar' %}فئات المنتجات{% elif lang == 'en' %}Product Lines{% else %}产品分类{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}<span class="h-main">Browse by Category</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Browse by Category</span>{% endif %}
+        {% if lang == 'ar' %}<span class="h-main">تصفح حسب خط الإنتاج</span>{% elif lang == 'en' %}<span class="h-main">Browse by Category</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Browse by Category</span>{% endif %}
       </h2>
       <p class="lead">
-        {% if lang == 'en' %}
+        {% if lang == 'ar' %}
+        من المستشعرات إلى الأطقم الكاملة — كل مكوّن مصمم هندسيًا لآلة الرصف.
+        {% elif lang == 'en' %}
         From sensors to complete kits — every component engineered for the paver.
         {% else %}
         从传感器到完整套件，每一件配件都为摊铺机工况而设计。
@@ -82,12 +90,13 @@
     <div class="grid grid--3 cat-grid">
       {% for c in cat_cards %}
       <a class="card cat-card" href="{% url 'product_list' %}?category={{ c.slug }}">
+        <span class="cat-card-bg" aria-hidden="true" style="background-image:url('{% cat_cover c %}');"></span>
         <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-        <h3>{% if lang == 'en' %}{{ c.name_en }}{% else %}{{ c.name }}{% endif %}</h3>
+        <h3>{{ c|cname:lang }}</h3>
         {% if lang == 'zh' %}<span class="en">{{ c.name_en }}</span>{% endif %}
         <div class="meta">
           <span class="count">
-            {% if lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
+            {% if lang == 'ar' %}{{ c.count }} منتجات · {{ c.tl_ar }}{% elif lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
           </span>
           <span class="arrow">→</span>
         </div>
@@ -102,12 +111,14 @@
 <section class="section section--alt">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Featured{% else %}推荐产品{% endif %}</span>
+      <span class="eyebrow">{% if lang == 'ar' %}منتجات مميزة{% elif lang == 'en' %}Featured{% else %}推荐产品{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}<span class="h-main">Featured Products</span>{% else %}<span class="h-main">推荐产品</span><span class="h-sub">Featured Products</span>{% endif %}
+        {% if lang == 'ar' %}<span class="h-main">منتجات مميزة</span>{% elif lang == 'en' %}<span class="h-main">Featured Products</span>{% else %}<span class="h-main">推荐产品</span><span class="h-sub">Featured Products</span>{% endif %}
       </h2>
       <p class="lead">
-        {% if lang == 'en' %}
+        {% if lang == 'ar' %}
+        أفضل المنتجات مبيعًا المختارة بعناية — قطع غيار آلات رصف مثبتة يطلبها عملاؤنا مرارًا وتكرارًا.
+        {% elif lang == 'en' %}
         Hand-picked bestsellers — proven paver parts our customers order again and again.
         {% else %}
         精选热销配件——客户反复订购、久经验证的摊铺机配件。
@@ -128,12 +139,14 @@
 <section class="section">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Product Lines{% else %}产品线{% endif %}</span>
+      <span class="eyebrow">{% if lang == 'ar' %}خطوط الإنتاج{% elif lang == 'en' %}Product Lines{% else %}产品线{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}<span class="h-main">Shop by Product Line</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Shop by Product Line</span>{% endif %}
+        {% if lang == 'ar' %}<span class="h-main">تسوق حسب خط الإنتاج</span>{% elif lang == 'en' %}<span class="h-main">Shop by Product Line</span>{% else %}<span class="h-main">按产品线浏览</span><span class="h-sub">Shop by Product Line</span>{% endif %}
       </h2>
       <p class="lead">
-        {% if lang == 'en' %}
+        {% if lang == 'ar' %}
+        تصفح المجموعة الكاملة حسب خط الإنتاج — المستشعرات والكابلات ومقابض التحكم ووحدات العرض والمزيد.
+        {% elif lang == 'en' %}
         Browse the full range by product line — sensors, cables, handles, displays and more.
         {% else %}
         按产品线浏览全系列——传感器、线缆、手柄、显示器等配件。
@@ -148,7 +161,7 @@
           {% if lang == 'zh' %}<span class="en">{{ lineup.category.name_en }}</span>{% endif %}
         </h3>
         <a class="link-arrow" href="{% url 'product_list' %}?category={{ lineup.category.slug }}">
-          {% if lang == 'en' %}View all{% else %}查看全部{% endif %}
+          {% if lang == 'ar' %}عرض الكل{% elif lang == 'en' %}View all{% else %}查看全部{% endif %}
           <span class="arrow">→</span>
         </a>
       </div>
@@ -167,35 +180,35 @@
 <section class="section">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Why Glowisd{% else %}为什么选择我们{% endif %}</span>
+      <span class="eyebrow">{% if lang == 'ar' %}لماذا Glowisd{% elif lang == 'en' %}Why Glowisd{% else %}为什么选择我们{% endif %}</span>
       <h2 class="h-section">
-        {% if lang == 'en' %}Engineered precision, delivered reliably{% else %}以工程精度，服务每一次摊铺{% endif %}
+        {% if lang == 'ar' %}دقة هندسية وتوريد موثوق{% elif lang == 'en' %}Engineered precision, delivered reliably{% else %}以工程精度，服务每一次摊铺{% endif %}
       </h2>
     </div>
     <div class="grid grid--4">
       <div class="card adv-card">
         <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3z"/><path d="m8.5 12 2.5 2.5 5-5"/></svg></div>
-        <h3>{% if lang == 'en' %}Quality Assured{% else %}品质管控{% endif %}</h3>
-        <span class="en">{% if lang == 'en' %}Quality{% else %}Quality Assured{% endif %}</span>
-        <p>{% if lang == 'en' %}Every unit passes strict inspection and burn-in testing before shipping.{% else %}每件产品出厂前经过严格检验与老化测试，确保一致性与可靠性。{% endif %}</p>
+        <h3>{% if lang == 'ar' %}ضمان الجودة{% elif lang == 'en' %}Quality Assured{% else %}品质管控{% endif %}</h3>
+        <span class="en">{% if lang == 'ar' %}Quality Assured{% elif lang == 'en' %}Quality{% else %}Quality Assured{% endif %}</span>
+        <p>{% if lang == 'ar' %}تخضع كل وحدة لفحص صارم واختبار إجهاد قبل الشحن لضمان الاتساق والموثوقية.{% elif lang == 'en' %}Every unit passes strict inspection and burn-in testing before shipping.{% else %}每件产品出厂前经过严格检验与老化测试，确保一致性与可靠性。{% endif %}</p>
       </div>
       <div class="card adv-card">
         <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></div>
-        <h3>{% if lang == 'en' %}Wide Compatibility{% else %}兼容广泛{% endif %}</h3>
-        <span class="en">{% if lang == 'en' %}Compatibility{% else %}Wide Compatibility{% endif %}</span>
-        <p>{% if lang == 'en' %}Compatible with Vogele, Bomag, Wirtgen, ABG and other leading paver brands.{% else %}覆盖 Vogele、Bomag、Wirtgen、ABG 等主流摊铺机品牌机型。{% endif %}</p>
+        <h3>{% if lang == 'ar' %}توافق واسع{% elif lang == 'en' %}Wide Compatibility{% else %}兼容广泛{% endif %}</h3>
+        <span class="en">{% if lang == 'ar' %}Wide Compatibility{% elif lang == 'en' %}Compatibility{% else %}Wide Compatibility{% endif %}</span>
+        <p>{% if lang == 'ar' %}متوافقة مع Vogele وBomag وWirtgen وABG وغيرها من العلامات الرائدة لآلات الرصف.{% elif lang == 'en' %}Compatible with Vogele, Bomag, Wirtgen, ABG and other leading paver brands.{% else %}覆盖 Vogele、Bomag、Wirtgen、ABG 等主流摊铺机品牌机型。{% endif %}</p>
       </div>
       <div class="card adv-card">
         <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></div>
-        <h3>{% if lang == 'en' %}Fast Response{% else %}快速响应{% endif %}</h3>
-        <span class="en">{% if lang == 'en' %}Response{% else %}Fast Response{% endif %}</span>
-        <p>{% if lang == 'en' %}Quotes and technical support within 24 hours for customers worldwide.{% else %}报价与技术支持 24 小时内响应全球客户。{% endif %}</p>
+        <h3>{% if lang == 'ar' %}استجابة سريعة{% elif lang == 'en' %}Fast Response{% else %}快速响应{% endif %}</h3>
+        <span class="en">{% if lang == 'ar' %}Fast Response{% elif lang == 'en' %}Response{% else %}Fast Response{% endif %}</span>
+        <p>{% if lang == 'ar' %}عرض أسعار ودعم فني خلال 24 ساعة للعملاء حول العالم.{% elif lang == 'en' %}Quotes and technical support within 24 hours for customers worldwide.{% else %}报价与技术支持 24 小时内响应全球客户。{% endif %}</p>
       </div>
       <div class="card adv-card">
         <div class="glyph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M8.5 12.5 7 22l5-3 5 3-1.5-9.5"/></svg></div>
-        <h3>{% if lang == 'en' %}Expert Support{% else %}专业支持{% endif %}</h3>
-        <span class="en">{% if lang == 'en' %}Expertise{% else %}Expert Support{% endif %}</span>
-        <p>{% if lang == 'en' %}Experienced engineers guide selection, installation and after-sales service.{% else %}资深工程团队提供选型、安装与售后指导。{% endif %}</p>
+        <h3>{% if lang == 'ar' %}دعم احترافي{% elif lang == 'en' %}Expert Support{% else %}专业支持{% endif %}</h3>
+        <span class="en">{% if lang == 'ar' %}Expert Support{% elif lang == 'en' %}Expertise{% else %}Expert Support{% endif %}</span>
+        <p>{% if lang == 'ar' %}مهندسون ذوو خبرة يقدمون الإرشاد في الاختيار والتركيب وخدمة ما بعد البيع.{% elif lang == 'en' %}Experienced engineers guide selection, installation and after-sales service.{% else %}资深工程团队提供选型、安装与售后指导。{% endif %}</p>
       </div>
     </div>
   </div>
@@ -206,19 +219,19 @@
   <div class="container">
     <div class="cta-band">
       <div class="cta-panel">
-        <span class="eyebrow">{% if lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
-        <h3>{% if lang == 'en' %}Own factory, full-process manufacturing{% else %}自有工厂 · 全流程制造{% endif %}</h3>
-        <p>{% if lang == 'en' %}CNC machining, SMT assembly, cable harness and calibration testing under one roof.{% else %}CNC 加工、SMT 贴片、线缆组装与标定检测，全流程自主掌控。{% endif %}</p>
+        <span class="eyebrow">{% if lang == 'ar' %}التصنيع{% elif lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
+        <h3>{% if lang == 'ar' %}مصنعنا الخاص وتصنيع متكامل{% elif lang == 'en' %}Own factory, full-process manufacturing{% else %}自有工厂 · 全流程制造{% endif %}</h3>
+        <p>{% if lang == 'ar' %}التصنيع باستخدام CNC وتجميع SMT وتجميع الكابلات واختبارات المعايرة تحت سقف واحد.{% elif lang == 'en' %}CNC machining, SMT assembly, cable harness and calibration testing under one roof.{% else %}CNC 加工、SMT 贴片、线缆组装与标定检测，全流程自主掌控。{% endif %}</p>
         <a class="btn btn--outline" href="{% url 'factory' %}">
-          {% if lang == 'en' %}Visit Our Factory{% else %}走进工厂{% endif %}
+          {% if lang == 'ar' %}زيارة مصنعنا{% elif lang == 'en' %}Visit Our Factory{% else %}走进工厂{% endif %}
         </a>
       </div>
       <div class="cta-panel">
-        <span class="eyebrow--dark eyebrow">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
-        <h3>{% if lang == 'en' %}OEM / ODM development{% else %}OEM / ODM 定制开发{% endif %}</h3>
-        <p>{% if lang == 'en' %}Private label, custom development and made-to-print manufacturing for your brand.{% else %}支持贴牌、联合开发与来图/来样制造，让您的品牌拥有专属配件。{% endif %}</p>
+        <span class="eyebrow--dark eyebrow">{% if lang == 'ar' %}التخصيص{% elif lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
+        <h3>{% if lang == 'ar' %}تطوير OEM / ODM{% elif lang == 'en' %}OEM / ODM development{% else %}OEM / ODM 定制开发{% endif %}</h3>
+        <p>{% if lang == 'ar' %}علامات خاصة وتطوير مخصص وتصنيع حسب الرسومات والأنماط لعلامتك التجارية.{% elif lang == 'en' %}Private label, custom development and made-to-print manufacturing for your brand.{% else %}支持贴牌、联合开发与来图/来样制造，让您的品牌拥有专属配件。{% endif %}</p>
         <a class="btn btn--outline-light" href="{% url 'custom' %}">
-          {% if lang == 'en' %}Learn More{% else %}了解定制{% endif %}
+          {% if lang == 'ar' %}اعرف المزيد{% elif lang == 'en' %}Learn More{% else %}了解定制{% endif %}
         </a>
       </div>
     </div>
@@ -230,25 +243,27 @@
   <div class="container">
     <div class="split">
       <div>
-        <span class="eyebrow">{% if lang == 'en' %}About{% else %}公司简介{% endif %}</span>
+        <span class="eyebrow">{% if lang == 'ar' %}من نحن{% elif lang == 'en' %}About{% else %}公司简介{% endif %}</span>
         <h2 class="h-section">
-          {% if lang == 'en' %}Focused on construction machinery components, serving global customers{% else %}专注工程机械配件，服务全球客户{% endif %}
+          {% if lang == 'ar' %}تركيز على مكونات آلات الإنشاءات وخدمة العملاء حول العالم{% elif lang == 'en' %}Focused on construction machinery components, serving global customers{% else %}专注工程机械配件，服务全球客户{% endif %}
         </h2>
         <p class="lead">
-          {% if lang == 'en' %}
+          {% if lang == 'ar' %}
+          {% if site_settings.about_ar %}{{ site_settings.about_ar }}{% else %}CZ Glowisd Science And Technology Co.,Ltd شركة تقنية متخصصة في البحث والتطوير وتصنيع أنظمة التحكم الإلكتروني والكابلات والمكونات الميكانيكية لآلات الإنشاءات، يقع مقرها في تشانغتشو، جيانغسو — في قلب حزام تصنيع المعدات في الصين. تُباع منتجاتنا حول العالم، ولدينا شركاء طويلو الأمد في الشرق الأوسط وآسيا الوسطى وأوروبا والبر الرئيسي للصين.{% endif %}
+          {% elif lang == 'en' %}
           {% if site_settings.about_en %}{{ site_settings.about_en }}{% else %}CZ Glowisd Science And Technology Co.,Ltd is a technology enterprise specializing in the R&D and manufacturing of construction machinery electronic control systems, cables and mechanical components, based in Changzhou, Jiangsu — at the heart of China's equipment manufacturing belt. Our products are sold worldwide, with long-term partners across the Middle East, Central Asia, Europe and mainland China.{% endif %}
           {% else %}
           {% if site_settings.about_zh %}{{ site_settings.about_zh }}{% else %}CZ Glowisd Science And Technology Co.,Ltd 是一家专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业，坐落于江苏常州——中国装备制造产业带核心区域。产品远销全球，在中东、中亚、欧洲及中国大陆拥有多家长期稳定的合作伙伴。{% endif %}
           {% endif %}
         </p>
         <ul class="body-list">
-          <li>{% if lang == 'en' %}Own factory with full-process production capability{% else %}自有工厂，全流程生产能力{% endif %}</li>
-          <li>{% if lang == 'en' %}Multi-brand compatible replacement parts{% else %}多品牌兼容替代配件{% endif %}</li>
-          <li>{% if lang == 'en' %}Strict quality control system, traceable batches{% else %}严格质量控制体系，批次可追溯{% endif %}</li>
+          <li>{% if lang == 'ar' %}مصنع خاص بقدرة إنتاجية متكاملة{% elif lang == 'en' %}Own factory with full-process production capability{% else %}自有工厂，全流程生产能力{% endif %}</li>
+          <li>{% if lang == 'ar' %}قطع غيار بديلة متوافقة مع علامات متعددة{% elif lang == 'en' %}Multi-brand compatible replacement parts{% else %}多品牌兼容替代配件{% endif %}</li>
+          <li>{% if lang == 'ar' %}نظام صارم لمراقبة الجودة مع تتبع الدفعات{% elif lang == 'en' %}Strict quality control system, traceable batches{% else %}严格质量控制体系，批次可追溯{% endif %}</li>
         </ul>
         <div style="margin-top:36px;">
           <a class="link-arrow" href="{% url 'factory' %}">
-            {% if lang == 'en' %}Learn more about Glowisd{% else %}了解更多{% endif %}
+            {% if lang == 'ar' %}اعرف المزيد عن Glowisd{% elif lang == 'en' %}Learn more about Glowisd{% else %}了解更多{% endif %}
             <span class="arrow">→</span>
           </a>
         </div>
@@ -256,13 +271,13 @@
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.home_factory %}
-          <img src="{{ site_images.home_factory.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.home_factory.caption_en|default:'Glowisd factory workshop' }}{% else %}{{ site_images.home_factory.caption_zh|default:'Glowisd 工厂车间' }}{% endif %}" loading="lazy">
+          <img src="{{ site_images.home_factory.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.home_factory.caption_ar|default:'ورشة مصنع Glowisd' }}{% elif lang == 'en' %}{{ site_images.home_factory.caption_en|default:'Glowisd factory workshop' }}{% else %}{{ site_images.home_factory.caption_zh|default:'Glowisd 工厂车间' }}{% endif %}" loading="lazy">
           {% else %}
-          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Glowisd factory — placeholder photo{% else %}Glowisd 工厂（占位图）{% endif %}">
+          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}Glowisd — صورة توضيحية للمصنع{% elif lang == 'en' %}Glowisd factory — placeholder photo{% else %}Glowisd 工厂（占位图）{% endif %}">
           {% endif %}
         </div>
         <div class="caption">
-          <span>{% if lang == 'en' %}Factory{% else %}工厂车间{% endif %}</span>
+          <span>{% if lang == 'ar' %}ورشة المصنع{% elif lang == 'en' %}Factory{% else %}工厂车间{% endif %}</span>
           <span>GLOWISD</span>
         </div>
       </div>

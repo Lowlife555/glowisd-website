@@ -7,6 +7,7 @@ class HeroSlide(models.Model):
     image = models.ImageField('轮播图片', upload_to='hero/')
     title_zh = models.CharField('标题(中文)', max_length=200, blank=True)
     title_en = models.CharField('标题(英文)', max_length=200, blank=True)
+    title_ar = models.CharField('标题(阿拉伯语)', max_length=200, blank=True, default='')
     sort_order = models.IntegerField('排序', default=0)
     is_active = models.BooleanField('启用', default=True)
     created_at = models.DateTimeField('创建时间', auto_now_add=True)
@@ -15,6 +16,11 @@ class HeroSlide(models.Model):
         verbose_name = '首页轮播图'
         verbose_name_plural = '首页轮播图'
         ordering = ['sort_order', '-created_at']
+
+    def display_title(self, lang='zh'):
+        if lang == 'ar':
+            return self.title_ar or self.title_en or self.title_zh
+        return (self.title_zh if lang == 'zh' else self.title_en) or self.title_zh or self.title_en
 
     def __str__(self):
         return f'Slide {self.sort_order} - {self.title_zh or self.title_en or "未命名"}'
@@ -45,6 +51,7 @@ class SiteImage(models.Model):
     )
     caption_zh = models.CharField('图片说明(中文)', max_length=200, blank=True, default='')
     caption_en = models.CharField('图片说明(英文)', max_length=200, blank=True, default='')
+    caption_ar = models.CharField('图片说明(阿拉伯语)', max_length=200, blank=True, default='')
     updated_at = models.DateTimeField('更新时间', auto_now=True)
 
     class Meta:
@@ -111,8 +118,10 @@ class SiteSettings(models.Model):
 
     company_name_zh = models.CharField('公司名(中文)', max_length=200, blank=True, default='')
     company_name_en = models.CharField('公司名(英文)', max_length=200, blank=True, default='')
+    company_name_ar = models.CharField('公司名(阿拉伯语)', max_length=200, blank=True, default='')
     address_zh = models.CharField('地址(中文)', max_length=200, blank=True, default='')
     address_en = models.CharField('地址(英文)', max_length=200, blank=True, default='')
+    address_ar = models.CharField('地址(阿拉伯语)', max_length=200, blank=True, default='')
     phone = models.CharField('电话', max_length=50, blank=True, default='')
     email = models.CharField('邮箱', max_length=100, blank=True, default='')
     whatsapp = models.CharField('WhatsApp', max_length=100, blank=True, default='')
@@ -120,10 +129,18 @@ class SiteSettings(models.Model):
     moq = models.CharField('起订量', max_length=50, blank=True, default='')
     about_zh = models.TextField('公司简介(中文)', blank=True, default='')
     about_en = models.TextField('公司简介(英文)', blank=True, default='')
+    about_ar = models.TextField('公司简介(阿拉伯语)', blank=True, default='')
     seo_title_zh = models.CharField('SEO标题(中文)', max_length=200, blank=True, default='')
     seo_title_en = models.CharField('SEO标题(英文)', max_length=200, blank=True, default='')
+    seo_title_ar = models.CharField('SEO标题(阿拉伯语)', max_length=200, blank=True, default='')
     seo_desc_zh = models.TextField('SEO描述(中文)', blank=True, default='')
     seo_desc_en = models.TextField('SEO描述(英文)', blank=True, default='')
+    seo_desc_ar = models.TextField('SEO描述(阿拉伯语)', blank=True, default='')
+    # —— 翻译服务（DeepSeek API，后台自行填写；仅超管可见）——
+    deepseek_api_key = models.CharField(
+        'DeepSeek API Key', max_length=200, blank=True, default='',
+        help_text='用于后台自动生成阿拉伯语翻译。在 platform.deepseek.com 申请，形如 sk-...；只保存在服务器数据库，不会进入代码仓库',
+    )
     # —— 水印设置（产品图水印）——
     watermark_enabled = models.BooleanField('启用水印', default=False)
     watermark_image = models.ImageField('水印图片', upload_to='watermark/', blank=True, null=True)

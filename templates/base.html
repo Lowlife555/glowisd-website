@@ -1,11 +1,10 @@
-{% load static products_extras %}
-<!DOCTYPE html>
-<html lang="{{ lang }}">
+{% load static products_extras %}<!DOCTYPE html>
+<html lang="{{ lang }}"{% if lang == 'ar' %} dir="rtl"{% endif %}>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% block meta_desc %}{% if lang == 'en' %}{% if site_settings.seo_desc_en %}{{ site_settings.seo_desc_en }}{% else %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% endif %}{% else %}{% if site_settings.seo_desc_zh %}{{ site_settings.seo_desc_zh }}{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endif %}{% endblock %}">
-  <title>{% block title %}{% if lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Construction Machinery Control Systems &amp; Components{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endif %}{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}{% if lang == 'ar' %}{% if site_settings.seo_desc_ar %}{{ site_settings.seo_desc_ar }}{% else %}CZ Glowisd Science And Technology — شركة تقنية متخصصة في أنظمة التحكم الإلكتروني وآلات الإنشاءات والكابلات والمكونات الميكانيكية.{% endif %}{% elif lang == 'en' %}{% if site_settings.seo_desc_en %}{{ site_settings.seo_desc_en }}{% else %}CZ Glowisd Science And Technology — technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% endif %}{% else %}{% if site_settings.seo_desc_zh %}{{ site_settings.seo_desc_zh }}{% else %}CZ Glowisd Science And Technology — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}{% endif %}{% endblock %}">
+  <title>{% block title %}{% if lang == 'ar' %}{% if site_settings.seo_title_ar %}{{ site_settings.seo_title_ar }}{% else %}Glowisd — أنظمة التحكم والمكونات لآلات الإنشاءات{% endif %}{% elif lang == 'en' %}{% if site_settings.seo_title_en %}{{ site_settings.seo_title_en }}{% else %}Glowisd — Construction Machinery Control Systems &amp; Components{% endif %}{% else %}{% if site_settings.seo_title_zh %}{{ site_settings.seo_title_zh }}{% else %}Glowisd — 工程机械电控系统与配件制造{% endif %}{% endif %}{% endblock %}</title>
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'img/favicon-16.png' %}?v={{ site_version }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{% static 'img/favicon-32.png' %}?v={{ site_version }}">
   <link rel="icon" type="image/png" sizes="48x48" href="{% static 'img/favicon-48.png' %}?v={{ site_version }}">
@@ -29,28 +28,28 @@
     <div class="container header-inner">
       <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}?v={{ site_version }}" alt="Glowisd" style="height:64px;width:auto;"></a>
 
-      <nav class="nav-main" aria-label="{% if lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
-        <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
-        <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
-        <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
-        <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'en' %}Custom{% else %}定制{% endif %}</a>
-        <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'en' %}Contact{% else %}联系{% endif %}</a>
+      <nav class="nav-main" aria-label="{% if lang == 'ar' %}التنقل الرئيسي{% elif lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
+        <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a>
+        <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</a>
+        <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'ar' %}المصنع{% elif lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
+        <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'ar' %}التخصيص{% elif lang == 'en' %}Custom{% else %}定制{% endif %}</a>
+        <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系{% endif %}</a>
       </nav>
 
       <div style="display:flex; align-items:center; gap:16px;">
         <div class="header-lang" data-lang-switcher></div>
-        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="{% if lang == 'en' %}Menu{% else %}菜单{% endif %}">
+        <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="{% if lang == 'ar' %}القائمة{% elif lang == 'en' %}Menu{% else %}菜单{% endif %}">
           <span></span><span></span><span></span>
         </button>
       </div>
     </div>
 
-    <nav class="mobile-nav" id="mobile-nav" aria-label="{% if lang == 'en' %}Mobile navigation{% else %}移动导航{% endif %}">
-      <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a>
-      <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'en' %}Products{% else %}产品{% endif %}</a>
-      <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
-      <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'en' %}Custom{% else %}定制{% endif %}</a>
-      <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'en' %}Contact{% else %}联系{% endif %}</a>
+    <nav class="mobile-nav" id="mobile-nav" aria-label="{% if lang == 'ar' %}تنقل الجوال{% elif lang == 'en' %}Mobile navigation{% else %}移动导航{% endif %}">
+      <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a>
+      <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</a>
+      <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'ar' %}المصنع{% elif lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
+      <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'ar' %}التخصيص{% elif lang == 'en' %}Custom{% else %}定制{% endif %}</a>
+      <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系{% endif %}</a>
       <div class="mobile-lang" data-lang-switcher></div>
     </nav>
   </header>
@@ -62,19 +61,19 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <img src="{% static 'img/logo.png' %}?v={{ site_version }}" alt="Glowisd" style="height:56px;width:auto;">
-          <p>{% if lang == 'en' %}{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }} — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}{{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }} — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
+          <p>{% if lang == 'ar' %}{{ site_settings.company_name_ar|default:"CZ Glowisd Science And Technology Co.,Ltd" }} — شركة تقنية متخصصة في أنظمة التحكم الإلكتروني والكابلات والمكونات الميكانيكية لآلات الإنشاءات.{% elif lang == 'en' %}{{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }} — a technology enterprise specializing in construction machinery electronic control systems, cables and mechanical components.{% else %}{{ site_settings.company_name_zh|default:"常州 Glowisd 科技有限公司" }} — 专注于工程机械电控系统、线缆及机械配件研发与制造的科技企业。{% endif %}</p>
         </div>
         <div class="footer-col">
-          <h4>{% if lang == 'en' %}Company{% else %}公司{% endif %}</h4>
+          <h4>{% if lang == 'ar' %}الشركة{% elif lang == 'en' %}Company{% else %}公司{% endif %}</h4>
           <ul>
-            <li><a href="{% url 'home' %}">{% if lang == 'en' %}Home{% else %}首页{% endif %}</a></li>
-            <li><a href="{% url 'factory' %}">{% if lang == 'en' %}Factory{% else %}工厂{% endif %}</a></li>
-            <li><a href="{% url 'custom' %}">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</a></li>
-            <li><a href="{% url 'contact' %}">{% if lang == 'en' %}Contact{% else %}联系我们{% endif %}</a></li>
+            <li><a href="{% url 'home' %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a></li>
+            <li><a href="{% url 'factory' %}">{% if lang == 'ar' %}المصنع{% elif lang == 'en' %}Factory{% else %}工厂{% endif %}</a></li>
+            <li><a href="{% url 'custom' %}">{% if lang == 'ar' %}خدمات التخصيص{% elif lang == 'en' %}Customization{% else %}定制服务{% endif %}</a></li>
+            <li><a href="{% url 'contact' %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系我们{% endif %}</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>{% if lang == 'en' %}Products{% else %}产品{% endif %}</h4>
+          <h4>{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</h4>
           <ul>
             {% footer_categories as fcats %}
             {% for c in fcats %}
@@ -83,9 +82,14 @@
           </ul>
         </div>
         <div class="footer-col">
-          <h4>{% if lang == 'en' %}Contact{% else %}联系方式{% endif %}</h4>
+          <h4>{% if lang == 'ar' %}معلومات الاتصال{% elif lang == 'en' %}Contact{% else %}联系方式{% endif %}</h4>
           <div class="f-addr">
-            {% if lang == 'en' %}
+            {% if lang == 'ar' %}
+            {{ site_settings.company_name_ar|default:"CZ Glowisd Science And Technology Co.,Ltd" }}<br>
+            {{ site_settings.address_ar|default:"تشانغتشو، جيانغسو، الصين" }}<br>
+            <a href="mailto:{{ site_settings.email|default:"424760214@qq.com" }}">{{ site_settings.email|default:"424760214@qq.com" }}</a><br>
+            {{ site_settings.phone|default:"+86-139-6147-3930" }}
+            {% elif lang == 'en' %}
             {{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}<br>
             {{ site_settings.address_en|default:"Changzhou, Jiangsu, China" }}<br>
             <a href="mailto:{{ site_settings.email|default:"424760214@qq.com" }}">{{ site_settings.email|default:"424760214@qq.com" }}</a><br>
@@ -100,11 +104,13 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 {{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}. {% if lang == 'en' %}All rights reserved.{% else %}保留所有权利。{% endif %}</span>
+        <span>© 2026 {{ site_settings.company_name_en|default:"CZ Glowisd Science And Technology Co.,Ltd" }}. {% if lang == 'ar' %}جميع الحقوق محفوظة.{% elif lang == 'en' %}All rights reserved.{% else %}保留所有权利。{% endif %}</span>
         <span class="ver">V{{ site_version }} · GLOWISD</span>
       </div>
     </div>
   </footer>
+
+  {% if show_lang_modal %}{% include 'partials/lang_modal.html' %}{% endif %}
 
   <script src="{% static 'vendor/vue.global.prod.js' %}?v={{ site_version }}"></script>
   <script src="{% static 'js/app.js' %}?v={{ site_version }}"></script>

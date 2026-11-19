@@ -16,5 +16,17 @@
     <div style="font-size:13px;color:#5a6b9e;">暂无统计数据</div>
     {% endfor %}
   </div>
+
+  <div style="margin-top:22px;padding:14px 18px;background:#F6F8FE;border:1px solid #e4e9f5;border-radius:4px;">
+    <div style="font-size:13px;font-weight:600;color:#162A87;">阿拉伯语翻译</div>
+    <div style="font-size:12px;color:#5a6b9e;margin-top:4px;line-height:1.7;">
+      产品保存时会自动生成阿语名称/描述（需先在「站点设置 → 翻译服务」填写 DeepSeek API Key）。
+      如需为全部缺失阿语的产品批量补翻译：
+    </div>
+    <a href="{% url 'admin:products_product_translate_arabic' %}"
+       style="display:inline-block;margin-top:10px;padding:7px 16px;background:#162A87;color:#fff;font-size:12px;border-radius:3px;text-decoration:none;">
+      批量生成阿语翻译
+    </a>
+  </div>
 </div>
 {% endblock %}

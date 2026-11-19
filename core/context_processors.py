@@ -2,15 +2,38 @@
 
 
 def get_lang(request):
+    """语言：cookie lang（zh/en/ar）优先，其次 Accept-Language（含 ar 则阿语），最后英文。"""
     lang = request.COOKIES.get('lang', '')
-    if lang not in ('zh', 'en'):
+    if lang not in ('zh', 'en', 'ar'):
         accept = (request.META.get('HTTP_ACCEPT_LANGUAGE') or '').lower()
-        lang = 'zh' if 'zh' in accept else 'en'
+        if 'ar' in accept:
+            lang = 'ar'
+        elif 'zh' in accept:
+            lang = 'zh'
+        else:
+            lang = 'en'
     return lang
 
 
+def is_bot(request):
+    """粗判搜索引擎爬虫：弹窗对爬虫不显示，避免影响收录。"""
+    ua = (request.META.get('HTTP_USER_AGENT') or '').lower()
+    tokens = ('bot', 'spider', 'crawler', 'slurp', 'baiduspider', 'bingpreview', 'yandex')
+    return any(t in ua for t in tokens)
+
+
 def lang_context(request):
-    return {'lang': get_lang(request)}
+    """语言 + 是否展示「首次进入语言选择弹窗」。
+
+    弹窗仅当 cookie 里没有 lang_chosen 且访问者不是爬虫时显示；
+    用户选择或关闭后写入 lang_chosen（1 年），之后不再出现。
+    """
+    lang = get_lang(request)
+    chosen = request.COOKIES.get('lang_chosen') == '1'
+    return {
+        'lang': lang,
+        'show_lang_modal': (not chosen) and (not is_bot(request)),
+    }
 
 
 def site_settings(request):

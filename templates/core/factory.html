@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% load static products_extras %}
 
-{% block title %}{% if lang == 'en' %}Our Factory — Glowisd{% else %}工厂介绍 — Glowisd{% endif %}{% endblock %}
+{% block title %}{% if lang == 'ar' %}تعريف بالمصنع — Glowisd{% elif lang == 'en' %}Our Factory — Glowisd{% else %}工厂介绍 — Glowisd{% endif %}{% endblock %}
 
 {% block content %}
 
 <section class="page-hero">
   <div class="container">
-    <span class="eyebrow">{% if lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
-    <h1>{% if lang == 'en' %}Our Factory{% else %}工厂介绍{% endif %}</h1>
+    <span class="eyebrow">{% if lang == 'ar' %}القدرات التصنيعية{% elif lang == 'en' %}Manufacturing{% else %}制造实力{% endif %}</span>
+    <h1>{% if lang == 'ar' %}تعريف بالمصنع{% elif lang == 'en' %}Our Factory{% else %}工厂介绍{% endif %}</h1>
     <p class="lead">
-      {% if lang == 'en' %}
+      {% if lang == 'ar' %}
+      تصنيع متكامل تحت سقف واحد — التشغيل الميكانيكي والتجميع والمعايرة والاختبار —
+      لضمان اتساق وموثوقية كل قطعة من Glowisd.
+      {% elif lang == 'en' %}
       Full-process manufacturing under one roof — machining, assembly, calibration
       and testing — to keep every Glowisd part consistent and reliable.
       {% else %}
@@ -25,12 +28,16 @@
   <div class="container">
     <div class="split">
       <div>
-        <span class="eyebrow">{% if lang == 'en' %}About the Factory{% else %}工厂概况{% endif %}</span>
+        <span class="eyebrow">{% if lang == 'ar' %}نظرة عامة على المصنع{% elif lang == 'en' %}About the Factory{% else %}工厂概况{% endif %}</span>
         <h2 class="h-section">
-          {% if lang == 'en' %}Built on precision, run on process{% else %}以精密为基础，以流程为保障{% endif %}
+          {% if lang == 'ar' %}الدقة أساس، والعمليات ضمان{% elif lang == 'en' %}Built on precision, run on process{% else %}以精密为基础，以流程为保障{% endif %}
         </h2>
         <p class="lead">
-          {% if lang == 'en' %}
+          {% if lang == 'ar' %}
+          يجمع مصنعنا في تشانغتشو بين التصنيع CNC وتجميع SMT وخطوط إنتاج ضفائر
+          الكابلات ومعايرة المستشعرات. تخضع كل دفعة إنتاج للفحص والتوثيق والتتبع —
+          من المواد الواردة حتى القطعة النهائية المركّبة على آلة الرصف لديكم.
+          {% elif lang == 'en' %}
           Our Changzhou facility combines CNC machining, SMT assembly, cable
           harness production and sensor calibration lines. Each production batch
           is inspected, documented and traceable — from incoming material to the
@@ -41,21 +48,21 @@
           {% endif %}
         </p>
         <ul class="body-list">
-          <li>{% if lang == 'en' %}Dedicated production lines for sensors, cables and control handles{% else %}传感器、线缆、控制手柄专用产线{% endif %}</li>
-          <li>{% if lang == 'en' %}Batch-level traceability and documented inspection records{% else %}批次级追溯，检验记录完整可查{% endif %}</li>
-          <li>{% if lang == 'en' %}Continuous improvement driven by field feedback{% else %}以现场反馈驱动持续改进{% endif %}</li>
+          <li>{% if lang == 'ar' %}خطوط إنتاج مخصصة للمستشعرات والكابلات ومقابض التحكم{% elif lang == 'en' %}Dedicated production lines for sensors, cables and control handles{% else %}传感器、线缆、控制手柄专用产线{% endif %}</li>
+          <li>{% if lang == 'ar' %}تتبع على مستوى الدفعة، وسجلات فحص كاملة وقابلة للتحقق{% elif lang == 'en' %}Batch-level traceability and documented inspection records{% else %}批次级追溯，检验记录完整可查{% endif %}</li>
+          <li>{% if lang == 'ar' %}تحسين مستمر مدفوع بملاحظات الميدان{% elif lang == 'en' %}Continuous improvement driven by field feedback{% else %}以现场反馈驱动持续改进{% endif %}</li>
         </ul>
       </div>
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.factory_hero %}
-          <img src="{{ site_images.factory_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.factory_hero.caption_en|default:'Glowisd factory building' }}{% else %}{{ site_images.factory_hero.caption_zh|default:'Glowisd 工厂厂房' }}{% endif %}" loading="lazy">
+          <img src="{{ site_images.factory_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.factory_hero.caption_ar|default:'مبنى مصنع Glowisd' }}{% elif lang == 'en' %}{{ site_images.factory_hero.caption_en|default:'Glowisd factory building' }}{% else %}{{ site_images.factory_hero.caption_zh|default:'Glowisd 工厂厂房' }}{% endif %}" loading="lazy">
           {% else %}
-          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Factory building — placeholder photo{% else %}工厂厂房（占位图）{% endif %}">
+          <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}مبنى المصنع — صورة مؤقتة{% elif lang == 'en' %}Factory building — placeholder photo{% else %}工厂厂房（占位图）{% endif %}">
           {% endif %}
         </div>
         <div class="caption">
-          <span>{% if lang == 'en' %}Factory{% else %}工厂外景{% endif %}</span>
+          <span>{% if lang == 'ar' %}المظهر الخارجي للمصنع{% elif lang == 'en' %}Factory{% else %}工厂外景{% endif %}</span>
           <span>GLOWISD</span>
         </div>
       </div>
@@ -67,26 +74,26 @@
 <section class="section section--white">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Capability{% else %}生产能力{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}At a Glance{% else %}产能一览{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}الطاقة الإنتاجية{% elif lang == 'en' %}Capability{% else %}生产能力{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}لمحة سريعة عن القدرات{% elif lang == 'en' %}At a Glance{% else %}产能一览{% endif %}</h2>
     </div>
     <div class="num-grid">
       <div class="num-cell">
         <div class="num">{{ site_settings.factory_area|default:"1,500㎡" }}</div>
-        <div class="lab">{% if lang == 'en' %}Plant Area{% else %}生产面积{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}مساحة الإنتاج{% elif lang == 'en' %}Plant Area{% else %}生产面积{% endif %}</div>
       </div>
       <div class="num-cell">
         <div class="num">10</div>
-        <div class="lab">{% if lang == 'en' %}Machines &amp; Lines{% else %}设备与产线{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}الآلات وخطوط الإنتاج{% elif lang == 'en' %}Machines &amp; Lines{% else %}设备与产线{% endif %}</div>
       </div>
       <div class="num-cell">
         <div class="num">—</div>
-        <div class="lab">{% if lang == 'en' %}Units / Month{% else %}月产能（件）{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}الوحدات شهريًا{% elif lang == 'en' %}Units / Month{% else %}月产能（件）{% endif %}</div>
       </div>
       <div class="num-cell">
         <div class="num">100<span class="plus">%</span></div>
-        <div class="lab">{% if lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
-        <div class="note">{% if lang == 'en' %}per batch{% else %}每批次{% endif %}</div>
+        <div class="lab">{% if lang == 'ar' %}فحص الجودة{% elif lang == 'en' %}QC Inspected{% else %}出厂检验{% endif %}</div>
+        <div class="note">{% if lang == 'ar' %}لكل دفعة{% elif lang == 'en' %}per batch{% else %}每批次{% endif %}</div>
       </div>
     </div>
   </div>
@@ -96,56 +103,56 @@
 <section class="section">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Equipment{% else %}主要设备{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}Production Equipment{% else %}生产与检测设备{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}المعدات الرئيسية{% elif lang == 'en' %}Equipment{% else %}主要设备{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}معدات الإنتاج والفحص{% elif lang == 'en' %}Production Equipment{% else %}生产与检测设备{% endif %}</h2>
     </div>
     <div class="grid grid--3">
       <div class="card equip-card">
         <span class="no">01</span>
         <div>
-          <h3>{% if lang == 'en' %}SMT Assembly{% else %}SMT 贴片产线{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}تجميع SMT{% elif lang == 'en' %}SMT Assembly{% else %}SMT 贴片产线{% endif %}</h3>
           <span class="en">SMT / PCB</span>
-          <p>{% if lang == 'en' %}High-precision placement and reflow for display controllers and PCBs.{% else %}高精度贴片与回流焊，满足显示控制器与电路板生产。{% endif %}</p>
+          <p>{% if lang == 'ar' %}تركيب عالي الدقة ولحام إعادة الصهر لوحدات التحكم في الشاشات ولوحات الدوائر المطبوعة.{% elif lang == 'en' %}High-precision placement and reflow for display controllers and PCBs.{% else %}高精度贴片与回流焊，满足显示控制器与电路板生产。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">02</span>
         <div>
-          <h3>{% if lang == 'en' %}CNC Machining{% else %}CNC 精密加工{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}التصنيع الدقيق CNC{% elif lang == 'en' %}CNC Machining{% else %}CNC 精密加工{% endif %}</h3>
           <span class="en">CNC</span>
-          <p>{% if lang == 'en' %}Machining of housings, brackets and leveling components.{% else %}加工壳体、支架与找平机构等精密零件。{% endif %}</p>
+          <p>{% if lang == 'ar' %}تصنيع الهياكل والحوامل ومكونات آلية التسوية.{% elif lang == 'en' %}Machining of housings, brackets and leveling components.{% else %}加工壳体、支架与找平机构等精密零件。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">03</span>
         <div>
-          <h3>{% if lang == 'en' %}Cable Harness{% else %}线缆组装与测试{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}تجميع الكابلات واختبارها{% elif lang == 'en' %}Cable Harness{% else %}线缆组装与测试{% endif %}</h3>
           <span class="en">Cables</span>
-          <p>{% if lang == 'en' %}Crimping, potting and continuity testing for rugged paver cables.{% else %}压接、灌封与导通测试，打造耐候摊铺机线缆。{% endif %}</p>
+          <p>{% if lang == 'ar' %}العقص والصبّ العازل واختبار الاستمرارية لكابلات آلات الرصف عالية التحمل.{% elif lang == 'en' %}Crimping, potting and continuity testing for rugged paver cables.{% else %}压接、灌封与导通测试，打造耐候摊铺机线缆。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">04</span>
         <div>
-          <h3>{% if lang == 'en' %}Calibration{% else %}传感器标定台{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}منصة معايرة المستشعرات{% elif lang == 'en' %}Calibration{% else %}传感器标定台{% endif %}</h3>
           <span class="en">Calibration</span>
-          <p>{% if lang == 'en' %}Sensor calibration and linearity verification against reference masters.{% else %}依据基准件完成传感器标定与线性度验证。{% endif %}</p>
+          <p>{% if lang == 'ar' %}معايرة المستشعرات والتحقق من الخطية مقابل قطع مرجعية معيارية.{% elif lang == 'en' %}Sensor calibration and linearity verification against reference masters.{% else %}依据基准件完成传感器标定与线性度验证。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">05</span>
         <div>
-          <h3>{% if lang == 'en' %}Aging &amp; Burn-in{% else %}老化与高低温测试{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}التقادم واختبار درجات الحرارة{% elif lang == 'en' %}Aging &amp; Burn-in{% else %}老化与高低温测试{% endif %}</h3>
           <span class="en">Testing</span>
-          <p>{% if lang == 'en' %}Temperature cycling and aging tests simulate real job-site conditions.{% else %}高低温循环与老化测试，模拟真实工地工况。{% endif %}</p>
+          <p>{% if lang == 'ar' %}دورات حرارية واختبارات تقادم تحاكي ظروف موقع العمل الفعلية.{% elif lang == 'en' %}Temperature cycling and aging tests simulate real job-site conditions.{% else %}高低温循环与老化测试，模拟真实工地工况。{% endif %}</p>
         </div>
       </div>
       <div class="card equip-card">
         <span class="no">06</span>
         <div>
-          <h3>{% if lang == 'en' %}Packing &amp; Storage{% else %}包装与仓储{% endif %}</h3>
+          <h3>{% if lang == 'ar' %}التغليف والتخزين{% elif lang == 'en' %}Packing &amp; Storage{% else %}包装与仓储{% endif %}</h3>
           <span class="en">Logistics</span>
-          <p>{% if lang == 'en' %}Protective packing and organized storage for fast, safe dispatch.{% else %}防护包装与规范仓储，保障快速安全发运。{% endif %}</p>
+          <p>{% if lang == 'ar' %}تغليف واقٍ وتخزين منظم لشحن سريع وآمن.{% elif lang == 'en' %}Protective packing and organized storage for fast, safe dispatch.{% else %}防护包装与规范仓储，保障快速安全发运。{% endif %}</p>
         </div>
       </div>
     </div>
@@ -156,24 +163,24 @@
 <section class="section section--alt">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Quality Control{% else %}质量控制{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}Three-Stage Quality Control{% else %}三段式质量控制{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}مراقبة الجودة{% elif lang == 'en' %}Quality Control{% else %}质量控制{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}مراقبة الجودة على ثلاث مراحل{% elif lang == 'en' %}Three-Stage Quality Control{% else %}三段式质量控制{% endif %}</h2>
     </div>
     <div class="qc-row">
       <div class="card qc-card">
-        <h3>{% if lang == 'en' %}Incoming Inspection{% else %}来料检验{% endif %}</h3>
+        <h3>{% if lang == 'ar' %}فحص المواد الواردة{% elif lang == 'en' %}Incoming Inspection{% else %}来料检验{% endif %}</h3>
         <div class="code">IQC</div>
-        <p>{% if lang == 'en' %}Every material lot is verified against specifications before entering production.{% else %}所有来料批次按规格书验收合格后方可投产。{% endif %}</p>
+        <p>{% if lang == 'ar' %}تُفحص كل دفعة مواد وفق المواصفات قبل دخولها الإنتاج.{% elif lang == 'en' %}Every material lot is verified against specifications before entering production.{% else %}所有来料批次按规格书验收合格后方可投产。{% endif %}</p>
       </div>
       <div class="card qc-card">
-        <h3>{% if lang == 'en' %}In-Process Control{% else %}过程检验{% endif %}</h3>
+        <h3>{% if lang == 'ar' %}الفحص أثناء التصنيع{% elif lang == 'en' %}In-Process Control{% else %}过程检验{% endif %}</h3>
         <div class="code">IPQC</div>
-        <p>{% if lang == 'en' %}Key stations are checked during assembly; deviations stop the line immediately.{% else %}关键工位实时抽检，异常即停线处理。{% endif %}</p>
+        <p>{% if lang == 'ar' %}تخضع المحطات الرئيسية للتفتيش أثناء التجميع، وأي انحراف يوقف الخط فورًا.{% elif lang == 'en' %}Key stations are checked during assembly; deviations stop the line immediately.{% else %}关键工位实时抽检，异常即停线处理。{% endif %}</p>
       </div>
       <div class="card qc-card">
-        <h3>{% if lang == 'en' %}Final Inspection{% else %}出厂检验{% endif %}</h3>
+        <h3>{% if lang == 'ar' %}الفحص النهائي{% elif lang == 'en' %}Final Inspection{% else %}出厂检验{% endif %}</h3>
         <div class="code">OQC</div>
-        <p>{% if lang == 'en' %}Finished goods pass functional testing and visual inspection before packing.{% else %}成品包装前完成功能测试与外观全检。{% endif %}</p>
+        <p>{% if lang == 'ar' %}تخضع المنتجات النهائية لاختبار وظيفي وفحص بصري شامل قبل التغليف.{% elif lang == 'en' %}Finished goods pass functional testing and visual inspection before packing.{% else %}成品包装前完成功能测试与外观全检。{% endif %}</p>
       </div>
     </div>
   </div>
@@ -183,28 +190,28 @@
 <section class="section">
   <div class="container">
     <div class="sec-head">
-      <span class="eyebrow">{% if lang == 'en' %}Workshop{% else %}车间实景{% endif %}</span>
-      <h2 class="h-section">{% if lang == 'en' %}Inside the Workshop{% else %}车间一瞥{% endif %}</h2>
+      <span class="eyebrow">{% if lang == 'ar' %}الورشة{% elif lang == 'en' %}Workshop{% else %}车间实景{% endif %}</span>
+      <h2 class="h-section">{% if lang == 'ar' %}لمحة داخل الورشة{% elif lang == 'en' %}Inside the Workshop{% else %}车间一瞥{% endif %}</h2>
       <p class="lead">
-        {% if lang == 'en' %}Photo placeholders — replace with real workshop photos before launch.{% else %}照片为占位图，正式上线前请替换为真实车间照片。{% endif %}
+        {% if lang == 'ar' %}الصور مؤقتة — يُرجى استبدالها بصور حقيقية للورشة قبل الإطلاق.{% elif lang == 'en' %}Photo placeholders — replace with real workshop photos before launch.{% else %}照片为占位图，正式上线前请替换为真实车间照片。{% endif %}
       </p>
     </div>
     <div class="photo-grid">
       <div class="photo-frame">
-        <div class="ph">{% if site_images.workshop_1 %}<img src="{{ site_images.workshop_1.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_1.caption_en|default:'Assembly line' }}{% else %}{{ site_images.workshop_1.caption_zh|default:'组装产线' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 1{% else %}车间照片占位 1{% endif %}">{% endif %}</div>
-        <div class="caption"><span>{% if lang == 'en' %}Assembly Line{% else %}组装产线{% endif %}</span><span>01</span></div>
+        <div class="ph">{% if site_images.workshop_1 %}<img src="{{ site_images.workshop_1.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.workshop_1.caption_ar|default:'خط التجميع' }}{% elif lang == 'en' %}{{ site_images.workshop_1.caption_en|default:'Assembly line' }}{% else %}{{ site_images.workshop_1.caption_zh|default:'组装产线' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}صورة مؤقتة للورشة 1{% elif lang == 'en' %}Workshop photo placeholder 1{% else %}车间照片占位 1{% endif %}">{% endif %}</div>
+        <div class="caption"><span>{% if lang == 'ar' %}خط التجميع{% elif lang == 'en' %}Assembly Line{% else %}组装产线{% endif %}</span><span>01</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph">{% if site_images.workshop_2 %}<img src="{{ site_images.workshop_2.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_2.caption_en|default:'CNC area' }}{% else %}{{ site_images.workshop_2.caption_zh|default:'CNC 加工区' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 2{% else %}车间照片占位 2{% endif %}">{% endif %}</div>
-        <div class="caption"><span>{% if lang == 'en' %}CNC Area{% else %}CNC 加工区{% endif %}</span><span>02</span></div>
+        <div class="ph">{% if site_images.workshop_2 %}<img src="{{ site_images.workshop_2.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.workshop_2.caption_ar|default:'منطقة التصنيع CNC' }}{% elif lang == 'en' %}{{ site_images.workshop_2.caption_en|default:'CNC area' }}{% else %}{{ site_images.workshop_2.caption_zh|default:'CNC 加工区' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}صورة مؤقتة للورشة 2{% elif lang == 'en' %}Workshop photo placeholder 2{% else %}车间照片占位 2{% endif %}">{% endif %}</div>
+        <div class="caption"><span>{% if lang == 'ar' %}منطقة التصنيع CNC{% elif lang == 'en' %}CNC Area{% else %}CNC 加工区{% endif %}</span><span>02</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph">{% if site_images.workshop_3 %}<img src="{{ site_images.workshop_3.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_3.caption_en|default:'Testing bench' }}{% else %}{{ site_images.workshop_3.caption_zh|default:'检测台' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 3{% else %}车间照片占位 3{% endif %}">{% endif %}</div>
-        <div class="caption"><span>{% if lang == 'en' %}Testing Bench{% else %}检测台{% endif %}</span><span>03</span></div>
+        <div class="ph">{% if site_images.workshop_3 %}<img src="{{ site_images.workshop_3.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.workshop_3.caption_ar|default:'منصة الاختبار' }}{% elif lang == 'en' %}{{ site_images.workshop_3.caption_en|default:'Testing bench' }}{% else %}{{ site_images.workshop_3.caption_zh|default:'检测台' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}صورة مؤقتة للورشة 3{% elif lang == 'en' %}Workshop photo placeholder 3{% else %}车间照片占位 3{% endif %}">{% endif %}</div>
+        <div class="caption"><span>{% if lang == 'ar' %}منصة الاختبار{% elif lang == 'en' %}Testing Bench{% else %}检测台{% endif %}</span><span>03</span></div>
       </div>
       <div class="photo-frame">
-        <div class="ph">{% if site_images.workshop_4 %}<img src="{{ site_images.workshop_4.image.url }}?v={{ site_version }}" alt="{% if lang == 'en' %}{{ site_images.workshop_4.caption_en|default:'Warehouse' }}{% else %}{{ site_images.workshop_4.caption_zh|default:'成品仓储' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'en' %}Workshop photo placeholder 4{% else %}车间照片占位 4{% endif %}">{% endif %}</div>
-        <div class="caption"><span>{% if lang == 'en' %}Warehouse{% else %}成品仓储{% endif %}</span><span>04</span></div>
+        <div class="ph">{% if site_images.workshop_4 %}<img src="{{ site_images.workshop_4.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.workshop_4.caption_ar|default:'مخزن المنتجات النهائية' }}{% elif lang == 'en' %}{{ site_images.workshop_4.caption_en|default:'Warehouse' }}{% else %}{{ site_images.workshop_4.caption_zh|default:'成品仓储' }}{% endif %}" loading="lazy">{% else %}<img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}صورة مؤقتة للورشة 4{% elif lang == 'en' %}Workshop photo placeholder 4{% else %}车间照片占位 4{% endif %}">{% endif %}</div>
+        <div class="caption"><span>{% if lang == 'ar' %}مخزن المنتجات النهائية{% elif lang == 'en' %}Warehouse{% else %}成品仓储{% endif %}</span><span>04</span></div>
       </div>
     </div>
   </div>
@@ -215,16 +222,16 @@
   <div class="container">
     <div class="cta-band">
       <div class="cta-panel">
-        <span class="eyebrow">{% if lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
-        <h3>{% if lang == 'en' %}Need OEM / ODM?{% else %}需要 OEM / ODM 定制？{% endif %}</h3>
-        <p>{% if lang == 'en' %}From private label to custom development — our factory can build it.{% else %}从贴牌到联合开发，我们的工厂都能承接。{% endif %}</p>
-        <a class="btn btn--outline" href="{% url 'custom' %}">{% if lang == 'en' %}Custom Services{% else %}定制服务{% endif %}</a>
+        <span class="eyebrow">{% if lang == 'ar' %}خدمات التخصيص{% elif lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
+        <h3>{% if lang == 'ar' %}هل تحتاجون إلى تصنيع OEM / ODM؟{% elif lang == 'en' %}Need OEM / ODM?{% else %}需要 OEM / ODM 定制？{% endif %}</h3>
+        <p>{% if lang == 'ar' %}من العلامة الخاصة إلى التطوير المشترك — مصنعنا قادر على التنفيذ.{% elif lang == 'en' %}From private label to custom development — our factory can build it.{% else %}从贴牌到联合开发，我们的工厂都能承接。{% endif %}</p>
+        <a class="btn btn--outline" href="{% url 'custom' %}">{% if lang == 'ar' %}خدمات التخصيص{% elif lang == 'en' %}Custom Services{% else %}定制服务{% endif %}</a>
       </div>
       <div class="cta-panel">
-        <span class="eyebrow--dark eyebrow">{% if lang == 'en' %}Inquiry{% else %}询价{% endif %}</span>
-        <h3>{% if lang == 'en' %}Request a Quotation{% else %}获取产品报价{% endif %}</h3>
-        <p>{% if lang == 'en' %}Send us the SKU or P/N — we reply within 24 hours.{% else %}提供 SKU 或 P/N，我们 24 小时内回复。{% endif %}</p>
-        <a class="btn btn--outline-light" href="{% url 'contact' %}">{% if lang == 'en' %}Contact Us{% else %}联系我们{% endif %}</a>
+        <span class="eyebrow--dark eyebrow">{% if lang == 'ar' %}طلب عرض سعر{% elif lang == 'en' %}Inquiry{% else %}询价{% endif %}</span>
+        <h3>{% if lang == 'ar' %}اطلبوا عرض سعر{% elif lang == 'en' %}Request a Quotation{% else %}获取产品报价{% endif %}</h3>
+        <p>{% if lang == 'ar' %}أرسلوا لنا رمز SKU أو رقم القطعة P/N، ونرد خلال 24 ساعة.{% elif lang == 'en' %}Send us the SKU or P/N — we reply within 24 hours.{% else %}提供 SKU 或 P/N，我们 24 小时内回复。{% endif %}</p>
+        <a class="btn btn--outline-light" href="{% url 'contact' %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact Us{% else %}联系我们{% endif %}</a>
       </div>
     </div>
   </div>

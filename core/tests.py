@@ -380,3 +380,69 @@ class SiteImageTests(TestCase):
         """未上传图片的槽位，前台应显示占位图。"""
         resp = self.client.get('/factory/')
         self.assertContains(resp, 'placeholder-factory.svg')
+
+
+class ArabicAndLangModalTests(TestCase):
+    """V0.9.0 三语：阿语切换、首次语言弹窗、分类封面兜底、翻译服务降级。"""
+
+    def test_arabic_cookie_renders_arabic(self):
+        self.client.cookies['lang'] = 'ar'
+        resp = self.client.get('/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'الرئيسية')          # 导航首页
+        self.assertContains(resp, 'dir="rtl"')         # RTL 方向
+
+    def test_language_modal_shown_on_first_visit(self):
+        resp = self.client.get('/')
+        self.assertContains(resp, 'id="lang-modal"')
+        self.assertContains(resp, 'data-pick-lang="ar"')
+
+    def test_language_modal_hidden_after_choice(self):
+        self.client.cookies['lang_chosen'] = '1'
+        resp = self.client.get('/')
+        self.assertNotContains(resp, 'id="lang-modal"')
+
+    def test_language_modal_hidden_for_crawlers(self):
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (compatible; Googlebot/2.1)')
+        self.assertNotContains(resp, 'id="lang-modal"')
+
+    def test_category_cover_falls_back_to_product_image(self):
+        import io
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+        from products.models import Category, Product
+
+        buf = io.BytesIO()
+        Image.new('RGB', (400, 300), '#162A87').save(buf, 'PNG')
+        with tempfile.TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root):
+                cat = Category.objects.create(name='测试分类', name_en='Test Cat', slug='test-cat')
+                Product.objects.create(
+                    sku='TEST-1', part_name='传感器', part_name_en='Sensor', category=cat,
+                    image=SimpleUploadedFile('sensor.png', buf.getvalue(), 'image/png'),
+                )
+                self.assertIsNotNone(cat.cover_or_first_product_image())
+
+    def test_translate_returns_none_without_key(self):
+        from core.models import SiteSettings
+        from core.translation import translate_ar
+        s = SiteSettings.load()
+        s.deepseek_api_key = ''
+        s.save(update_fields=['deepseek_api_key'])
+        self.assertIsNone(translate_ar(['传感器']))
+
+    def test_apply_arabic_map_command(self):
+        from django.core.management import call_command
+        from products.models import Category, Product
+
+        cat = Category.objects.first()
+        if not cat:
+            cat = Category.objects.create(name='传感器', name_en='Sensors', slug='sensors')
+        Product.objects.create(sku='AR-1', part_name='传感器', part_name_en='Sensor', category=cat)
+        out = StringIO()
+        call_command('apply_arabic_map', stdout=out)
+        product = Product.objects.get(sku='AR-1')
+        self.assertTrue(product.part_name_ar)
+        self.assertTrue(cat.name_ar or Category.objects.get(pk=cat.pk).name_ar)

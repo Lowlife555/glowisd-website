@@ -7,19 +7,19 @@
   if (typeof Vue === 'undefined') return;
   var createApp = Vue.createApp;
 
-  /* ---- 1. 语言切换 Language switcher（桌面 + 移动多挂载点） ---- */
+  /* ---- 1. 语言切换 Language switcher（中 / EN / عربي 三态，桌面 + 移动多挂载点） ---- */
   var switcherEls = document.querySelectorAll('[data-lang-switcher]');
   if (switcherEls.length) {
+    var currentLang = document.documentElement.getAttribute('lang') || 'zh';
     var switcherDef = {
       data: function () {
-        return {
-          lang: document.documentElement.getAttribute('lang') === 'en' ? 'en' : 'zh'
-        };
+        return { lang: currentLang };
       },
       methods: {
         setLang: function (l) {
           if (l === this.lang) return;
           document.cookie = 'lang=' + l + '; path=/; max-age=31536000; SameSite=Lax';
+          document.cookie = 'lang_chosen=1; path=/; max-age=31536000; SameSite=Lax';
           window.location.reload();
         }
       },
@@ -27,12 +27,35 @@
         '<div class="lang-switch" role="group" aria-label="Language switch">' +
         '<button type="button" :class="{\'is-active\': lang === \'zh\'}" @click="setLang(\'zh\')">中</button>' +
         '<button type="button" :class="{\'is-active\': lang === \'en\'}" @click="setLang(\'en\')">EN</button>' +
+        '<button type="button" :class="{\'is-active\': lang === \'ar\'}" @click="setLang(\'ar\')">عربي</button>' +
         '</div>'
     };
     switcherEls.forEach(function (el) {
       createApp(switcherDef).mount(el);
     });
   }
+
+  /* ---- 1b. 首次进入语言选择弹窗（仅首次：cookie lang_chosen 不存在时由后端渲染） ---- */
+  var langModal = document.getElementById('lang-modal');
+  if (langModal) {
+    var chooseLang = function (l) {
+      if (l) {
+        document.cookie = 'lang=' + l + '; path=/; max-age=31536000; SameSite=Lax';
+      }
+      document.cookie = 'lang_chosen=1; path=/; max-age=31536000; SameSite=Lax';
+      langModal.classList.add('is-closing');
+      setTimeout(function () { window.location.reload(); }, 160);
+    };
+    langModal.querySelectorAll('[data-pick-lang]').forEach(function (btn) {
+      btn.addEventListener('click', function () { chooseLang(btn.getAttribute('data-pick-lang')); });
+    });
+    var closeBtn = langModal.querySelector('[data-close-modal]');
+    if (closeBtn) closeBtn.addEventListener('click', function () { chooseLang(null); });
+    langModal.addEventListener('click', function (e) {
+      if (e.target === langModal) chooseLang(null);
+    });
+  }
+
 
   /* ---- 2. 移动导航 Mobile nav toggle ---- */
   var navToggle = document.getElementById('nav-toggle');
@@ -53,9 +76,11 @@
 
     createApp({
       data: function () {
-        var en = contactEl.getAttribute('data-lang') === 'en';
+        var cur = document.documentElement.getAttribute('lang') || contactEl.getAttribute('data-lang') || 'zh';
+        var isAr = cur === 'ar';
+        var isEn = cur === 'en';
         return {
-          lang: en ? 'en' : 'zh',
+          lang: cur,
           form: {
             name: '',
             company: '',
@@ -72,9 +97,12 @@
           error: '',
           rateLimited: false,
           csrf: '',
-          okText: en ? 'Submitted! We will contact you soon.' : '提交成功，我们会尽快与您联系！',
-          submitText: en ? 'Send Inquiry' : '提交询价',
-          sendingText: en ? 'Sending…' : '提交中…'
+          okText: isAr ? 'تم الإرسال بنجاح، سنتواصل معك قريباً.'
+            : isEn ? 'Submitted! We will contact you soon.' : '提交成功，我们会尽快与您联系！',
+          submitText: isAr ? 'إرسال طلب عرض السعر'
+            : isEn ? 'Send Inquiry' : '提交询价',
+          sendingText: isAr ? 'جارٍ الإرسال…'
+            : isEn ? 'Sending…' : '提交中…'
         };
       },
       created: function () {
@@ -84,7 +112,10 @@
         if (m) { this.csrf = decodeURIComponent(m[1]); }
       },
       methods: {
-        i18n: function (zh, en) { return this.lang === 'en' ? en : zh; },
+        i18n: function (zh, en, ar) {
+          if (this.lang === 'ar') return ar || en;
+          return this.lang === 'en' ? en : zh;
+        },
         submit: function () {
           var self = this;
           var f = this.form;
@@ -94,10 +125,10 @@
           this.ok = false;
           this.rateLimited = false;
 
-          if (!f.name.trim()) { this.error = this.i18n('请填写姓名', 'Please enter your name.'); return; }
-          if (!f.email.trim()) { this.error = this.i18n('请填写邮箱', 'Please enter your email.'); return; }
-          if (!emailRe.test(f.email.trim())) { this.error = this.i18n('邮箱格式不正确', 'Please enter a valid email address.'); return; }
-          if (!f.message.trim()) { this.error = this.i18n('请填写留言内容', 'Please enter your message.'); return; }
+          if (!f.name.trim()) { this.error = this.i18n('请填写姓名', 'Please enter your name.', 'يرجى إدخال اسمك.'); return; }
+          if (!f.email.trim()) { this.error = this.i18n('请填写邮箱', 'Please enter your email.', 'يرجى إدخال بريدك الإلكتروني.'); return; }
+          if (!emailRe.test(f.email.trim())) { this.error = this.i18n('邮箱格式不正确', 'Please enter a valid email address.', 'يرجى إدخال بريد إلكتروني صالح.'); return; }
+          if (!f.message.trim()) { this.error = this.i18n('请填写留言内容', 'Please enter your message.', 'يرجى إدخال رسالتك.'); return; }
 
           var fd = new FormData();
           Object.keys(f).forEach(function (k) { fd.append(k, f[k]); });
@@ -124,12 +155,12 @@
                 self.form.message = ''; self.form.product = ''; self.form.website = '';
               } else {
                 self.error = (r.data && r.data.error) ||
-                  self.i18n('提交失败，请稍后再试', 'Submission failed. Please try again later.');
+                  self.i18n('提交失败，请稍后再试', 'Submission failed. Please try again later.', 'فشل الإرسال، يرجى المحاولة لاحقاً.');
                 if (r.data && r.data.rate_limited) { self.rateLimited = true; }
               }
             })
             .catch(function () {
-              self.error = self.i18n('网络错误，请稍后再试', 'Network error. Please try again later.');
+              self.error = self.i18n('网络错误，请稍后再试', 'Network error. Please try again later.', 'خطأ في الشبكة، يرجى المحاولة لاحقاً.');
             })
             .then(function () { self.submitting = false; });
         }
