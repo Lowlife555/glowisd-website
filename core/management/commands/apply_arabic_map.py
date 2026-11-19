@@ -114,6 +114,12 @@ CATEGORY_AR = {
     'membrane-switches': 'المفاتيح الغشائية',
     'complete-kits': 'الأطقم الكاملة',
     'uncategorized': 'غير مصنف',
+    # 线上实际分类 slug（V0.12.0 线上核查补充）
+    'Millingmachine': 'قطع غيار آلات الطحن',
+    'Paveror-MillingMachineBalanceBeam': 'عارضة التوازن لآلات الرصف والطحن',
+    'Roadroller': 'قطع غيار مداحل الطرق',
+    'machine': 'آلات إنشاءات أخرى',
+    'paver': 'قطع غيار آلات الرصف',
 }
 
 
