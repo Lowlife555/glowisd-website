@@ -168,3 +168,114 @@
     }).mount(contactEl);
   }
 })();
+
+/* =========================================================
+   V0.13.0 — 导航增强（独立 IIFE，不依赖 Vue）：
+   · 下滑收起 / 上滑出现的吸顶导航
+   · 「产品」二级菜单：hover intent + 键盘 + 触屏点击
+   · 移动端产品分类折叠
+   ========================================================= */
+(function () {
+  'use strict';
+  var header = document.querySelector('.site-header');
+  if (!header) return;
+  var mobileNav = document.getElementById('mobile-nav');
+
+  /* ---- 滚动方向检测 ---- */
+  var lastY = window.scrollY || window.pageYOffset || 0;
+  var ticking = false;
+  var THRESHOLD = 6;
+
+  function syncHeader() {
+    ticking = false;
+    var y = window.scrollY || window.pageYOffset || 0;
+    header.classList.toggle('is-scrolled', y > 6);
+
+    var menuOpen = !!(mobileNav && mobileNav.classList.contains('is-open'));
+    var subOpen = !!header.querySelector('.nav-item--sub.is-open');
+
+    if (y <= 90 || menuOpen || subOpen) {
+      header.classList.remove('is-hidden');
+    } else if (y > lastY + THRESHOLD) {
+      header.classList.add('is-hidden');
+    } else if (y < lastY - THRESHOLD) {
+      header.classList.remove('is-hidden');
+    }
+    lastY = y;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(syncHeader);
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  syncHeader();
+
+  /* ---- 产品二级菜单 ---- */
+  var sub = document.querySelector('[data-nav-sub]');
+  if (sub) {
+    var trigger = sub.querySelector('.nav-link');
+    var closeTimer = null;
+    var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    function openSub() {
+      clearTimeout(closeTimer);
+      sub.classList.add('is-open');
+      if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeSub(delay) {
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(function () {
+        sub.classList.remove('is-open');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      }, typeof delay === 'number' ? delay : 140);
+    }
+
+    if (canHover) {
+      sub.addEventListener('mouseenter', openSub);
+      sub.addEventListener('mouseleave', function () { closeSub(180); });
+    }
+    sub.addEventListener('focusin', openSub);
+    sub.addEventListener('focusout', function (e) {
+      if (!sub.contains(e.relatedTarget)) closeSub(0);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && sub.classList.contains('is-open')) {
+        sub.classList.remove('is-open');
+        if (trigger) {
+          trigger.setAttribute('aria-expanded', 'false');
+          trigger.focus();
+        }
+      }
+    });
+
+    /* 触屏：第一次点展开分类，再点进入产品列表 */
+    if (!canHover && trigger) {
+      trigger.addEventListener('click', function (e) {
+        if (sub.classList.contains('is-open')) return;
+        e.preventDefault();
+        openSub();
+      });
+      document.addEventListener('click', function (e) {
+        if (!sub.contains(e.target)) closeSub(0);
+      });
+    }
+
+    sub.querySelectorAll('.nav-sub-item, .nav-sub-all').forEach(function (a) {
+      a.addEventListener('click', function () { closeSub(0); });
+    });
+  }
+
+  /* ---- 移动端分类折叠 ---- */
+  var mobileSubToggle = document.querySelector('[data-mobile-sub]');
+  var mobileSubBody = mobileSubToggle && mobileSubToggle.parentElement.querySelector('.mobile-sub-body');
+  if (mobileSubToggle && mobileSubBody) {
+    mobileSubToggle.addEventListener('click', function () {
+      var open = mobileSubBody.classList.toggle('is-open');
+      mobileSubToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+})();

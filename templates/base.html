@@ -30,7 +30,38 @@
 
       <nav class="nav-main" aria-label="{% if lang == 'ar' %}التنقل الرئيسي{% elif lang == 'en' %}Main navigation{% else %}主导航{% endif %}">
         <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a>
-        <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</a>
+        <div class="nav-item nav-item--sub" data-nav-sub>
+          <a href="{% url 'product_list' %}" class="nav-link {% if active == 'products' %}is-active{% endif %}" aria-haspopup="true" aria-expanded="false" aria-controls="nav-sub-products">
+            {% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}<span class="nav-caret" aria-hidden="true"></span>
+          </a>
+          <div class="nav-sub" id="nav-sub-products">
+            <div class="nav-sub-panel">
+              <p class="nav-sub-eyebrow">{% if lang == 'ar' %}كتالوج المنتجات{% elif lang == 'en' %}Product catalog{% else %}产品目录{% endif %}</p>
+              <ul class="nav-sub-grid">
+                {% for c in nav_categories %}
+                <li>
+                  <a class="nav-sub-item" href="{% url 'product_list' %}?category={{ c.slug }}">
+                    {% cat_cover c as cover %}
+                    {% if cover %}
+                    <span class="nav-sub-thumb" aria-hidden="true"><img src="{{ cover }}" alt="" loading="lazy"></span>
+                    {% else %}
+                    <span class="nav-sub-thumb is-empty" aria-hidden="true">{{ c.slug|slice:":1"|upper }}</span>
+                    {% endif %}
+                    <span class="nav-sub-text">
+                      <span class="nav-sub-name">{{ c|cname:lang }}</span>
+                      <span class="nav-sub-count">{{ c.nav_count }} {% if lang == 'ar' %}منتج{% elif lang == 'en' %}products{% else %}款产品{% endif %}</span>
+                    </span>
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+              <a class="nav-sub-all" href="{% url 'product_list' %}">
+                {% if lang == 'ar' %}عرض جميع المنتجات{% elif lang == 'en' %}View all products{% else %}查看全部产品{% endif %}
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
         <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'ar' %}المصنع{% elif lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
         <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'ar' %}التخصيص{% elif lang == 'en' %}Custom{% else %}定制{% endif %}</a>
         <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系{% endif %}</a>
@@ -47,6 +78,18 @@
     <nav class="mobile-nav" id="mobile-nav" aria-label="{% if lang == 'ar' %}تنقل الجوال{% elif lang == 'en' %}Mobile navigation{% else %}移动导航{% endif %}">
       <a href="{% url 'home' %}" class="{% if active == 'home' %}is-active{% endif %}">{% if lang == 'ar' %}الرئيسية{% elif lang == 'en' %}Home{% else %}首页{% endif %}</a>
       <a href="{% url 'product_list' %}" class="{% if active == 'products' %}is-active{% endif %}">{% if lang == 'ar' %}المنتجات{% elif lang == 'en' %}Products{% else %}产品{% endif %}</a>
+      <div class="mobile-sub">
+        <button type="button" class="mobile-sub-toggle" data-mobile-sub aria-expanded="false">
+          {% if lang == 'ar' %}الفئات{% elif lang == 'en' %}Categories{% else %}产品分类{% endif %}
+          <span class="nav-caret" aria-hidden="true"></span>
+        </button>
+        <div class="mobile-sub-body">
+          {% for c in nav_categories %}
+          <a href="{% url 'product_list' %}?category={{ c.slug }}">{{ c|cname:lang }}<span class="mobile-sub-count">{{ c.nav_count }}</span></a>
+          {% endfor %}
+          <a href="{% url 'product_list' %}" class="mobile-sub-all">{% if lang == 'ar' %}عرض جميع المنتجات{% elif lang == 'en' %}View all products{% else %}查看全部产品 →{% endif %}</a>
+        </div>
+      </div>
       <a href="{% url 'factory' %}" class="{% if active == 'factory' %}is-active{% endif %}">{% if lang == 'ar' %}المصنع{% elif lang == 'en' %}Factory{% else %}工厂{% endif %}</a>
       <a href="{% url 'custom' %}" class="{% if active == 'custom' %}is-active{% endif %}">{% if lang == 'ar' %}التخصيص{% elif lang == 'en' %}Custom{% else %}定制{% endif %}</a>
       <a href="{% url 'contact' %}" class="{% if active == 'contact' %}is-active{% endif %}">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系{% endif %}</a>

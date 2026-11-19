@@ -60,3 +60,23 @@ def pricing_flags(request):
     """向前台模板提供 show_prices：后台「收款设置 → 前台显示价格」一键开关（V0.11.0）。"""
     from payments.models import PaymentSettings
     return {'show_prices': PaymentSettings.prices_visible()}
+
+
+def nav_categories(request):
+    """导航「产品」二级菜单的分类列表（V0.13.0）。
+
+    只取有产品的可见分类（排除未分类），按后台排序（sort_order）输出，
+    供下拉面板渲染缩略图 + 名称 + 数量。当前台分类很少时面板自动变矮。
+    """
+    from django.db.models import Count
+
+    from products.models import Category
+
+    qs = (
+        Category.objects
+        .annotate(nav_count=Count('products'))
+        .filter(nav_count__gt=0)
+        .exclude(slug='uncategorized')
+        .order_by('sort_order', 'name')
+    )
+    return {'nav_categories': list(qs)}

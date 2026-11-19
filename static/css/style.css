@@ -964,3 +964,264 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 .lang-modal-btn .lm-native { font-size: 18px; font-weight: 600; color: var(--ink); }
 .lang-modal-btn .lm-label { font-size: 12px; color: var(--ink-3); letter-spacing: .06em; }
 .lang-modal-hint { margin: 22px 0 0; font-size: 12px; line-height: 1.8; color: var(--ink-3); }
+
+/* ============================================================
+   V0.13.0 — 导航升级：产品二级菜单（宽面板）+ 滚动自动收起
+   ============================================================ */
+
+/* ---------- 1. 吸顶导航：毛玻璃 + 滚动收缩 + 上滑隐藏 ---------- */
+.site-header {
+  background: rgba(247, 245, 241, .82);
+  -webkit-backdrop-filter: saturate(170%) blur(18px);
+  backdrop-filter: saturate(170%) blur(18px);
+  transition: transform .38s cubic-bezier(.4, 0, .2, 1),
+              box-shadow .28s ease,
+              background .28s ease,
+              border-color .28s ease;
+  will-change: transform;
+}
+.site-header.is-scrolled {
+  background: rgba(247, 245, 241, .94);
+  box-shadow: 0 10px 30px rgba(22, 42, 135, .08);
+  border-bottom-color: transparent;
+}
+.site-header.is-scrolled .header-inner { height: 62px; }
+.header-inner {
+  transition: height .28s cubic-bezier(.4, 0, .2, 1);
+}
+.site-header.is-scrolled .brand img { height: 52px !important; }
+.brand img { transition: height .28s cubic-bezier(.4, 0, .2, 1); }
+.site-header.is-hidden { transform: translateY(-102%); }
+.site-header.is-hidden .nav-sub { visibility: hidden; opacity: 0; }
+
+/* ---------- 2. 「产品」导航项 + 下拉触发器 ---------- */
+.nav-main { gap: 32px; }
+.nav-item--sub { position: relative; display: inline-flex; align-items: center; }
+.nav-main .nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.nav-caret {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .2s ease;
+  opacity: .7;
+}
+.nav-item--sub:hover .nav-caret,
+.nav-item--sub.is-open .nav-caret { transform: translateY(0) rotate(225deg); opacity: 1; }
+[dir="rtl"] .nav-caret { transform: translateY(-2px) rotate(45deg); }
+
+/* ---------- 3. 下拉面板（毛玻璃 + 双列分类卡） ---------- */
+.nav-sub {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: min(700px, calc(100vw - 40px));
+  padding-top: 14px;  /* 用 padding 填满触发间隔，鼠标移动不会中途关闭 */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .22s ease, transform .26s cubic-bezier(.4, 0, .2, 1), visibility .22s;
+  z-index: 120;
+}
+.nav-item--sub:hover .nav-sub,
+.nav-item--sub.is-open .nav-sub,
+.nav-item--sub:focus-within .nav-sub {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.nav-sub-panel {
+  position: relative;
+  /* 不用 backdrop-filter：面板是吸顶 header 的后代，嵌套 backdrop-filter 会透底，
+     分类文字与首屏大图混在一起不可读；用近乎不透明的白 + 大阴影更接近苹果下拉菜单 */
+  background: #FFFFFF;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(22, 42, 135, .18), 0 4px 14px rgba(22, 42, 135, .07);
+  padding: 20px 20px 14px;
+}
+.nav-sub-panel::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  margin-left: -5.5px;
+  background: #FFFFFF;
+  border-left: 1px solid var(--line);
+  border-top: 1px solid var(--line);
+  transform: rotate(45deg);
+}
+.nav-sub-eyebrow {
+  margin: 0 0 12px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.nav-sub-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 10px;
+}
+.nav-sub-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  transition: background .15s ease, transform .15s ease;
+}
+.nav-sub-item:hover,
+.nav-sub-item:focus-visible {
+  background: var(--primary-soft);
+  transform: translateX(2px);
+}
+.nav-sub-thumb {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+}
+.nav-sub-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.nav-sub-thumb.is-empty {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ink-3);
+}
+.nav-sub-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nav-sub-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-sub-count {
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+.nav-sub-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 9px 10px 4px;
+  border-top: 1px solid var(--line);
+  width: 100%;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  transition: color .15s ease, gap .15s ease;
+}
+.nav-sub-all:hover { color: var(--primary); gap: 12px; }
+
+/* 阿语 RTL：面板与指示三角镜像 */
+[dir="rtl"] .nav-sub { left: auto; right: 50%; transform: translateX(50%) translateY(-8px); }
+[dir="rtl"] .nav-item--sub:hover .nav-sub,
+[dir="rtl"] .nav-item--sub.is-open .nav-sub,
+[dir="rtl"] .nav-item--sub:focus-within .nav-sub { transform: translateX(50%) translateY(0); }
+[dir="rtl"] .nav-sub-item:hover { transform: translateX(-2px); }
+[dir="rtl"] .nav-sub-all { flex-direction: row-reverse; }
+
+/* ---------- 4. 移动端：分类折叠列表 ---------- */
+.mobile-sub { border-top: 1px solid var(--line); padding-inline-start: 24px; }
+.mobile-sub-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 0;
+  background: none;
+  border: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.mobile-sub-toggle[aria-expanded="true"] .nav-caret { transform: translateY(2px) rotate(225deg); }
+.mobile-sub-body { display: none; padding: 0 0 10px; }
+.mobile-sub-body.is-open { display: block; }
+.mobile-sub-body a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 2px;
+  font-size: 13px;
+  color: var(--ink-3);
+  border-bottom: 1px dashed var(--line);
+}
+.mobile-sub-body a:hover { color: var(--ink); }
+.mobile-sub-count {
+  font-size: 11px;
+  color: var(--ink-3);
+  opacity: .8;
+}
+.mobile-sub-body .mobile-sub-all {
+  justify-content: flex-start;
+  border-bottom: 0;
+  font-weight: 600;
+  color: var(--primary);
+  padding-top: 12px;
+}
+
+/* ---------- 5. 响应式：窄屏收起悬浮面板（改用汉堡菜单） ---------- */
+@media (max-width: 1024px) {
+  .nav-item--sub .nav-sub { display: none; }
+  .nav-main .nav-link .nav-caret { display: none; }
+}
+
+/* ---------- 6. 苹果式细节：hover 抬升 + 键盘焦点可见 ---------- */
+.card, .p-card, .cat-card {
+  transition: border-color .18s ease, box-shadow .22s ease, transform .22s ease;
+}
+.card:hover, .p-card:hover, .cat-card:hover {
+  box-shadow: 0 12px 28px rgba(22, 42, 135, .09);
+  transform: translateY(-2px);
+}
+.btn { transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(22, 42, 135, .14); }
+.btn:active { transform: translateY(0); box-shadow: none; }
+a:focus-visible, button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- 7. 首屏内容轻微上浮淡入（尊重 prefers-reduced-motion） ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-inner > *, .page-hero .container > * {
+    animation: fadeUp .62s cubic-bezier(.4, 0, .2, 1) both;
+  }
+  .hero-inner > *:nth-child(2), .page-hero .container > *:nth-child(2) { animation-delay: .06s; }
+  .hero-inner > *:nth-child(3), .page-hero .container > *:nth-child(3) { animation-delay: .12s; }
+  .hero-inner > *:nth-child(4), .page-hero .container > *:nth-child(4) { animation-delay: .18s; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}

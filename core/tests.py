@@ -480,3 +480,31 @@ class LogEntryNaturalMessageTests(TestCase):
         from core.admin import LogEntryAdmin
         admin_obj = LogEntryAdmin(type(self._entry('')), None)
         self.assertEqual(admin_obj.change_message_natural(self._entry('')), '—')
+
+
+class NavMenuTests(TestCase):
+    """V0.13.0 导航：产品二级菜单的分类上下文 + 结构。"""
+
+    def test_nav_categories_context(self):
+        from products.models import Category, Product
+
+        visible = Category.objects.create(name='可见分类', name_en='Visible', slug='nav-visible')
+        empty = Category.objects.create(name='空分类', name_en='Empty', slug='nav-empty')
+        Product.objects.create(sku='NAV-1', part_name='配件', category=visible)
+        resp = self.client.get('/')
+        self.assertEqual(resp.status_code, 200)
+        slugs = [c.slug for c in resp.context['nav_categories']]
+        self.assertIn('nav-visible', slugs)
+        self.assertNotIn('nav-empty', slugs)
+        self.assertNotIn('uncategorized', slugs)
+        self.assertTrue(empty)
+
+    def test_nav_markup_and_category_links(self):
+        from products.models import Category, Product
+
+        cat = Category.objects.create(name='导航测试', name_en='Nav Test', slug='nav-markup')
+        Product.objects.create(sku='NAV-2', part_name='配件', category=cat)
+        html = self.client.get('/').content.decode('utf-8')
+        self.assertIn('nav-item--sub', html)
+        self.assertIn('data-mobile-sub', html)
+        self.assertIn('category=nav-markup', html)
