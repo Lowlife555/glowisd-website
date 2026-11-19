@@ -51,9 +51,15 @@ def site_images(request):
 
     模板用法：{% if site_images.factory_hero %} 用 {{ site_images.factory_hero.image.url }}，
     否则回退占位图。后台「站点图片」上传即替换，无需改代码（V0.7.3）。
+
+    另提供 has_workshop_photos：4 张车间照片是否有任意一张（V0.14.1）。
+    工厂页「车间一瞥」整段在没图时整段隐藏——否则前台会出现占位方块和
+    "照片为占位图，正式上线前请替换"这类内部提示，等于把待办事项展示给客户。
     """
     from core.models import SiteImage
-    return {'site_images': SiteImage.get_map()}
+    images = SiteImage.get_map()
+    has_workshop = any(key in images for key in ('workshop_1', 'workshop_2', 'workshop_3', 'workshop_4'))
+    return {'site_images': images, 'has_workshop_photos': has_workshop}
 
 
 def pricing_flags(request):

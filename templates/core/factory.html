@@ -187,13 +187,17 @@
 </section>
 
 <!-- workshop photos -->
+<!-- workshop gallery：4 张车间照片一张都没有时整段不渲染（V0.14.1）
+     以前没图时会渲染 4 个占位方块 + 一行"照片为占位图，正式上线前请替换"的内部提示，
+     等于把待办事项挂在客户看得见的地方。后台传了任意一张车间照片，这段自动出现。 -->
+{% if has_workshop_photos %}
 <section class="section">
   <div class="container">
     <div class="sec-head">
       <span class="eyebrow">{% if lang == 'ar' %}الورشة{% elif lang == 'en' %}Workshop{% else %}车间实景{% endif %}</span>
       <h2 class="h-section">{% if lang == 'ar' %}لمحة داخل الورشة{% elif lang == 'en' %}Inside the Workshop{% else %}车间一瞥{% endif %}</h2>
       <p class="lead">
-        {% if lang == 'ar' %}الصور مؤقتة — يُرجى استبدالها بصور حقيقية للورشة قبل الإطلاق.{% elif lang == 'en' %}Photo placeholders — replace with real workshop photos before launch.{% else %}照片为占位图，正式上线前请替换为真实车间照片。{% endif %}
+        {% if lang == 'ar' %}أربع مراحل تحت سقف واحد — التجميع والتصنيع والاختبار والتخزين.{% elif lang == 'en' %}Four stages under one roof — assembly, machining, testing and warehousing.{% else %}组装、加工、检测、仓储——四个环节的实景记录。{% endif %}
       </p>
     </div>
     <div class="photo-grid">
@@ -216,6 +220,7 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 <!-- CTA -->
 <section class="section section--white">

@@ -711,3 +711,48 @@ class AdminChangeDetailTests(TestCase):
         call_command('purge_admin_log', '--days', '180', stdout=StringIO())
         self.assertFalse(LogEntry.objects.filter(pk=old_change.pk).exists())
         self.assertTrue(LogEntry.objects.filter(pk=old_delete.pk).exists(), '删除记录应永久保留')
+
+
+class FactoryPhotoSectionTests(TestCase):
+    """V0.14.1：车间照片缺失时「车间一瞥」整段隐藏，前台不出现内部 TODO 文案。"""
+
+    def setUp(self):
+        import shutil
+        import tempfile
+        from io import BytesIO
+
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+
+        from core.models import SiteImage
+
+        SiteImage.objects.all().delete()
+        self.tmpdir = tempfile.mkdtemp()
+        self._override = override_settings(MEDIA_ROOT=self.tmpdir)
+        self._override.enable()
+        self.addCleanup(self._override.disable)
+        self.addCleanup(shutil.rmtree, self.tmpdir, True)
+        self.client.cookies['lang'] = 'en'
+        self.client.cookies['lang_chosen'] = '1'
+
+        buf = BytesIO()
+        Image.new('RGB', (32, 24), (208, 214, 228)).save(buf, 'PNG')
+        si = SiteImage(key='workshop_1', caption_zh='组装产线', caption_en='Assembly line')
+        si.image.save('w1.png', SimpleUploadedFile('w1.png', buf.getvalue(), content_type='image/png'), save=True)
+
+    def test_section_and_internal_todo_hidden_when_no_photos(self):
+        from core.models import SiteImage
+
+        SiteImage.objects.all().delete()
+        html = self.client.get('/factory/').content.decode('utf-8')
+        self.assertNotIn('Inside the Workshop', html)
+        self.assertNotIn('replace with real workshop photos', html)
+        self.assertNotIn('车间一瞥', html)
+
+    def test_section_visible_and_todo_gone_with_photo(self):
+        html = self.client.get('/factory/').content.decode('utf-8')
+        self.assertIn('Inside the Workshop', html)
+        self.assertIn('Four stages under one roof', html)   # 新的正面文案
+        self.assertNotIn('replace with real workshop photos', html)
+        self.assertNotIn('Photo placeholders', html)
