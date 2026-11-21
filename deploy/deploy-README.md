@@ -92,26 +92,52 @@ pm2 status                            # glowisd 应为 online
 
 ---
 
-## 三、日常部署（本地开发机执行，6 步）
+## 三、日常部署（本地开发机执行，8 步）
 
 ```powershell
 powershell -File deploy/deploy_glowisd.ps1
 ```
 
-脚本 6 步（每步失败即 `throw` 中止）：
+脚本 8 步（关键步骤失败即 `throw` 中止）：
 
 1. **本地 git push** —— `git add -A && commit --allow-empty && push origin <当前分支>`
 2. **服务器 git pull** —— `cd /var/www/glowisd && git pull --ff-only`
 3. **依赖安装** —— 缺则 apt 装 `python3-venv/python3-pip` → 建/复用 `venv` → `pip install -r requirements.txt`
 4. **数据库迁移** —— `venv/bin/python manage.py migrate`
-5. **构建** —— `venv/bin/python manage.py collectstatic --noinput`（Django 的“构建”步骤）
-6. **重启 + 健康检查** —— pm2 重启 `glowisd`（首次自动 `pm2 start`）→ `curl http://127.0.0.1:8080/` 期望 200
+5. **SQLite 切 WAL** —— `manage.py enable_sqlite_wal`（幂等；读不被写阻塞，多 worker 下更稳）
+6. **生成 WebP 变体** —— `venv/bin/python scripts/make_webp.py --stats`（跳过已存在的；约 10-30 秒 / 590 张）
+   —— **变体不进 git**（`.gitignore` 忽略 `media/opt/`），必须在服务器上生成；失败不阻断（前台回退原图）
+7. **构建** —— `venv/bin/python manage.py collectstatic --noinput`
+8. **重启 + 健康检查** —— `pm2 restart glowisd --update-env` → `curl http://127.0.0.1:8080/` 期望 200
 
----
+### 系统级配置（只需手动做一次，不算在日常部署里）
+
+nginx 的缓存 / gzip / HTTP2 改动是 `/etc/nginx` 下的系统文件，部署脚本不动它：
+
+```bash
+scp deploy/nginx-glowisd.conf        root@43.135.22.140:/etc/nginx/sites-available/glowisd
+scp deploy/nginx-glowisd-domain.conf root@43.135.22.140:/etc/nginx/sites-available/glowisd-domain
+ssh root@43.135.22.140 'nginx -t && systemctl reload nginx'
+```
+
+改了 gunicorn 进程参数（worker 数、线程数）同样只需 `pm2 restart glowisd --update-env` 一次。
+
+### 上线后自检
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/            # 200
+curl -s http://127.0.0.1:8080/ | grep -o 'V0\.[0-9]*\.[0-9]*' | head -1     # 版本号
+pm2 describe glowisd | grep -E 'workers|threads'                            # 3 worker / 3 threads
+curl -sI http://127.0.0.1:8080/media/opt/hero/hero1-1600.webp | grep -Ei 'cache-control|content-type'
+# → Cache-Control: public, max-age=2592000, immutable + image/webp
+```
 
 ## 四、常见问题
 
-- **`pm2 describe glowisd` 找不到**：首次未执行 `pm2 start deploy/ecosystem.config.cjs`，脚本第 6 步会自动补启。
+- **`pm2 describe glowisd` 找不到**：首次未执行 `pm2 start deploy/ecosystem.config.cjs`，脚本第 8 步会自动补启。
 - **8080 打不开**：先 `pm2 logs glowisd` 看 gunicorn 报错，再 `nginx -t` 检查配置。
 - **后台样式丢了 / 产品图裂**：确认 `collectstatic` 已跑、nginx 的 `/static/`、`/media/` `alias` 路径指向 `/var/www/glowisd/staticfiles/`、`/var/www/glowisd/media/`。
-- **改了 settings.py 没生效**：gunicorn 由 pm2 管理，部署脚本第 6 步已 `restart --update-env`，无需手动 reload。
+- **改了 settings.py 没生效**：gunicorn 由 pm2 管理，部署脚本最后一步已 `restart --update-env`，无需手动 reload。
+- **图片变得很慢 / 页面体积又回到 MB 级**：`media/opt/` 下的 WebP 变体没生成或被清掉。跑 `venv/bin/python scripts/make_webp.py --stats`，然后 `pm2 restart glowisd`（变体存在性有进程内缓存，重启后才会被识别）。
+- **后台改完内容前台没变**：整页缓存默认 120 秒（`PAGE_CACHE_SECONDS`），最迟 2 分钟生效；要立刻生效就 `pm2 restart glowisd`（文件缓存清空）或把该值设 0 关掉整页缓存。
+- **想确认有没有走缓存**：响应头 `X-Page-Cache: HIT/MISS`（联系页/支付页/后台不缓存，不会有这个头）。

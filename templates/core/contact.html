@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<section class="page-hero">
+<section class="page-hero{% if site_images.contact_hero %} page-hero--photo{% endif %}"{% if site_images.contact_hero %} style="--page-hero-img:url('{% opt_img site_images.contact_hero.image 1400 %}')"{% endif %}>
   <div class="container">
     <span class="eyebrow">{% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact{% else %}联系{% endif %}</span>
     <h1>{% if lang == 'ar' %}اتصل بنا / طلب عرض السعر{% elif lang == 'en' %}Contact &amp; Inquiry{% else %}联系我们 / 询价{% endif %}</h1>
@@ -165,3 +165,5 @@
 </section>
 
 {% endblock %}
+{# 询价表单用 Vue 3 驱动（表单校验 / 提交状态 / 错误提示），只有本页需要 #}
+{% block vendor_js %}<script src="{% static 'vendor/vue.global.prod.js' %}?v={{ site_version }}"></script>{% endblock %}

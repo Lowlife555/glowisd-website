@@ -2,7 +2,12 @@
 <a class="p-card" href="{% url 'product_detail' p.pk %}">
   <div class="p-card__media">
     {% if p.image %}
-    <img src="{{ p.image.url }}?v={{ site_version }}" alt="{{ p.sku }} — {{ p|pname:lang }}">
+    <img src="{% opt_img p.image 640 %}"
+         srcset="{% opt_srcset p.image '320,640' %}"
+         sizes="(max-width: 820px) 46vw, 300px"
+         width="640" height="480"
+         alt="{{ p.sku }} — {{ p|pname:lang }}"
+         loading="lazy" decoding="async">
     {% else %}
     <img class="ph" src="{% static 'img/placeholder-product.svg' %}" alt="{% if lang == 'ar' %}صورة المنتج مؤقتة{% elif lang == 'en' %}Product photo placeholder{% else %}产品照片占位{% endif %}">
     {% endif %}
@@ -20,10 +25,11 @@
     </div>
     {% if show_prices %}
     <div class="p-card__price{% if p.is_placeholder_price %} is-placeholder{% endif %}">
-      <b>{{ p.price_display }}</b>
       {% if p.is_placeholder_price %}
-      <span class="p-card__price-tag">{% if lang == 'ar' %}السعر قيد التحديد{% elif lang == 'en' %}Price TBD{% else %}待定价{% endif %}</span>
+      <b class="p-card__price-quote">{% if lang == 'ar' %}السعر عند الطلب{% elif lang == 'en' %}Price on request{% else %}价格面议{% endif %}</b>
+      <span class="p-card__price-tag">{% if lang == 'ar' %}عرض سعر خلال 24 ساعة{% elif lang == 'en' %}Quote in 24h{% else %}24 小时内报价{% endif %}</span>
       {% else %}
+      <b>{{ p.price_display }}</b>
       <span class="p-card__price-unit">/ {% if lang == 'ar' %}وحدة{% elif lang == 'en' %}unit{% else %}件{% endif %}</span>
       {% endif %}
     </div>

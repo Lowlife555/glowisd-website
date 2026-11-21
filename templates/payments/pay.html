@@ -26,7 +26,7 @@
       <aside class="pay-summary">
         <div class="pay-summary__media">
           {% if product.image %}
-          <img src="{{ product.image.url }}?v={{ site_version }}" alt="{{ product.sku }}">
+          <img src="{% opt_img product.image 640 %}" loading="lazy" decoding="async" alt="{{ product.sku }}">
           {% else %}
           <img src="{% static 'img/placeholder-product.svg' %}" alt="">
           {% endif %}

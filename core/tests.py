@@ -351,11 +351,11 @@ class SiteImageTests(TestCase):
     """V0.7.3 站点图片：7 个固定槽位 + 后台上传即替换前台展示。"""
 
     def test_slots_seeded(self):
-        self.assertEqual(SiteImage.objects.count(), 7)
+        self.assertEqual(SiteImage.objects.count(), 9)
         self.assertEqual(
             set(SiteImage.objects.values_list('key', flat=True)),
             {'home_factory', 'factory_hero', 'workshop_1', 'workshop_2',
-             'workshop_3', 'workshop_4', 'custom_hero'},
+             'workshop_3', 'workshop_4', 'custom_hero', 'catalog_hero', 'contact_hero'},
         )
 
     def test_uploaded_image_renders_on_factory_page(self):
@@ -759,3 +759,221 @@ class FactoryPhotoSectionTests(TestCase):
         self.assertIn('Four stages under one roof', html)   # 新的正面文案
         self.assertNotIn('replace with real workshop photos', html)
         self.assertNotIn('Photo placeholders', html)
+
+
+class PageHeroPhotoTests(TestCase):
+    """V0.15.0 页头主题图：有图时走照片版页头，无图时退回纯色（不出现空块/裂图）。"""
+
+    def _upload(self, key, filename='hero.png'):
+        import io
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+
+        buf = io.BytesIO()
+        Image.new('RGB', (1600, 900), '#162A87').save(buf, 'PNG')
+        tmp = tempfile.TemporaryDirectory()
+        ctx = override_settings(MEDIA_ROOT=tmp.name)
+        ctx.enable()
+        self.addCleanup(ctx.disable)
+        self.addCleanup(tmp.cleanup)
+        si = SiteImage.objects.get(key=key)
+        si.image.save(filename, SimpleUploadedFile(filename, buf.getvalue(), 'image/png'))
+        return si
+
+    def test_catalog_hero_photo_when_image_uploaded(self):
+        self._upload('catalog_hero')
+        resp = self.client.get('/products/')
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, 'page-hero--photo')
+        self.assertContains(resp, '--page-hero-img')
+
+    def test_contact_hero_photo_when_image_uploaded(self):
+        self._upload('contact_hero')
+        resp = self.client.get('/contact/')
+        self.assertContains(resp, 'page-hero--photo')
+
+    def test_falls_back_to_plain_hero_without_image(self):
+        resp = self.client.get('/products/')
+        self.assertContains(resp, 'page-hero')
+        self.assertNotContains(resp, 'page-hero--photo')
+
+
+class OptImageTagTests(TestCase):
+    """V0.15.0 图片优化标签：有 WebP 变体时用变体（带版本号），没有就回退原图。"""
+
+    def test_falls_back_to_original_when_variant_missing(self):
+        import io
+        import os
+        import tempfile
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        from django.test import override_settings
+        from PIL import Image
+
+        from products.templatetags.products_extras import opt_img, opt_srcset
+
+        buf = io.BytesIO()
+        Image.new('RGB', (800, 600), '#162A87').save(buf, 'JPEG')
+        with tempfile.TemporaryDirectory() as media_root:
+            with override_settings(MEDIA_ROOT=media_root, MEDIA_URL='/media/'):
+                si = SiteImage.objects.get(key='custom_hero')
+                si.image.save('probe.jpg', SimpleUploadedFile('probe.jpg', buf.getvalue(), 'image/jpeg'))
+                self.assertEqual(opt_img(si.image, 640), si.image.url)
+                self.assertEqual(opt_srcset(si.image, '320,640'), '')
+
+    def test_uses_variant_and_version_when_present(self):
+        import os
+        import tempfile
+        from django.test import override_settings
+
+        from products.templatetags.products_extras import _variant_path, opt_img
+
+        with tempfile.TemporaryDirectory() as media_root:
+            os.makedirs(os.path.join(media_root, 'opt', 'site_images'))
+            open(os.path.join(media_root, 'opt', 'site_images', 'probe-640.webp'), 'wb').close()
+            _variant_path.cache_clear()          # 变体存在性有进程内缓存，测试要先清
+            with override_settings(MEDIA_ROOT=media_root, MEDIA_URL='/media/'):
+
+                class _Img:
+                    url = '/media/site_images/probe.jpg'
+                    name = 'site_images/probe.jpg'
+
+                url = opt_img(_Img(), 640)
+                self.assertIn('opt/site_images/probe-640.webp', url)
+                self.assertIn('?v=', url)
+            _variant_path.cache_clear()
+
+
+class PageCacheMiddlewareTests(TestCase):
+    """V0.15.0 匿名整页缓存：GET 第二次命中；带表单/已登录/后台一律不缓存。"""
+
+    def setUp(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def tearDown(self):
+        from django.core.cache import cache
+        cache.clear()
+
+    def test_second_get_hits_cache(self):
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            first = self.client.get('/factory/')
+            second = self.client.get('/factory/')
+        self.assertEqual(first.headers.get('X-Page-Cache'), 'MISS')
+        self.assertEqual(second.headers.get('X-Page-Cache'), 'HIT')
+        self.assertEqual(first.content, second.content)
+
+    def test_contact_page_never_cached(self):
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            resp = self.client.get('/contact/')
+        self.assertIsNone(resp.headers.get('X-Page-Cache'))
+        self.assertContains(resp, 'csrfmiddlewaretoken')
+
+    def test_disabled_when_seconds_zero(self):
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=0, DEBUG=False):
+            resp = self.client.get('/factory/')
+        self.assertIsNone(resp.headers.get('X-Page-Cache'))
+
+    def test_authenticated_user_bypasses_cache(self):
+        from django.contrib.auth.models import User
+        from django.test import override_settings
+
+        user = User.objects.create_user('cacheprobe', password='x')
+        self.client.force_login(user)
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            resp = self.client.get('/factory/')
+        self.assertIsNone(resp.headers.get('X-Page-Cache'))
+
+    def test_saving_content_invalidates_cache_immediately(self):
+        """后台改完内容，前台下一次请求必须重新渲染（不用等 120 秒 TTL）。"""
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            self.client.get('/factory/')                       # MISS，写入缓存
+            self.assertEqual(self.client.get('/factory/').headers.get('X-Page-Cache'), 'HIT')
+
+            from core.models import SiteSettings
+
+            settings_obj = SiteSettings.objects.first()        # 后台「站点设置」保存
+            settings_obj.moq = (settings_obj.moq or 'MOQ') + '·'
+            settings_obj.save()                                # 触发缓存代号 +1
+
+            self.assertEqual(self.client.get('/factory/').headers.get('X-Page-Cache'), 'MISS')
+
+    def test_site_image_save_invalidates_cache(self):
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            self.client.get('/products/')
+            self.assertEqual(self.client.get('/products/').headers.get('X-Page-Cache'), 'HIT')
+            si = SiteImage.objects.get(key='catalog_hero')
+            si.caption_zh = (si.caption_zh or '') + '·'
+            si.save()
+            self.assertEqual(self.client.get('/products/').headers.get('X-Page-Cache'), 'MISS')
+
+    def test_invalidation_does_not_wipe_login_limiter(self):
+        """失效用的是「换代号」，不能顺手清掉登录限流计数（否则封禁会被误解除）。"""
+        from django.core.cache import cache
+        from django.test import override_settings
+
+        cache.set('login_block:1.2.3.4', 1, timeout=900)
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            self.client.get('/factory/')
+            si = SiteImage.objects.get(key='home_factory')
+            si.caption_zh = (si.caption_zh or '') + '·'
+            si.save()
+        self.assertEqual(cache.get('login_block:1.2.3.4'), 1)
+
+    def test_language_partitioned(self):
+        from django.test import override_settings
+
+        with override_settings(PAGE_CACHE_SECONDS=60, DEBUG=False):
+            zh = self.client.get('/factory/', HTTP_COOKIE='lang=zh; lang_chosen=1')
+            ar = self.client.get('/factory/', HTTP_COOKIE='lang=ar; lang_chosen=1')
+        # 语言不同 → 不能互相命中
+        self.assertEqual(zh.headers.get('X-Page-Cache'), 'MISS')
+        self.assertEqual(ar.headers.get('X-Page-Cache'), 'MISS')
+
+
+class StyleRegressionTests(TestCase):
+    """样式回归护栏：这几个选择器/变量被删掉会静默破坏功能（RTL 可读性、蜜罐不溢出）。"""
+
+    def test_hero_scrim_is_direction_aware(self):
+        import os
+
+        from django.conf import settings
+
+        css_path = os.path.join(settings.BASE_DIR, 'static', 'css', 'style.css')
+        css = open(css_path, encoding='utf-8').read()
+        self.assertIn('--hero-scrim', css)
+        self.assertIn('html[dir="rtl"]', css)
+        # RTL 下必须镜像成 270deg，否则阿语文字压在浅色侧（实测只有 3.4:1）
+        self.assertIn('linear-gradient(270deg', css)
+        self.assertIn('var(--hero-scrim)', css)
+
+    def test_honeypot_does_not_use_offscreen_position(self):
+        import os
+
+        from django.conf import settings
+
+        css_path = os.path.join(settings.BASE_DIR, 'static', 'css', 'style.css')
+        css = open(css_path, encoding='utf-8').read()
+        # 用 left:-9999px 会在 RTL 下把文档撑出 9999px 横向滚动
+        self.assertNotIn('left: -9999px', css)
+        self.assertIn('clip-path: inset(50%)', css)
+
+    def test_search_form_can_shrink(self):
+        import os
+
+        from django.conf import settings
+
+        css_path = os.path.join(settings.BASE_DIR, 'static', 'css', 'style.css')
+        css = open(css_path, encoding='utf-8').read()
+        self.assertIn('.search-form input { min-width: 0; }', css)

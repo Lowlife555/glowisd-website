@@ -28,3 +28,9 @@ Thumbs.db
 
 # 日志
 *.log
+
+# Django 文件缓存（多 worker 共享，运行时生成）
+.django-cache/
+
+# WebP 变体（scripts/make_webp.py 在服务器上生成，约 8.5MB，不入库）
+/media/opt/

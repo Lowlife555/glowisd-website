@@ -63,8 +63,12 @@ class PaymentFlowTests(TestCase):
 
     def test_detail_shows_placeholder_price_without_buy_button(self):
         resp = self.client.get(reverse('product_detail', args=[self.placeholder.pk]))
-        self.assertContains(resp, '99,999')
+        # 汲取版：防拍价（99999）不再展示数字，改为「价格面议」+ 询价入口
+        # 测试客户端默认无 lang cookie → 走英文分支（Price on request）
+        self.assertNotContains(resp, '99,999')
+        self.assertContains(resp, 'Price on request')
         self.assertNotContains(resp, reverse('payment_start', args=[self.placeholder.pk]))
+        self.assertContains(resp, reverse('contact'))
 
     def test_detail_shows_order_button_for_priced_product(self):
         resp = self.client.get(reverse('product_detail', args=[self.product.pk]))

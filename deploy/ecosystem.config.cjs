@@ -31,11 +31,16 @@ module.exports = {
       name: 'glowisd',
       cwd: '/var/www/glowisd',
       script: 'venv/bin/gunicorn',
-      args: 'config.wsgi:application --bind 127.0.0.1:8000 --workers 1 --timeout 120',
+      // 并发：2 核 2G 机器上，1 个同步 worker 会把所有请求排成一条队（第 50 个访客要等前面 49 个走完）。
+      // 3 worker × 3 gthread = 9 个并发槽位；本项目每次请求只有几十毫秒 CPU，够扛 50 人同时浏览。
+      // max-requests：worker 处理一定请求数后自动重启，避免长期运行的内存缓慢上涨。
+      args: 'config.wsgi:application --bind 127.0.0.1:8000 ' +
+        '--workers 3 --threads 3 --worker-class gthread --timeout 60 --graceful-timeout 30 ' +
+        '--keep-alive 5 --max-requests 1000 --max-requests-jitter 120',
       interpreter: 'none',           // gunicorn 是 venv 里的可执行脚本，不要用 node 解释
       exec_mode: 'fork',
       autorestart: true,
-      max_memory_restart: '300M',
+      max_memory_restart: '600M',   // 3 worker 合计约 300-400MB，留出余量避免误判重启
       env: {
         DJANGO_SETTINGS_MODULE: 'config.settings',
         // 让 gunicorn 脚本找到 venv 里的 python（shebang 已指向 venv，此行为保险）

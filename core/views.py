@@ -1,6 +1,6 @@
 import time
 
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -25,14 +25,35 @@ CATEGORY_TAGLINES = {
     'pcb-boards': ('原厂级电路方案', 'OEM-grade circuit boards', 'لوحات دوائر بمعايير المصنع الأصلي'),
     'membrane-switches': ('耐用面板，灵敏反馈', 'Durable panels, responsive feedback', 'لوحات متينة واستجابة حساسة'),
     'complete-kits': ('一站式配套方案', 'One-stop complete kits', 'أطقم متكاملة من مكان واحد'),
+    # 生产库实际在用的分类 slug（早期为中文/机型号命名），缺文案时卡片会露出「63 款 · 」后面空着
+    'paver': ('摊铺机全系配件', 'Full paver parts range', 'قطع غيار كاملة لآلات الرصف'),
+    'Roadroller': ('压路机专用配件', 'Road roller parts', 'قطع غيار مداحل الطرق'),
+    'Millingmachine': ('铣刨机专用配件', 'Milling machine parts', 'قطع غيار آلات التفريز'),
+    'Paveror-MillingMachineBalanceBeam': ('找平梁与平衡梁', 'Leveling and balance beams', 'عوارض التسوية والتوازن'),
+    'machine': ('整机与配套件', 'Machines and accessories', 'آلات وملحقات'),
 }
+
+#: 未登记 slug 的兜底文案，避免分类卡片出现空标签行
+GENERIC_TAGLINE = ('工程机械配件', 'Construction machinery parts', 'قطع غيار آلات الإنشاءات')
 
 
 def home(request):
-    categories = Category.objects.annotate(product_count=Count('products')).all()
+    # 一次取全分类（含在架数），并一次性预取各类最新产品：
+    # 旧写法在 lineups 循环里对每个分类单独查一次产品（N+1，实测 8 次多余查询），
+    # 且 categories.exclude() 会再查一次分类表；现在固定 2 次查询。
+    categories = list(
+        Category.objects
+        .annotate(product_count=Count('products'))
+        .order_by('sort_order', 'name')
+        .prefetch_related(Prefetch(
+            'products',
+            queryset=Product.objects.order_by('-created_at'),
+            to_attr='recent_products',
+        ))
+    )
     cats = []
     for c in categories:
-        tl = CATEGORY_TAGLINES.get(c.slug, ('', '', ''))
+        tl = CATEGORY_TAGLINES.get(c.slug, GENERIC_TAGLINE)
         cats.append({
             'slug': c.slug,
             'name': c.name,
@@ -54,19 +75,18 @@ def home(request):
     cat_cards = []
     for c in categories:
         if c.product_count > 0 and c.slug != 'uncategorized':
-            tl = CATEGORY_TAGLINES.get(c.slug, ('', '', ''))
+            tl = CATEGORY_TAGLINES.get(c.slug, GENERIC_TAGLINE)
             c.tl_zh, c.tl_en, c.tl_ar = tl[0], tl[1], tl[2]
             c.count = c.product_count
             cat_cards.append(c)
 
-    # 产品线分区陈列：有产品的分类（排除"未分类"），每线取前 4 个产品
+    # 产品线分区陈列：有产品的分类（排除"未分类"），每线取前 4 个产品（走上面的 prefetch 缓存，不再逐类查询）
     lineups = []
-    for c in categories.exclude(slug='uncategorized'):
-        if c.product_count > 0:
-            prods = list(Product.objects.filter(category=c).order_by('-created_at')[:4])
+    for c in categories:
+        if c.slug != 'uncategorized' and c.product_count > 0:
             lineups.append({
                 'category': c,
-                'products': prods,
+                'products': c.recent_products[:4],
             })
 
     return render(request, 'core/home.html', {

@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<section class="page-hero">
+<section class="page-hero{% if site_images.catalog_hero %} page-hero--photo{% endif %}"{% if site_images.catalog_hero %} style="--page-hero-img:url('{% opt_img site_images.catalog_hero.image 1400 %}')"{% endif %}>
   <div class="container">
     <span class="eyebrow">{% if lang == 'ar' %}كتالوج المنتجات{% elif lang == 'en' %}Product Catalog{% else %}产品目录{% endif %}</span>
     <h1>{% if lang == 'ar' %}مركز المنتجات{% elif lang == 'en' %}Products{% else %}产品中心{% endif %}</h1>

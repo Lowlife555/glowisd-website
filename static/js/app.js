@@ -1,39 +1,51 @@
 /* =========================================================
-   GLOWISD — front-end scripts (Vue 3 global build)   V0.4.1
-   组件：语言切换 · 移动导航 · 询价表单（fetch POST）
+   GLOWISD — front-end scripts
+   组件：语言切换（原生 JS）· 移动导航（原生 JS）· 询价表单（Vue 3）
    ========================================================= */
+
+/* ---- 0. 语言切换（原生实现，不依赖 Vue） ----
+   原来这三个按钮是 Vue 组件，导致每张页面都要下载 143KB 的 vue.global.prod.js。
+   逻辑只有「写两个 cookie + 刷新」，用原生 JS 即可，Vue 只在联系页的询价表单加载。 */
+(function () {
+  'use strict';
+  var els = document.querySelectorAll('[data-lang-switcher]');
+  if (!els.length) return;
+
+  var current = document.documentElement.getAttribute('lang') || 'zh';
+  var LANGS = [['zh', '中'], ['en', 'EN'], ['ar', 'عربي']];
+
+  function setLang(code) {
+    if (code === current) return;
+    document.cookie = 'lang=' + code + '; path=/; max-age=31536000; SameSite=Lax';
+    document.cookie = 'lang_chosen=1; path=/; max-age=31536000; SameSite=Lax';
+    window.location.reload();
+  }
+
+  Array.prototype.forEach.call(els, function (el) {
+    el.classList.add('lang-switch');
+    el.setAttribute('role', 'group');
+    el.setAttribute('aria-label', 'Language switch');
+    LANGS.forEach(function (pair) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = pair[1];
+      btn.setAttribute('lang', pair[0]);
+      if (pair[0] === current) {
+        btn.className = 'is-active';
+        btn.setAttribute('aria-current', 'true');
+      }
+      btn.addEventListener('click', function () { setLang(pair[0]); });
+      el.appendChild(btn);
+    });
+  });
+})();
+
 (function () {
   'use strict';
   if (typeof Vue === 'undefined') return;
   var createApp = Vue.createApp;
 
-  /* ---- 1. 语言切换 Language switcher（中 / EN / عربي 三态，桌面 + 移动多挂载点） ---- */
-  var switcherEls = document.querySelectorAll('[data-lang-switcher]');
-  if (switcherEls.length) {
-    var currentLang = document.documentElement.getAttribute('lang') || 'zh';
-    var switcherDef = {
-      data: function () {
-        return { lang: currentLang };
-      },
-      methods: {
-        setLang: function (l) {
-          if (l === this.lang) return;
-          document.cookie = 'lang=' + l + '; path=/; max-age=31536000; SameSite=Lax';
-          document.cookie = 'lang_chosen=1; path=/; max-age=31536000; SameSite=Lax';
-          window.location.reload();
-        }
-      },
-      template:
-        '<div class="lang-switch" role="group" aria-label="Language switch">' +
-        '<button type="button" :class="{\'is-active\': lang === \'zh\'}" @click="setLang(\'zh\')">中</button>' +
-        '<button type="button" :class="{\'is-active\': lang === \'en\'}" @click="setLang(\'en\')">EN</button>' +
-        '<button type="button" :class="{\'is-active\': lang === \'ar\'}" @click="setLang(\'ar\')">عربي</button>' +
-        '</div>'
-    };
-    switcherEls.forEach(function (el) {
-      createApp(switcherDef).mount(el);
-    });
-  }
+  /* ---- 1. 语言切换：已改为原生 JS，见文件顶部「0. 语言切换」 ---- */
 
   /* ---- 1b. 首次进入语言选择弹窗（仅首次：cookie lang_chosen 不存在时由后端渲染） ---- */
   var langModal = document.getElementById('lang-modal');

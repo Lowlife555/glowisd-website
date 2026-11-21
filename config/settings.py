@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,7 +40,7 @@ _load_dotenv(BASE_DIR / '.env')
 
 # 站点版本：cache busting 用（静态/媒体资源 URL 加 ?v=<版本>，升版本后全设备立即可见）
 # 版本规则见 glowisd-versioning skill；每次升版本必须同步此常量。
-SITE_VERSION = '0.14.3'
+SITE_VERSION = '0.15.0'
 
 
 # Quick-start development settings - unsuitable for production
@@ -95,18 +96,40 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # 匿名整页缓存放在最后（最内层）：此时 request.user 已就绪，能跳过登录用户，
+    # 命中时直接把渲染好的 HTML 返回，省掉整个视图+模板渲染（首页 40-90ms → ~1ms）。
+    'core.middleware.AnonymousPageCacheMiddleware',
 ]
 
 # —— 缓存：登录限流计数/封禁标记用（locmem 单进程够用）——
 # 生产多进程（gunicorn workers）或多机部署时建议换成共享缓存，例如：
 #   CACHES = {'default': {'BACKEND': 'django.core.cache.backends.redis.RedisCache',
 #                         'LOCATION': os.environ.get('REDIS_URL', 'redis://127.0.0.1:6379/1')}}
+# 多进程共享缓存：gunicorn 起 3 个 worker 时，LocMem 会让 3 个进程各存一份 ——
+# 后台登录限流变成「每个 worker 各算 5 次」（等于放宽 3 倍），整页缓存也要重复渲染 3 次。
+# 文件缓存由同一台机器上的所有 worker 共享，不需要额外起 Redis。
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'glowisd-login-ratelimit',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': BASE_DIR / '.django-cache',
+        'TIMEOUT': 300,
+        # MAX_ENTRIES 600：整页缓存每条约 40-80KB，600 条最坏约 46MB 磁盘；
+        # 设为 3000 时最坏能到 230MB，2G 内存的机器上不划算。
+        'OPTIONS': {'MAX_ENTRIES': 600, 'CULL_FREQUENCY': 2},
     }
 }
+
+# —— 整页缓存（AnonymousPageCacheMiddleware）——
+# 有效期内前台直接复用渲染好的 HTML；后台改内容最迟这么多秒后生效。
+# 想在本地/调试环境立刻看到改动：设 GLOWISD_PAGE_CACHE_SECONDS=0 关闭。
+PAGE_CACHE_SECONDS = 0 if 'test' in sys.argv else int(os.environ.get('GLOWISD_PAGE_CACHE_SECONDS', '120'))
+# 这些路径不缓存：带 CSRF 表单（联系页/支付页）、后台、以及后台地图类文件
+PAGE_CACHE_EXCLUDE = (
+    '/admin/',
+    '/contact/',
+    '/pay/',
+    '/sitemap',
+)
 
 # —— 安全响应头（P2）——
 # 说明：X-Frame-Options 与 CSP 由 core.middleware.SecurityHeadersMiddleware 显式输出
@@ -153,6 +176,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # 并发：SQLite 写锁冲突时最多等 20 秒再报 "database is locked"。
+        # 默认 5 秒，多 worker/多线程同时写（询价单、后台保存）时容易直接抛错。
+        'OPTIONS': {'timeout': 20},
     }
 }
 

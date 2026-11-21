@@ -20,8 +20,11 @@ P2 安全响应头（SecurityHeadersMiddleware）：
 - CSP 里的 'unsafe-inline' 是 simpleui 后台内联脚本/样式的兼容妥协（前台 Vue 本地构建、
   simpleui 均有内联代码），生产可进一步收敛。
 """
+import os
+
+from django.conf import settings
 from django.core.cache import cache
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.urls import reverse
 
 # 登录失败计数窗口与封禁时长（秒）
@@ -167,3 +170,85 @@ class LoginRateLimitMiddleware:
         ):
             profile.must_change_password = False
             profile.save(update_fields=['must_change_password'])
+
+class AnonymousPageCacheMiddleware:
+    """匿名 GET 页面整页缓存（浅层缓存），给 2 核 2G 服务器扛并发。
+
+    为什么要它：首页每次渲染 40-90ms（60 张产品卡 + 分类卡），是整站最贵的环节。
+    但页面内容只取决于「路径 + 查询串 + 语言 + 是否首次访问 + 站点版本」，
+    跟具体是哪位访客无关，所以可以把渲染好的 HTML 整页复用。
+
+    不缓存的请求：
+    - 非 GET/HEAD（表单提交、后台操作）
+    - 已登录用户（后台/预览要用最新数据）
+    - 带表单令牌的页面（联系页、支付页）以及 /admin/、/sitemap
+    - 响应里带 Set-Cookie 的（例如首次切换语言的响应）
+
+    缓存有效期由 settings.PAGE_CACHE_SECONDS 控制（默认 120 秒），但**不依赖 TTL 生效**：
+    后台保存任何前台内容（产品/分类/站点图片/设置/轮播）会通过 core.page_cache 把缓存代号 +1，
+    旧条目立刻不再命中（见 core/signals.py 的 invalidate_* 接收器），所以改完刷新即可看到。
+    TTL 只是兜底：防止某条内容变更走了绕过信号的路径（如直接改库）时长期显示旧页面。
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not self._cacheable(request):
+            return self.get_response(request)
+
+        key = self._key(request)
+        cached = cache.get(key)
+        if cached is not None:
+            body, content_type, status = cached
+            response = HttpResponse(body, content_type=content_type, status=status)
+            response['X-Page-Cache'] = 'HIT'
+            return response
+
+        response = self.get_response(request)
+        response['X-Page-Cache'] = 'MISS'
+        if (
+            response.status_code == 200
+            and not response.has_header('Set-Cookie')
+            and not getattr(response, 'streaming', False)
+        ):
+            # 渲染期间若发生内容变更（首次请求会 get_or_create 出 SiteSettings 等），
+            # 代号已 +1：按「写入时」的代号存，否则这条缓存永远命中不到。
+            key = self._key(request)
+            cache.set(
+                key,
+                (response.content, response.get('Content-Type', 'text/html; charset=utf-8'),
+                 response.status_code),
+                settings.PAGE_CACHE_SECONDS,
+            )
+        return response
+
+    @staticmethod
+    def _cacheable(request):
+        seconds = getattr(settings, 'PAGE_CACHE_SECONDS', 0)
+        if seconds <= 0:
+            return False
+        if settings.DEBUG and os.environ.get('GLOWISD_PAGE_CACHE_FORCE') != '1':
+            return False
+        if request.method not in ('GET', 'HEAD'):
+            return False
+        user = getattr(request, 'user', None)
+        if user is not None and user.is_authenticated:
+            return False
+        path = request.path
+        for prefix in getattr(settings, 'PAGE_CACHE_EXCLUDE', ()):
+            if path.startswith(prefix):
+                return False
+        return True
+
+    @staticmethod
+    def _key(request):
+        from core.context_processors import get_lang
+        from core.page_cache import page_generation
+
+        lang = get_lang(request)
+        modal = '0' if request.COOKIES.get('lang_chosen') == '1' else '1'
+        version = getattr(settings, 'SITE_VERSION', '0')
+        query = request.META.get('QUERY_STRING', '')
+        # 代号让「后台保存内容 → 旧缓存立刻作废」，不必等 TTL
+        return f'page:{page_generation()}:{version}:{lang}:{modal}:{request.path}?{query}'

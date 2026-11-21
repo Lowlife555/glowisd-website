@@ -10,7 +10,15 @@
   {% if hero_slides %}
   <div class="hero-slides" aria-hidden="true">
     {% for slide in hero_slides %}
-    <img class="hero-slide{% if forloop.first %} is-active{% endif %}" src="{{ slide.image.url }}?v={{ site_version }}" alt="" loading="eager">
+    {% if forloop.first %}
+    <img class="hero-slide is-active"
+         src="{% opt_img slide.image 1600 %}"
+         srcset="{% opt_srcset slide.image '960,1600' %}"
+         sizes="100vw"
+         alt="" loading="eager" fetchpriority="high" decoding="async">
+    {% else %}
+    <img class="hero-slide" data-src="{% opt_img slide.image 1600 %}" alt="" decoding="async">
+    {% endif %}
     {% endfor %}
   </div>
   {% endif %}
@@ -48,6 +56,11 @@
         {% if lang == 'ar' %}اتصل بنا{% elif lang == 'en' %}Contact Us{% else %}联系我们{% endif %}
       </a>
     </div>
+    <ul class="hero-chips">
+      <li class="hero-chip">Vögele · Bomag · Wirtgen · ABG</li>
+      <li class="hero-chip">{% if lang == 'ar' %}مصنع خاص في تشانغتشو{% elif lang == 'en' %}Own plant in Changzhou{% else %}常州自有工厂 {{ site_settings.factory_area|default:"500 ㎡" }}{% endif %}</li>
+      <li class="hero-chip">{% if lang == 'ar' %}عرض سعر خلال 24 ساعة{% elif lang == 'en' %}Quote within 24 hours{% else %}24 小时内报价{% endif %}</li>
+    </ul>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="num">180<span class="plus">+</span></div>
@@ -89,18 +102,24 @@
     </div>
     <div class="grid grid--3 cat-grid">
       {% for c in cat_cards %}
-      <a class="card cat-card" href="{% url 'product_list' %}?category={{ c.slug }}">
-        <span class="cat-card-bg" aria-hidden="true" style="background-image:url('{% cat_cover c %}');"></span>
-        <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
-        <h3>{{ c|cname:lang }}</h3>
-        {% if lang == 'zh' %}<span class="en">{{ c.name_en }}</span>{% endif %}
-        <div class="meta">
-          <span class="count">
-            {% if lang == 'ar' %}{{ c.count }} منتجات · {{ c.tl_ar }}{% elif lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
-          </span>
-          <span class="arrow">→</span>
-        </div>
-      </a>
+      <div class="card cat-card">
+        <a class="cat-card__main" href="{% url 'product_list' %}?category={{ c.slug }}">
+          <span class="cat-card-bg" aria-hidden="true" style="background-image:url('{% cat_cover c %}');"></span>
+          <span class="idx">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
+          <h3>{{ c|cname:lang }}</h3>
+          {% if lang == 'zh' %}<span class="en">{{ c.name_en }}</span>{% endif %}
+          <div class="meta">
+            <span class="count">
+              {% if lang == 'ar' %}{{ c.count }} منتجات · {{ c.tl_ar }}{% elif lang == 'en' %}{{ c.count }} items · {{ c.tl_en }}{% else %}{{ c.count }} 款 · {{ c.tl_zh }}{% endif %}
+            </span>
+            <span class="arrow">→</span>
+          </div>
+        </a>
+        <a class="cat-card__cta" href="{% url 'contact' %}?category={{ c.slug }}">
+          <span>{% if lang == 'ar' %}اطلب عرض سعر لهذا الخط{% elif lang == 'en' %}Quote this line{% else %}就此项询价{% endif %}</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
       {% endfor %}
     </div>
   </div>
@@ -271,7 +290,7 @@
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.home_factory %}
-          <img src="{{ site_images.home_factory.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.home_factory.caption_ar|default:'ورشة مصنع Glowisd' }}{% elif lang == 'en' %}{{ site_images.home_factory.caption_en|default:'Glowisd factory workshop' }}{% else %}{{ site_images.home_factory.caption_zh|default:'Glowisd 工厂车间' }}{% endif %}" loading="lazy">
+          <img src="{% opt_img site_images.home_factory.image 800 %}" loading="lazy" decoding="async" alt="{% if lang == 'ar' %}{{ site_images.home_factory.caption_ar|default:'ورشة مصنع Glowisd' }}{% elif lang == 'en' %}{{ site_images.home_factory.caption_en|default:'Glowisd factory workshop' }}{% else %}{{ site_images.home_factory.caption_zh|default:'Glowisd 工厂车间' }}{% endif %}" loading="lazy">
           {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}Glowisd — صورة توضيحية للمصنع{% elif lang == 'en' %}Glowisd factory — placeholder photo{% else %}Glowisd 工厂（占位图）{% endif %}">
           {% endif %}
@@ -291,11 +310,25 @@
   var slides = document.querySelectorAll('.hero-slide');
   if (slides.length < 2) return;
   var idx = 0;
+  // 轮播图按需加载：只有被激活的那张才真正下载（首张在模板里已直接给出 src），
+  // 避免首屏一次拉 6 张 × 300KB。空闲时再预取下一张，切换不闪白。
+  function ensure(i) {
+    var s = slides[i];
+    if (s.dataset.src && !s.getAttribute('src')) s.setAttribute('src', s.dataset.src);
+  }
+  function prefetchNext() {
+    ensure((idx + 1) % slides.length);
+  }
   setInterval(function () {
     slides[idx].classList.remove('is-active');
     idx = (idx + 1) % slides.length;
+    ensure(idx);
     slides[idx].classList.add('is-active');
+    setTimeout(prefetchNext, 3800);   // 下一张在 5s 后切换，提前 1.2s 取即可
   }, 5000);
+  // 不要一加载就预取第 2 张：会和首屏图片抢带宽（实测那张 293KB，直接把首访流量翻倍）
+  // 改为窗口 load 之后 3.8 秒再取，那时首屏已经画完。
+  window.addEventListener('load', function () { setTimeout(prefetchNext, 3800); });
 })();
 </script>
 {% endif %}

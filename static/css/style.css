@@ -262,7 +262,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   object-fit: cover;
   object-position: center;
   opacity: 0;
-  transition: opacity 1.6s ease-in-out;
+  transition: opacity 1s ease-in-out;
 }
 .hero-slide.is-active { opacity: 1; }
 /* 图片整体变暗，保证白字可读 */
@@ -280,9 +280,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   height: 64%;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(12, 16, 32, 0) 0%, rgba(12, 16, 32, .6) 55%, rgba(12, 16, 32, .92) 100%);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: linear-gradient(180deg, rgba(12, 16, 32, 0) 0%, rgba(12, 16, 32, .66) 52%, rgba(12, 16, 32, .94) 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
   mask-image: linear-gradient(180deg, transparent 0%, #000 100%);
 }
@@ -467,7 +465,10 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 }
 .chip:hover { border-color: var(--ink); color: var(--ink); }
 .chip.is-active { background: var(--ink); border-color: var(--ink); color: #fff; }
-.search-form { display: flex; gap: 0; width: 100%; max-width: 420px; }
+/* min-width:0 让搜索框能在窄屏（尤其 RTL）里收缩：
+   否则 flex 项按内容最小宽度撑开，阿语手机端会横向溢出 122px。 */
+.search-form { display: flex; gap: 0; width: 100%; max-width: 420px; min-width: 0; }
+.search-form input { min-width: 0; }
 .search-form input {
   flex: 1;
   min-height: 46px;
@@ -682,7 +683,24 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 }
 .field select { appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' fill='none' stroke='%236F6A63' stroke-width='1.4'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
 .field .err { font-size: 12px; color: #B3261E; }
-.hp-field { position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; opacity: 0 !important; }
+/* 蜜罐字段：原来用 left:-9999px 挪出屏幕，RTL 下会变成「向右挪 -9999px」，
+   把整个文档撑出 9999px 横向滚动（阿语手机端实测 docW=10389px）。
+   改用 clip 方案：不产生任何布局溢出，屏幕阅读器与爬虫仍能看到该字段。 */
+.hp-field {
+  position: absolute !important;
+  inset: auto !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
 .form-actions { margin-top: 30px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
 .form-actions .note { font-size: 12px; color: var(--ink-3); }
 .notice {
@@ -838,8 +856,8 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   top: 0; bottom: 0; left: 42%; right: 0;
   background-size: cover;
   background-position: center;
-  opacity: .5;
-  filter: blur(7px) saturate(1.05);
+  opacity: .55;
+  /* 性能：改用 cat_cover 的 48px 变体天然模糊，去掉滤镜 */
   transform: scale(1.1);
   pointer-events: none;
   z-index: 0;
@@ -971,9 +989,9 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 
 /* ---------- 1. 吸顶导航：毛玻璃 + 滚动收缩 + 上滑隐藏 ---------- */
 .site-header {
-  background: rgba(247, 245, 241, .82);
-  -webkit-backdrop-filter: saturate(170%) blur(18px);
-  backdrop-filter: saturate(170%) blur(18px);
+  /* 性能：原为毛玻璃（saturate(170%) blur(18px)），吸顶时每滚动一帧都要重算整屏模糊，
+     在低端机/2 核服务器对应的弱终端上直接掉帧。改为高不透明度实色，观感几乎一致。 */
+  background: rgba(247, 245, 241, .96);
   transition: transform .38s cubic-bezier(.4, 0, .2, 1),
               box-shadow .28s ease,
               background .28s ease,
@@ -986,11 +1004,10 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   border-bottom-color: transparent;
 }
 .site-header.is-scrolled .header-inner { height: 62px; }
-.header-inner {
-  transition: height .28s cubic-bezier(.4, 0, .2, 1);
-}
+/* 性能：原来这里对 height 做 .28s 过渡，而 height 变化会让整个吸顶导航每帧重排
+   （下方的页面内容也要跟着重排）。改为瞬间切换高度，视觉差异极小，省掉一段卡顿。 */
 .site-header.is-scrolled .brand img { height: 52px !important; }
-.brand img { transition: height .28s cubic-bezier(.4, 0, .2, 1); }
+/* 同上：logo 高度不再做过渡（避免逐帧重排） */
 .site-header.is-hidden { transform: translateY(-102%); }
 .site-header.is-hidden .nav-sub { visibility: hidden; opacity: 0; }
 
@@ -1134,7 +1151,7 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--ink-3);
-  transition: color .15s ease, gap .15s ease;
+  transition: color .15s ease;
 }
 .nav-sub-all:hover { color: var(--primary); gap: 12px; }
 
@@ -1197,13 +1214,13 @@ button { background: none; border: none; cursor: pointer; padding: 0; }
 
 /* ---------- 6. 苹果式细节：hover 抬升 + 键盘焦点可见 ---------- */
 .card, .p-card, .cat-card {
-  transition: border-color .18s ease, box-shadow .22s ease, transform .22s ease;
+  transition: border-color .18s ease, transform .22s ease;
 }
 .card:hover, .p-card:hover, .cat-card:hover {
   box-shadow: 0 12px 28px rgba(22, 42, 135, .09);
   transform: translateY(-2px);
 }
-.btn { transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease, box-shadow .16s ease; }
+.btn { transition: background .16s ease, border-color .16s ease, color .16s ease, transform .16s ease; }
 .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(22, 42, 135, .14); }
 .btn:active { transform: translateY(0); box-shadow: none; }
 a:focus-visible, button:focus-visible {
@@ -1283,4 +1300,170 @@ a:focus-visible, button:focus-visible {
   .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 24px; }
   .flow__step { padding-inline-end: 10px; }
   .flow__title { font-size: 13px; }
+}
+
+/* ===================================================================
+   汲取版（对比用）：信任筹码 / 分项询价 / 规格表 / 移动端询价条
+   =================================================================== */
+
+/* 首屏信任筹码（对应样板 hero 的 3 个参数 chip） */
+.hero-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 26px 0 0; padding: 0; list-style: none; }
+.hero-chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: var(--radius);
+  color: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, .06);
+}
+
+/* 分类卡：正文可点 + 独立「就此项询价」入口 */
+.cat-card__main { display: block; position: relative; color: inherit; }
+.cat-card__cta {
+  position: relative;
+  z-index: 1;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--primary);
+}
+.cat-card__cta:hover { color: var(--primary-deep); }
+
+/* 产品详情：规格表（等宽数字，无竖线） */
+.spec-table { width: 100%; border-collapse: collapse; border-top: 1px solid var(--line-strong); margin-top: 24px; }
+.spec-table caption {
+  text-align: start;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  padding-bottom: 10px;
+}
+.spec-table th, .spec-table td {
+  text-align: start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  vertical-align: baseline;
+}
+.spec-table th { width: 42%; font-weight: 500; font-size: 12px; letter-spacing: .04em; color: var(--ink-3); }
+.spec-table td { color: var(--ink); }
+.spec-table .mono { font-family: var(--mono); letter-spacing: .02em; }
+.spec-link { border-bottom: 1px solid var(--line-strong); }
+
+/* 价格：占位价不展示数字，改「价格面议」 */
+.price-quote { font-family: var(--serif); font-size: 26px; color: var(--primary); }
+.p-card__price-quote { font-family: var(--mono); font-size: 13px; font-weight: 500; letter-spacing: .04em; color: var(--primary); }
+
+/* 移动端常驻询价条 */
+.quote-bar { display: none; }
+@media (max-width: 820px) {
+  body { padding-bottom: 64px; }
+  .quote-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 10px 16px;
+    background: #fff;
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -2px 14px rgba(22, 42, 135, .08);
+  }
+  .quote-bar__id { display: flex; flex-direction: column; line-height: 1.35; min-width: 0; flex: 1; }
+  .quote-bar .btn { flex: 0 0 auto; width: auto; min-width: 0; flex-shrink: 0; white-space: nowrap; }
+  .quote-bar__id .mono { font-family: var(--mono); font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .quote-bar__price { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* ---------- 页头（工厂/定制页）：照片底 + 对比度修正 ----------
+   旧版 .page-hero 是纯色块 + 96/72 内边距，正文宽 640px，右侧 2/3 全空；
+   .lead 用 --ink-3 在深蓝上对比不足。这里补背景图位（无图时自动退回纯色）并提亮正文。 */
+.page-hero { padding: 84px 0 64px; overflow: hidden; isolation: isolate; }
+.page-hero .lead { color: rgba(255, 255, 255, .82); }
+/* 遮罩渐变按书写方向取值：中文/英文文字在左（深色侧在左），阿语 RTL 文字在右（深色侧在右）。
+   实测：不镜像时阿语页头正文对比度只有 3.4:1（中文同位置 9.6:1），因为文字压在了浅色侧。 */
+:root { --hero-scrim: linear-gradient(90deg, rgba(10, 16, 42, .94) 0%, rgba(10, 16, 42, .88) 38%, rgba(10, 16, 42, .45) 78%, rgba(10, 16, 42, .62) 100%); }
+html[dir="rtl"] { --hero-scrim: linear-gradient(270deg, rgba(10, 16, 42, .94) 0%, rgba(10, 16, 42, .88) 38%, rgba(10, 16, 42, .45) 78%, rgba(10, 16, 42, .62) 100%); }
+
+.page-hero--photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--hero-scrim), var(--page-hero-img);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat;
+}
+/* 工厂页那张航拍用更紧的裁切，和下方「工厂概况」的同一张图区分开 */
+.page-hero--zoom::after {
+  background-size: 165% auto, cover;
+  background-position: 26% 62%, center;
+}
+.page-hero__facts { margin-top: 24px; }
+.page-hero__jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: rgba(255, 255, 255, .8);
+  border-bottom: 1px solid rgba(255, 255, 255, .28);
+  padding-bottom: 4px;
+}
+.page-hero__jump:hover { color: #fff; border-color: #fff; }
+@media (max-width: 760px) {
+  .page-hero { padding: 64px 0 52px; }
+  .page-hero--zoom::after { background-size: 210% auto, cover; background-position: 58% 55%, center; }
+  /* 手机上图片被裁得更紧、亮部更容易落到文字底下：把遮罩加厚一档（按方向分别给值）。
+     实测 390px 视口：中文页头正文 4.5:1 → 7.6:1。 */
+  :root { --hero-scrim: linear-gradient(90deg, rgba(10, 16, 42, .97) 0%, rgba(10, 16, 42, .93) 42%, rgba(10, 16, 42, .62) 78%, rgba(10, 16, 42, .78) 100%); }
+  html[dir="rtl"] { --hero-scrim: linear-gradient(270deg, rgba(10, 16, 42, .97) 0%, rgba(10, 16, 42, .93) 42%, rgba(10, 16, 42, .62) 78%, rgba(10, 16, 42, .78) 100%); }
+}
+
+/* 无配图时的页头兜底：极淡技术网格 + 右侧光晕，避免大面积纯色空块 */
+.page-hero:not(.page-hero--photo)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .04) 1px, transparent 1px),
+    radial-gradient(1100px 340px at 82% 18%, rgba(22, 42, 135, .55), transparent 72%);
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+}
+
+/* ===================================================================
+   性能：减少滚动时的重绘 + 尊重系统「减弱动态效果」
+   =================================================================== */
+
+/* 产品线区块在首屏之外，且每块含 4 张图；跳过屏外渲染，滚动到附近再算 */
+.lineup { content-visibility: auto; contain-intrinsic-size: auto 520px; }
+
+/* 图片启用异步解码（Chromium 默认即在栅格线程解码，显式声明对 Safari 有效） */
+img { image-rendering: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

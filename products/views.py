@@ -18,7 +18,10 @@ def _query_prefix(**params):
 
 def product_list(request):
     queryset = Product.objects.select_related('category').all()
-    categories = Category.objects.annotate(product_count=Count('products')).all()
+    # list() 一次性取出：分类既要给筛选条又要给侧栏，未实体化时模板多次遍历会重复查库（实测 3 次）
+    categories = list(
+        Category.objects.annotate(product_count=Count('products')).order_by('sort_order', 'name')
+    )
     category_slug = request.GET.get('category', '').strip()
     search = request.GET.get('search', '').strip()
 

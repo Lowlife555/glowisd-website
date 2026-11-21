@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<section class="page-hero">
+<section class="page-hero{% if site_images.custom_hero %} page-hero--photo{% endif %}"{% if site_images.custom_hero %} style="--page-hero-img:url('{% opt_img site_images.custom_hero.image 1400 %}')"{% endif %}>
   <div class="container">
     <span class="eyebrow">{% if lang == 'ar' %}خدمات التخصيص{% elif lang == 'en' %}Customization{% else %}定制服务{% endif %}</span>
     <h1>{% if lang == 'ar' %}OEM / ODM والقطع المخصصة{% elif lang == 'en' %}OEM / ODM &amp; Custom Parts{% else %}OEM / ODM 与定制配件{% endif %}</h1>
@@ -145,7 +145,7 @@
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.custom_hero %}
-          <img src="{{ site_images.custom_hero.image.url }}?v={{ site_version }}" alt="{% if lang == 'ar' %}{{ site_images.custom_hero.caption_ar|default:'التصنيع حسب الطلب' }}{% elif lang == 'en' %}{{ site_images.custom_hero.caption_en|default:'Custom manufacturing' }}{% else %}{{ site_images.custom_hero.caption_zh|default:'定制制造' }}{% endif %}" loading="lazy">
+          <img src="{% opt_img site_images.custom_hero.image 800 %}" loading="lazy" decoding="async" alt="{% if lang == 'ar' %}{{ site_images.custom_hero.caption_ar|default:'التصنيع حسب الطلب' }}{% elif lang == 'en' %}{{ site_images.custom_hero.caption_en|default:'Custom manufacturing' }}{% else %}{{ site_images.custom_hero.caption_zh|default:'定制制造' }}{% endif %}" loading="lazy">
           {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}خدمات التخصيص — صورة مؤقتة{% elif lang == 'en' %}Customization — placeholder photo{% else %}定制服务（占位图）{% endif %}">
           {% endif %}

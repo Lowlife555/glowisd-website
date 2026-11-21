@@ -42,6 +42,8 @@ class SiteImage(models.Model):
         ('workshop_3', '工厂页 - 车间照片 3'),
         ('workshop_4', '工厂页 - 车间照片 4'),
         ('custom_hero', '定制页 - 服务大图'),
+        ('catalog_hero', '产品目录页 - 页头大图'),
+        ('contact_hero', '联系页 - 页头大图'),
     ]
 
     key = models.CharField('图片位置', max_length=40, choices=KEY_CHOICES, unique=True)
