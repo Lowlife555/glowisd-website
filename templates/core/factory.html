@@ -64,8 +64,7 @@
       <div class="photo-frame">
         <div class="ph">
           {% if site_images.factory_hero %}
-          {# 与页头背景用同一个 1400w 变体：同一张照片只下载一次（之前 800w+1400w 各下一份，多花 121KB）。
-             补 width/height 防止懒加载完成时撑开导致布局位移（实测该页 CLS 0.043 → 0）。 #}
+          {# 与页头背景用同一个 1400w 变体：同一张照片只下载一次（之前 800w+1400w 各下一份，多花 121KB）；补 width/height 防止懒加载时撑开导致布局位移（实测该页 CLS 0.043 → 0） #}
           <img src="{% opt_img site_images.factory_hero.image 1400 %}" width="1400" height="1050" loading="lazy" decoding="async" alt="{% if lang == 'ar' %}{{ site_images.factory_hero.caption_ar|default:'مبنى مصنع Glowisd' }}{% elif lang == 'en' %}{{ site_images.factory_hero.caption_en|default:'Glowisd factory building' }}{% else %}{{ site_images.factory_hero.caption_zh|default:'Glowisd 工厂厂房' }}{% endif %}">
           {% else %}
           <img src="{% static 'img/placeholder-factory.svg' %}" alt="{% if lang == 'ar' %}مبنى المصنع — صورة مؤقتة{% elif lang == 'en' %}Factory building — placeholder photo{% else %}工厂厂房（占位图）{% endif %}">

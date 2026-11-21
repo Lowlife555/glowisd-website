@@ -155,8 +155,10 @@
 
   {% if show_lang_modal %}{% include 'partials/lang_modal.html' %}{% endif %}
 
-  {# Vue 只在真正用到的页面加载（目前只有联系页的询价表单需要）：
-     语言切换器已改为原生 JS，不再依赖 Vue；这样其它页面少下 143KB 的 vue.global.prod.js。 #}
+  {% comment %}
+    Vue 只在真正用到的页面加载（目前只有联系页的询价表单需要）：
+    语言切换器已改为原生 JS，不再依赖 Vue；这样其它页面少下 143KB 的 vue.global.prod.js。
+  {% endcomment %}
   {% block vendor_js %}{% endblock %}
   <script src="{% static 'js/app.js' %}?v={{ site_version }}"></script>
   {% block scripts %}{% endblock %}

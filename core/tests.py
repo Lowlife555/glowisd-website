@@ -977,3 +977,37 @@ class StyleRegressionTests(TestCase):
         css_path = os.path.join(settings.BASE_DIR, 'static', 'css', 'style.css')
         css = open(css_path, encoding='utf-8').read()
         self.assertIn('.search-form input { min-width: 0; }', css)
+
+class TemplateCommentTests(TestCase):
+    """护栏：Django 的 {# #} 只支持单行，跨行会把注释原样渲染到页面上（V0.15.0 上线时踩过）。
+
+    多行注释必须用 {% comment %} … {% endcomment %}。
+    """
+
+    def test_no_multiline_hash_comments(self):
+        import os
+
+        from django.conf import settings
+
+        tpl_root = os.path.join(settings.BASE_DIR, 'templates')
+        offenders = []
+        for dirpath, _dirs, files in os.walk(tpl_root):
+            for fn in files:
+                if not fn.endswith('.html'):
+                    continue
+                full = os.path.join(dirpath, fn)
+                with open(full, encoding='utf-8') as fh:
+                    for no, line in enumerate(fh, start=1):
+                        if '{#' in line and '#}' not in line:
+                            rel = os.path.relpath(full, tpl_root)
+                            offenders.append(f'{rel}:{no}')
+        self.assertEqual(offenders, [], f'多行 {{{{# #}}}} 注释会被渲染成正文：{offenders}')
+
+    def test_rendered_pages_have_no_leaked_comment_text(self):
+        """再退一步：真实渲染的页面里不能出现注释里才会有的话。"""
+        # 注释文字取自本次修掉的两处
+        markers = ['Vue 只在真正用到的页面加载', '与页头背景用同一个 1400w 变体']
+        for path in ('/', '/factory/', '/products/', '/custom/', '/contact/'):
+            body = self.client.get(path).content.decode('utf-8', 'replace')
+            for m in markers:
+                self.assertNotIn(m, body, f'{path} 页面把模板注释渲染出来了：{m}')
