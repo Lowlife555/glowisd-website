@@ -63,10 +63,16 @@ Write-Host "=== [9/9] 清缓存 + 重启 pm2 + 健康检查 ===" -ForegroundColo
 # 清整页缓存：文件缓存重启后仍然存在，不清的话访客最多会看到 2 分钟前渲染的旧页面。
 ssh $SERVER "cd $DEPLOY_DIR && venv/bin/python manage.py clear_site_cache 2>&1 | tail -2"
 if ($LASTEXITCODE -ne 0) { Write-Host "清缓存失败（不致命，最多 2 分钟后自然过期）" -ForegroundColor Yellow }
-# 首次: pm2 start deploy/ecosystem.config.cjs；之后: pm2 restart glowisd
-# --update-env：让 gunicorn 的 worker 数等参数改动生效
-ssh $SERVER "cd $DEPLOY_DIR && (pm2 describe glowisd >/dev/null 2>&1 && pm2 restart glowisd --update-env || pm2 start deploy/ecosystem.config.cjs)"
-if ($LASTEXITCODE -ne 0) { throw "pm2 启动/重启 failed" }
+# 关键：pm2 restart --update-env 只会重载 env，**不会**重读 ecosystem 里改过的 args。
+# 实测：改了 --workers 3 --threads 3 之后 restart，进程命令行仍是 --workers 1（老参数）。
+# 所以这里必须 delete + start，args 才会生效（停机约 1-2 秒）。
+ssh $SERVER "cd $DEPLOY_DIR && pm2 delete glowisd >/dev/null 2>&1; pm2 start deploy/ecosystem.config.cjs 2>&1 | tail -3"
+if ($LASTEXITCODE -ne 0) { throw "pm2 启动 failed" }
+ssh $SERVER "cd $DEPLOY_DIR && pm2 save >/dev/null 2>&1 && echo 'pm2 已保存开机自启'"
+Start-Sleep -Seconds 2
+$workers = ssh $SERVER "ps -ef | grep -c '[g]unicorn'"
+Write-Host "gunicorn 进程数（含 master，应为 4）: $workers" -ForegroundColor Green
+if ([int]$workers -lt 4) { Write-Host "警告：worker 数不足，检查 deploy/ecosystem.config.cjs 与 pm2 delete 是否成功" -ForegroundColor Red }
 Start-Sleep -Seconds 3
 $code = ssh $SERVER "curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/"
 Write-Host "Glowisd HTTP 状态: $code" -ForegroundColor Green
