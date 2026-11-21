@@ -36,7 +36,7 @@ QUALITY = 78
 
 #: 按目录覆盖质量：hero 上面有深蓝遮罩，用 70 肉眼无差但省 16%；
 #: products 是客户要看清件号的图，保持 78；site_images 也是内容图，保持 78。
-QUALITY_BY_SUB = {'hero': 70}
+QUALITY_BY_SUB = {'hero': 70, 'site_images': 74}
 
 EXTS = ('.jpg', '.jpeg', '.png', '.webp')
 
