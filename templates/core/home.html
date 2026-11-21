@@ -13,7 +13,7 @@
     {% if forloop.first %}
     <img class="hero-slide is-active"
          src="{% opt_img slide.image 1600 %}"
-         srcset="{% opt_srcset slide.image '960,1600' %}"
+         srcset="{% opt_srcset slide.image '960,1440,1600' %}"
          sizes="100vw"
          alt="" loading="eager" fetchpriority="high" decoding="async">
     {% else %}
